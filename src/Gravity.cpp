@@ -1,29 +1,22 @@
 #include "SpringForce.h"
+#include "Gravity.h"
 #include <GL/glut.h>
 #include <gfx/vec2.h>
 #include <math.h>
 
-SpringForce::SpringForce(Particle *p1, Particle * p2, double dist, double ks, double kd) :
-// "class : xxxxx" means pass xxxxx as parameters to define a new class
-  //p1,p2 are particles&postions of them
-  //m_p1(p1) means p1 is defined as private var. m_p1; p2 is m_p2; dist is m_dist ...
-  //cuz SpringForce::SpringForce, :: used. If only SpringForce, not need m_p1(p1)
-  m_p1(p1), m_p2(p2), m_dist(dist), m_ks(ks), m_kd(kd) {}
+Gravity::Gravity(Particle *p, double mass) :
+  m_p(p) {}
 
-void SpringForce::apply(bool springsCanBreak)
+void Gravity::apply()
 {
     Vec2f length = this->m_p1->m_Position - this->m_p2->m_Position; //l=particle p1-particle p2
     Vec2f length_derivate = this->m_p1->m_Velocity - this->m_p2->m_Velocity; //l'=velocity p1-velocity p2
     bool active = true;
 
-    if(springsCanBreak && norm(length)>2*this->m_dist){//think of break(or not) length
-        active=false;
-    } else if(active){
-        // force1 = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
-        Vec2f force = (this->m_ks*(norm(length)-this->m_dist)+this->m_kd*((length*length_derivate)/norm(length)))*(length/norm(length));
-        this->m_p1->m_Force = force;
-        this->m_p2->m_Force = -force;
-    }
+    // force = mg
+    Vec2f force = (this->m_ks*(norm(length)-this->m_dist)+this->m_kd*((length*length_derivate)/norm(length)))*(length/norm(length));
+    this->m_p1->m_Force = force;
+    this->m_p2->m_Force = -force;
 }
 
 Mat2**  SpringForce::Jacobian() {

@@ -43,6 +43,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "map": "cpp",
-        "particle.h": "c"
+        "particle.h": "c",
+        "mat2.h": "c"
     }
 }
