@@ -34,7 +34,7 @@ Mat2**  SpringForce::Jacobian() {
 
     Mat2 I = Mat2::I();
     Vec2f length = this->m_p1->m_Position - this->m_p2->m_Position;
-    Vec2f C=norm(length)-this->m_dist;
+    // double C=norm(length)-this->m_dist;
     float length_abs = norm(length);
 
     Mat2 force = this->m_ks*I \

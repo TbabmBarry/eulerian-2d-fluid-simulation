@@ -8,11 +8,11 @@ class Gravity {
  public:
   Gravity(Particle *p, double mass);
   void apply();
-  Mat2**  Gravity::Jacobian();
+  Vec2f Gravity::Jacobian();
   void draw();
 
  private:
 
   Particle * const m_p;   // particle
-  Vec2f g=(0,9.8);     // rest length
+  Vec2f g=new Vec2f(0,9.8f);     // rest length
 };
