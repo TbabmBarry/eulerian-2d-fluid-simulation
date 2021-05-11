@@ -44,6 +44,8 @@
         "typeinfo": "cpp",
         "map": "cpp",
         "particle.h": "c",
-        "mat2.h": "c"
+        "mat2.h": "c",
+        "vec2.h": "c",
+        "gfx.h": "c"
     }
 }

@@ -29,12 +29,10 @@ Vec2f Gravity::Jacobian() {
 //     return ks * MatrixXf::Identity(3, 3);
 // }
 
-void SpringForce::draw()
+void Gravity::draw()
 {
   glBegin( GL_LINES );
   glColor3f(0.6, 0.7, 0.8);
-  glVertex2f( m_p1->m_Position[0], m_p1->m_Position[1] );
-  glColor3f(0.6, 0.7, 0.8);
-  glVertex2f( m_p2->m_Position[0], m_p2->m_Position[1] );
+  glVertex2f( this->m_p->m_Position[0], this->m_p->m_Position[1] ); 
   glEnd();
 }
