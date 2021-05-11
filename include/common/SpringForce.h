@@ -1,6 +1,6 @@
 #pragma once
 #include <stdio.h>
-#include <mat2.h>
+#include <gfx/mat2.h>
 #include "Particle.h"
 #include <map>
 
