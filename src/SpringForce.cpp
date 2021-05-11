@@ -32,7 +32,7 @@ Mat2**  SpringForce::Jacobian() {
       Jacobian[i]=(Mat2*)malloc(sizeof(Mat2)*2);
     }
 
-    Mat2 I = Mat2::I();
+    Mat2 I = Mat2(1,0,0,1);
     Vec2f length = this->m_p1->m_Position - this->m_p2->m_Position;
     // double C=norm(length)-this->m_dist;
     float length_abs = norm(length);
