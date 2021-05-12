@@ -39,7 +39,6 @@ double vecSqrLen(int n, double v[])
   return vecDot(n, v, v);
 }
 
-// Solve Ax = b for a symmetric, positive definite matrix A
 double ConjGrad(int n, implicitMatrix *A, double x[], double b[],//Ax=b to get x,x is location?
 		double epsilon,	// how low should we go?
 		int    *steps)

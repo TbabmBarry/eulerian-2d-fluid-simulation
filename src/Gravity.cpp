@@ -6,7 +6,7 @@
 
 Gravity::Gravity(Particle *p, double mass) :
   m_p(p) {
-      this->m_p->mass=mass;
+      m_p->mass=mass;
   }
 
 void Gravity::apply()
@@ -16,12 +16,12 @@ void Gravity::apply()
     // bool active = true;
 
     // force = mg
-    Vec2f force = this->m_p->mass * this->g;
-    this->m_p->m_Force = force;
+    Vec2f force = m_p->mass * g;
+    m_p->m_Force = force;
 }
 
 Vec2f Gravity::Jacobian() {
-    return this->g;
+    return g;
 }
 
 
@@ -31,8 +31,8 @@ Vec2f Gravity::Jacobian() {
 
 void Gravity::draw()
 {
-  glBegin( GL_LINES );
+  glBegin( GL_POINTS );
   glColor3f(0.6, 0.7, 0.8);
-  glVertex2f( this->m_p->m_Position[0], this->m_p->m_Position[1] ); 
+  glVertex2f( m_p->m_Position[0], m_p->m_Position[1] );
   glEnd();
 }

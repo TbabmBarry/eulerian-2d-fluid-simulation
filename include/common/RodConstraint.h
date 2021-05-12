@@ -10,7 +10,7 @@ class RodConstraint {
   float C();
   float Cd();
   std::vector<Vec2f> j();
-  std::vector<Vec2f> RodConstraint::jd();
+  std::vector<Vec2f> jd();
   void draw();
 
  private:

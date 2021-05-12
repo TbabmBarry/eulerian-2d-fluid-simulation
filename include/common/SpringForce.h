@@ -8,7 +8,7 @@ class SpringForce {
  public:
   SpringForce(Particle *p1, Particle * p2, double dist, double ks, double kd);
   void apply(bool springsCanBreak);
-  Mat2**  SpringForce::Jacobian();
+  Mat2**  Jacobian();
   void draw();
 
  private:
