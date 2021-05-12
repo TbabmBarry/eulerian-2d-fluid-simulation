@@ -8,8 +8,9 @@ class RodConstraint {
  public:
   RodConstraint(Particle *p1, Particle * p2, double dist);
   float C();
-  float Cd();
-  std::vector<Vec2f> j();
+  float legal_velocity();
+  float legal_accelerate();
+  std::vector<Vec2f> Jacobian();
   std::vector<Vec2f> jd();
   void draw();
 

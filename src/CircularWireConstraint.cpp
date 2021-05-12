@@ -20,40 +20,42 @@ CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec2f & center
 	m_p(p), m_center(center), m_radius(radius) {}
 
 float CircularWireConstraint::C() {
-    float dx = this->m_p->m_Position[0] - this->m_center[0];
-	float dy = this->m_p->m_Position[1] - this->m_center[1];
-    return pow(dx,2) + pow(dy,2) - pow(this->m_radius,2);
+    float dx = m_p->m_Position[0] - m_center[0];
+	float dy = m_p->m_Position[1] - m_center[1];
+    return pow(dx,2) + pow(dy,2) - pow(m_radius,2);
 }
 
 /**
  * Computes Cd of this constraint
  * @return x * xd
  */
-float CircularWireConstraint::Cd() {
-    Vec2f pVector = (this->m_p->m_Position - this->m_center);
-    Vec2f vVector = this->m_p->m_Velocity;
+float CircularWireConstraint::legal_velocity() {//C'
+    Vec2f pVector = m_p->m_Position - m_center;
+    Vec2f vVector = m_p->m_Velocity;
     return 2 * pVector * vVector;
 }
 
-/**
- * Computes j of this constraint
- * @return
- */
-// std::vector<Vec2f> CircularWireConstraint::j() {
-//     std::vector<Vec2f> j;
-//     j.push_back((this->m_p->m_Position - this->m_center) * 2);
-//     return j;
-// }
+float CircularWireConstraint::legal_accelerate() {//C''
+    Vec2f vVector = m_p->m_Velocity;
+    return 2 * vVector * vVector;
+}
 
-// /**
-//  * Computes jd of this constraint
-//  * @return
-//  */
-// std::vector<Vec2f> CircularWireConstraint::jd() {
-//     std::vector<Vec2f> jd;
-//     jd.push_back(this->m_p->m_Velocity * 2);
-//     return jd;
-// }
+Vec2f CircularWireConstraint::ConstraintF(){
+	return -(m_p->m_Force * m_p->m_Position/norm(m_p->m_Position))*m_p->m_Position/norm(m_p->m_Position);
+}
+
+std::vector<Vec2f> CircularWireConstraint::Jacobian() {
+    std::vector<Vec2f> j;
+	//J=(x-xc,y-yc)
+    j.push_back((m_p->m_Position - m_center) * 2);//why vector Vec2f???
+    return j;
+}
+
+std::vector<Vec2f> CircularWireConstraint::jd() {
+    std::vector<Vec2f> jd;
+    jd.push_back(m_p->m_Velocity * 2);//why vector Vec2f???
+    return jd;
+}
 
 void CircularWireConstraint::draw()
 {
