@@ -1,19 +1,15 @@
 #pragma once
+#include <vector>
 #include <stdio.h>
-#include <mat2.h>
 #include "Particle.h"
 
-class SpringForce {
- public:
-  SpringForce(Particle *p1, Particle * p2, double dist, double ks, double kd);
-  void apply(bool springsCanBreak);
+using namespace std;
 
-  void draw();
+class Force {
+  public:
+    vector<Particle*> particles;
+    virtual void setTarget(vector<Particle*> particles) = 0;
+    virtual void apply(bool springsCanBreak) = 0;
+    virtual void draw() = 0;
 
- private:
-
-  Particle * const m_p1;   // particle 1
-  Particle * const m_p2;   // particle 2
-  double const m_dist;     // rest length
-  double const m_ks, m_kd; // spring strength constants
 };

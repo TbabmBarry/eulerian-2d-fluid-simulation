@@ -1,20 +1,20 @@
 #pragma once
 #include <stdio.h>
-#include <gfx/mat2.h>
+#include "Force.h"
 #include "Particle.h"
 #include <map>
 
-class SpringForce {
+class SpringForce : public Force {
+
  public:
-  SpringForce(Particle *p1, Particle * p2, double dist, double ks, double kd);
-  void apply(bool springsCanBreak);
-  Mat2**  Jacobian();
-  void draw();
+  SpringForce(Particle *p1, Particle * p2, float m_dist, float m_ks, float m_kd);
+  SpringForce(vector<Particle*> particles, float m_dist, float m_ks, float m_kd);
+
+  void draw() override;
+  void setTarget(vector<Particle*> particles) override;
+  void apply(bool springsCanBreak) override;
 
  private:
-
-  Particle * const m_p1;   // particle 1
-  Particle * const m_p2;   // particle 2
-  double const m_dist;     // rest length
-  double const m_ks, m_kd; // spring strength constants
+  float const m_dist;     // rest length
+  float const m_ks, m_kd; // spring strength constants
 };
