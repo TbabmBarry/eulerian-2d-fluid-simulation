@@ -16,8 +16,8 @@ static void draw_circle(const Vec2f & vect, float radius)
 	glEnd();
 }
 
-CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec2f & center, const double radius) :
-	m_p(p), m_center(center), m_radius(radius) {}
+CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec2f & center, const float radius) :
+	Constraint({p}), m_p(p), m_center(center), m_radius(radius) {}
 
 float CircularWireConstraint::C() {
     float dx = m_p->m_Position[0] - m_center[0];
@@ -44,15 +44,15 @@ Vec2f CircularWireConstraint::ConstraintF(){
 	return -(m_p->m_Force * m_p->m_Position/norm(m_p->m_Position))*m_p->m_Position/norm(m_p->m_Position);
 }
 
-std::vector<Vec2f> CircularWireConstraint::Jacobian() {
-    std::vector<Vec2f> j;
+vector<Vec2f> CircularWireConstraint::Jacobian() {
+    vector<Vec2f> j;
 	//J=(x-xc,y-yc)
     j.push_back((m_p->m_Position - m_center) * 2);//why vector Vec2f???
     return j;
 }
 
-std::vector<Vec2f> CircularWireConstraint::jd() {
-    std::vector<Vec2f> jd;
+vector<Vec2f> CircularWireConstraint::jd() {
+    vector<Vec2f> jd;
     jd.push_back(m_p->m_Velocity * 2);//why vector Vec2f???
     return jd;
 }

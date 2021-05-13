@@ -2,8 +2,8 @@
 #include <GL/glut.h>
 #include <math.h>
 
-RodConstraint::RodConstraint(Particle *p1, Particle * p2, double dist) : //r=dist
-  m_p1(p1), m_p2(p2), m_dist(dist) {}
+RodConstraint::RodConstraint(Particle *p1, Particle * p2, float dist) : //r=dist
+  Constraint({p1, p2}), m_p1(p1), m_p2(p2), m_dist(dist) {}
 
 float RodConstraint::C() {
   float dx = m_p1->m_Position[0] - m_p2->m_Position[0];

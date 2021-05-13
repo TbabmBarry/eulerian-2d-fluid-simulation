@@ -1,23 +1,22 @@
 #pragma once
-#include <vector>
 #include <gfx/vec2.h>
 #include <math.h>
-#include "Particle.h"
+#include "Constraint.h"
 
-class CircularWireConstraint {
+class CircularWireConstraint : public Constraint {
  public:
-  CircularWireConstraint(Particle *p, const Vec2f & center, const double radius);
-  float C();
-  float legal_velocity();
-  float legal_accelerate();
+  CircularWireConstraint(Particle *p, const Vec2f & center, const float radius);
+  float C() override;
+  float legal_velocity() override;
+  float legal_accelerate() override;
   Vec2f ConstraintF();
-  std::vector<Vec2f> Jacobian();
-  std::vector<Vec2f> jd();
-  void draw();
+  vector<Vec2f> Jacobian() override;
+  vector<Vec2f> jd() override;
+  void draw() override;
 
  private:
 
   Particle * const m_p;
   Vec2f const m_center;
-  double const m_radius;
+  float const m_radius;
 };
