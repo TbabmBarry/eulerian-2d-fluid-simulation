@@ -26,15 +26,15 @@ float RodConstraint::legalVelocity() {
 std::vector <Vec2f> RodConstraint::jacobian() {
     std::vector <Vec2f> j;
     j.push_back((m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 1
-    j.push_back((m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 2
+    j.push_back(-(m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 2
     //but why push twice??? cuz 2 particles?
     return j;
 }
 
 std::vector<Vec2f> RodConstraint::jacobianDerivative() {
     std::vector <Vec2f> jd;
-    jd.push_back(m_p1->m_Velocity * 2);
-    jd.push_back(-m_p2->m_Velocity * 2);
+    jd.push_back((m_p1->m_Velocity-m_p2->m_Velocity) * 2);
+    jd.push_back(-(m_p1->m_Velocity-m_p2->m_Velocity) * 2);
     return jd;
 }
 

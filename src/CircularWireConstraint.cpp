@@ -47,13 +47,13 @@ Vec2f CircularWireConstraint::ConstraintF(){
 vector<Vec2f> CircularWireConstraint::jacobian() {
     vector<Vec2f> j;
 	//J=(x-xc,y-yc)
-    j.push_back((m_p->m_Position - m_center) * 2);//why vector Vec2f???
+    j.push_back((m_p->m_Position - m_center) * 2);
     return j;
 }
 
 vector<Vec2f> CircularWireConstraint::jacobianDerivative() {
     vector<Vec2f> jd;
-    jd.push_back(m_p->m_Velocity * 2);//why vector Vec2f???
+    jd.push_back(m_p->m_Velocity * 2);
     return jd;
 }
 
