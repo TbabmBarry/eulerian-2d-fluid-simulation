@@ -13,10 +13,9 @@ class Constraint {
 
         virtual void draw() = 0;
         virtual float C() = 0;
-        virtual float legal_velocity() = 0;
-        virtual float legal_accelerate() = 0;
-        virtual vector<Vec2f> Jacobian() = 0;
-        virtual vector<Vec2f> jd() = 0;
+        virtual float legalVelocity() = 0;
+        virtual vector<Vec2f> jacobian() = 0;
+        virtual vector<Vec2f> jacobianDerivative() = 0;
     private:
         vector<Particle*> particles;
 };

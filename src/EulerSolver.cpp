@@ -8,17 +8,14 @@ void EulerSolver::simulateStep(System *system, float h) {
         // Something to add
     } else {
         // Get the old state
-        vector<float> oldState = system->particleGetState();
+        VectorXf oldState = system->particleGetState();
 
         // Evaluate derivative
-        vector<float> stateDeriv = system->particleDerivative();
+        VectorXf stateDeriv = system->particleAcceleration();
 
         // Calculate the new state
-        // vector<float> newState = oldState + h*stateDeriv;
-        vector<float> newState;
-        for (auto i = 0; i< stateDeriv.size(); i++) {
-            newState.push_back( oldState[i] + h*stateDeriv[i] );
-        }
+        // VectorXf newState = oldState + h*stateDeriv;
+        VectorXf newState = oldState + h * stateDeriv;
         
 
         if (type == SEMI) {

@@ -1,8 +1,11 @@
 #include "Particle.h"
 #include "Force.h"
 #include <vector>
+#include "Eigen/Dense"
+
 
 using namespace std;
+using namespace Eigen;
 
 class System {
 
@@ -24,15 +27,16 @@ class System {
 
         // ODE Interface
 
+        VectorXf particleAcceleration();
         // Calculate the derivative: Divide force by mass to get acceleration, and gather the derivatives into a global vector for the solver
-        vector<float> particleDerivative();
+        VectorXf particleDerivative();
         // Gather state from the particles into dst
-        vector<float> particleGetState();
+        VectorXf particleGetState();
 
         float particleGetTime();
         // Scatter state from src into the particles
-        void particleSetState(vector<float> src);
-        void particleSetState(vector<float> newState, float time);
+        void particleSetState(VectorXf src);
+        void particleSetState(VectorXf newState, float time);
         // Get length of state derivative, and force vectors
         int particleDims();
     

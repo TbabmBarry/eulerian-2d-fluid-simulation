@@ -29,29 +29,29 @@ float CircularWireConstraint::C() {
  * Computes Cd of this constraint
  * @return x * xd
  */
-float CircularWireConstraint::legal_velocity() {//C'
+float CircularWireConstraint::legalVelocity() {//C'
     Vec2f pVector = m_p->m_Position - m_center;
     Vec2f vVector = m_p->m_Velocity;
     return 2 * pVector * vVector;
 }
 
-float CircularWireConstraint::legal_accelerate() {//C''
-    Vec2f vVector = m_p->m_Velocity;
-    return 2 * vVector * vVector;
-}
+// float CircularWireConstraint::legal_accelerate() {//C''
+//     Vec2f vVector = m_p->m_Velocity;
+//     return 2 * vVector * vVector;
+// }
 
 Vec2f CircularWireConstraint::ConstraintF(){
 	return -(m_p->m_Force * m_p->m_Position/norm(m_p->m_Position))*m_p->m_Position/norm(m_p->m_Position);
 }
 
-vector<Vec2f> CircularWireConstraint::Jacobian() {
+vector<Vec2f> CircularWireConstraint::jacobian() {
     vector<Vec2f> j;
 	//J=(x-xc,y-yc)
     j.push_back((m_p->m_Position - m_center) * 2);//why vector Vec2f???
     return j;
 }
 
-vector<Vec2f> CircularWireConstraint::jd() {
+vector<Vec2f> CircularWireConstraint::jacobianDerivative() {
     vector<Vec2f> jd;
     jd.push_back(m_p->m_Velocity * 2);//why vector Vec2f???
     return jd;

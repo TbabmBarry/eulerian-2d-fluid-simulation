@@ -19,9 +19,9 @@ int System::particleDims()
     return particles.size() * 2 * 2;
 }
 
-vector<float> System::particleGetState()
+VectorXf System::particleGetState()
 {
-    vector<float> s(this->particleDims());
+    VectorXf s(this->particleDims());
 
     for (int i = 0; i < this->particles.size(); i++)
     {
@@ -40,12 +40,12 @@ float System::particleGetTime()
     return time;
 }
 
-void System::particleSetState(vector<float> src)
+void System::particleSetState(VectorXf src)
 {
     this->particleSetState(src, this->particleGetTime());
 }
 
-void System::particleSetState(vector<float> newState, float time)
+void System::particleSetState(VectorXf newState, float time)
 {
     for (int i = 0; i < particles.size(); i++)
     {
@@ -57,9 +57,17 @@ void System::particleSetState(vector<float> newState, float time)
     this->time = time;
 }
 
-vector<float> System::particleDerivative()
+VectorXf System::particleAcceleration()
 {
-    vector<float> dst(this->particleDims());
+    clearForces();
+    applyForces();
+    // TBD: Compute constraint force
+    return particleDerivative();
+}
+
+VectorXf System::particleDerivative()
+{
+    VectorXf dst(this->particleDims());
     for (int i = 0; i < particles.size(); i++)
     {
         Particle *p = particles[i];

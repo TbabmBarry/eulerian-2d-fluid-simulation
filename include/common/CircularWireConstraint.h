@@ -7,11 +7,10 @@ class CircularWireConstraint : public Constraint {
  public:
   CircularWireConstraint(Particle *p, const Vec2f & center, const float radius);
   float C() override;
-  float legal_velocity() override;
-  float legal_accelerate() override;
+  float legalVelocity() override;
   Vec2f ConstraintF();
-  vector<Vec2f> Jacobian() override;
-  vector<Vec2f> jd() override;
+  vector<Vec2f> jacobian() override;
+  vector<Vec2f> jacobianDerivative() override;
   void draw() override;
 
  private:
