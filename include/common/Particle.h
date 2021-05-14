@@ -17,4 +17,5 @@ public:
 	Vec2f m_Velocity;
 	Vec2f m_Force;
 	double mass;
+	int index;
 };

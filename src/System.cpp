@@ -1,6 +1,8 @@
 #include "System.h"
+#include "ConstraintMaintainer.h"
 
-System::System() : time(0.0f), dt(0.005)
+
+System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.005)
 {
 }
 
@@ -62,6 +64,7 @@ VectorXf System::particleAcceleration()
     clearForces();
     applyForces();
     // TBD: Compute constraint force
+    ConstraintMaintainer::maintainConstraint(this, 88.0f, 11.0f);
     return particleDerivative();
 }
 
