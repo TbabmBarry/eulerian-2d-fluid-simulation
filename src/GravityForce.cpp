@@ -15,12 +15,7 @@ void GravityForce::setTarget(vector<Particle*> particles)
 }
 
 void GravityForce::apply(bool springsCanBreak)
-{
-    // Vec2f length = this->m_p1->m_Position - this->m_p2->m_Position; //l=particle p1-particle p2
-    // Vec2f length_derivate = this->m_p1->m_Velocity - this->m_p2->m_Velocity; //l'=velocity p1-velocity p2
-    // bool active = true;
-
-    // force = mg
+{   // force = mg
     for (Particle *p : particles)
       p->m_Force += p->mass * g;
 }
