@@ -12,6 +12,6 @@ class GravityForce : public Force {
     void apply(bool springsCanBreak) override;
     void draw() override;
 
-  private:
-    Vec2f g = Vec2f(0.0f, 9.8f);     // gravity
+    Vec2f g;     // gravity
+    
 };

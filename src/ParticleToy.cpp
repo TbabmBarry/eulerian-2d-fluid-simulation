@@ -2,9 +2,12 @@
 //
 
 #include "Particle.h"
+#include "GravityForce.h"
 #include "SpringForce.h"
 #include "RodConstraint.h"
 #include "CircularWireConstraint.h"
+#include "System.h"
+#include "EulerSolver.h"
 #include "imageio.h"
 
 #include <vector>
@@ -15,7 +18,7 @@
 /* macros */
 
 /* external definitions (from solver) */
-extern void simulation_step( std::vector<Particle*> pVector, float dt );
+// extern void simulation_step( std::vector<Particle*> pVector, float dt );
 
 /* global variables */
 
@@ -26,7 +29,8 @@ static int dump_frames;
 static int frame_number;
 
 // static Particle *pList;
-static std::vector<Particle*> pVector;
+// static std::vector<Particle*> pVector;
+static System* sys;
 
 static int win_id;
 static int win_x, win_y;
@@ -36,9 +40,9 @@ static int mouse_shiftclick[3];
 static int omx, omy, mx, my;
 static int hmx, hmy;
 
-static SpringForce * delete_this_dummy_spring = NULL;
-static RodConstraint * delete_this_dummy_rod = NULL;
-static CircularWireConstraint * delete_this_dummy_wire = NULL;
+// static SpringForce * delete_this_dummy_spring = NULL;
+// static RodConstraint * delete_this_dummy_rod = NULL;
+// static CircularWireConstraint * delete_this_dummy_wire = NULL;
 
 
 /*
@@ -49,28 +53,30 @@ free/clear/allocate simulation data
 
 static void free_data ( void )
 {
-	pVector.clear();
-	if (delete_this_dummy_rod) {
-		delete delete_this_dummy_rod;
-		delete_this_dummy_rod = NULL;
-	}
-	if (delete_this_dummy_spring) {
-		delete delete_this_dummy_spring;
-		delete_this_dummy_spring = NULL;
-	}
-	if (delete_this_dummy_wire) {
-		delete delete_this_dummy_wire;
-		delete_this_dummy_wire = NULL;
-	}
+	// pVector.clear();
+	// if (delete_this_dummy_rod) {
+	// 	delete delete_this_dummy_rod;
+	// 	delete_this_dummy_rod = NULL;
+	// }
+	// if (delete_this_dummy_spring) {
+	// 	delete delete_this_dummy_spring;
+	// 	delete_this_dummy_spring = NULL;
+	// }
+	// if (delete_this_dummy_wire) {
+	// 	delete delete_this_dummy_wire;
+	// 	delete_this_dummy_wire = NULL;
+	// }
+	sys->free ();
 }
 
 static void clear_data ( void )
 {
-	int ii, size = pVector.size();
+	// int ii, size = pVector.size();
 
-	for(ii=0; ii<size; ii++){
-		pVector[ii]->reset();
-	}
+	// for(ii=0; ii<size; ii++){
+	// 	pVector[ii]->reset();
+	// }
+	sys->reset();
 }
 
 static void init_system(void)
@@ -78,20 +84,33 @@ static void init_system(void)
 	const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
-
+	sys = new System(new EulerSolver(EulerSolver::SEMI));
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
 
-	pVector.push_back(new Particle(center + offset));
+	// pVector.push_back(new Particle(center + offset));
 	//push_back:Adds a new element at the end of the vector, after its current last element.
-	pVector.push_back(new Particle(center + offset + offset));
-	pVector.push_back(new Particle(center + offset + offset + offset));
+	// pVector.push_back(new Particle(center + offset + offset));
+	// pVector.push_back(new Particle(center + offset + offset + offset));
 	
+	sys->addParticle(new Particle(center + offset, 2.0f, 0));
+	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
+	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
+	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 3));
+	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
+
 	// You shoud replace these with a vector generalized forces and one of
 	// constraints...
-	delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
-	delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
-	delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
+	// delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
+	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
+	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
+
+	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, 9.8f)));
+	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[2], sys->particles[3], dist, 150.f, 1.5f));
+    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
+	sys->addConstraint(new RodConstraint(sys->particles[3], sys->particles[4], dist));
+	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
 /*
@@ -139,28 +158,31 @@ static void post_display ( void )
 
 static void draw_particles ( void )
 {
-	int size = pVector.size();
+	// int size = pVector.size();
 
-	for(int ii=0; ii< size; ii++)
-	{
-		pVector[ii]->draw();
-	}
+	// for(int ii=0; ii< size; ii++)
+	// {
+	// 	pVector[ii]->draw();
+	// }
+	sys->drawParticles();
 }
 
 static void draw_forces ( void )
 {
 	// change this to iteration over full set
-	if (delete_this_dummy_spring)
-		delete_this_dummy_spring->draw();
+	// if (delete_this_dummy_spring)
+	// 	delete_this_dummy_spring->draw();
+	sys->drawForces();
 }
 
 static void draw_constraints ( void )
 {
 	// change this to iteration over full set
-	if (delete_this_dummy_rod)
-		delete_this_dummy_rod->draw();
-	if (delete_this_dummy_wire)
-		delete_this_dummy_wire->draw();
+	// if (delete_this_dummy_rod)
+	// 	delete_this_dummy_rod->draw();
+	// if (delete_this_dummy_wire)
+	// 	delete_this_dummy_wire->draw();
+	sys->drawConstraints();
 }
 
 /*
@@ -203,11 +225,10 @@ static void get_from_UI ()
 
 static void remap_GUI()
 {
-	int ii, size = pVector.size();
-	for(ii=0; ii<size; ii++)
+	for(int i=0; i < sys->particles.size(); i++)
 	{
-		pVector[ii]->m_Position[0] = pVector[ii]->m_ConstructPos[0];
-		pVector[ii]->m_Position[1] = pVector[ii]->m_ConstructPos[1];
+        sys->particles[i]->m_Position[0] = sys->particles[i]->m_ConstructPos[0];
+        sys->particles[i]->m_Position[1] = sys->particles[i]->m_ConstructPos[1];
 	}
 }
 
@@ -272,7 +293,7 @@ static void reshape_func ( int width, int height )
 
 static void idle_func ( void )
 {
-	if ( dsim ) simulation_step( pVector, dt );
+	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
 	glutSetWindow ( win_id );
