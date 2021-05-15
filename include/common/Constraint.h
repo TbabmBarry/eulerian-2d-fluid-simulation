@@ -16,6 +16,11 @@ class Constraint {
         virtual float legalVelocity() = 0;
         virtual vector<Vec2f> jacobian() = 0;
         virtual vector<Vec2f> jacobianDerivative() = 0;
+
+        vector<Particle*> store()
+        {
+            return particles;
+        }
     private:
         vector<Particle*> particles;
 };
