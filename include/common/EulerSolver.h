@@ -12,4 +12,8 @@ public:
     TYPE type;
 
     EulerSolver(TYPE type);
+private:
+    void explicitS(System* system, float h);
+    void implicitS(System* system, float h);
+    void semiS(System* system, float h);
 };

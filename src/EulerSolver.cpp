@@ -19,7 +19,7 @@ void EulerSolver::simulateStep(System *system, float h) {
 
 }
 
-void explicitS(System *system, float h) {
+void EulerSolver::explicitS(System *system, float h) {
     // Get the old state
     VectorXf oldState = system->particleGetState();
 
@@ -33,7 +33,7 @@ void explicitS(System *system, float h) {
     system->particleSetState(newState, system->particleGetTime() + h);              
 }
 
-void semiS(System *system, float h) {
+void EulerSolver::semiS(System *system, float h) {
     // Get the old state
     VectorXf oldState = system->particleGetState();
 
@@ -58,7 +58,7 @@ void semiS(System *system, float h) {
 }
 
 
-void implicitS(System *system, float h) {
+void EulerSolver::implicitS(System *system, float h) {
 
 }
     
