@@ -31,7 +31,7 @@ class System {
 
         void addParticle(Particle* p);
         void addForce(Force* f);
-
+        void addConstraint(Constraint* constraint);
         // ODE Interface
 
         VectorXf particleAcceleration();
@@ -46,7 +46,14 @@ class System {
         void particleSetState(VectorXf newState, float time);
         // Get length of state derivative, and force vectors
         int particleDims();
-    
+
+        void free();
+        void reset();
+        void simulationStep();
+        void drawParticles();
+        void drawForces();
+        void drawConstraints();
+        void drawSystem();
     private:
         // Clear forces: zero each particle's force accumulator
         void clearForces();

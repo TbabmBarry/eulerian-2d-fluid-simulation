@@ -16,9 +16,28 @@ void System::addForce(Force* f)
     forces.push_back(f);
 }
 
+void System::addConstraint(Constraint* constraint)
+{
+    constraints.push_back(constraint);
+}
+
 int System::particleDims()
 {
     return particles.size() * 2 * 2;
+}
+
+void System::free() 
+{
+    particles.clear();
+    forces.clear();
+}
+
+void System::reset() 
+{
+    for (Particle *p : particles) 
+    {
+        p->reset();
+    }
 }
 
 VectorXf System::particleGetState()
@@ -82,15 +101,54 @@ VectorXf System::particleDerivative()
     return dst;
 }
 
-void System::clearForces() {
-    for (Particle *p : particles) {
+void System::simulationStep()
+{
+    solver->simulateStep(this, dt);
+}
+
+void System::clearForces() 
+{
+    for (Particle *p : particles) 
+    {
         p->m_Force = Vec2f(0.0f, 0.0f);
     }
 }
 
-void System::applyForces() {
-    for (Force *f : forces) {
+void System::applyForces() 
+{
+    for (Force *f : forces) 
+    {
         f->apply(springsCanBreak);
     }
 }
 
+void System::drawParticles()
+{
+    for (auto *p : particles)
+    {
+        p->draw();
+    }
+}
+
+void System::drawForces()
+{
+    for (auto *f : forces)
+    {
+        f->draw();
+    }
+}
+
+void System::drawConstraints()
+{
+    for (auto *c : constraints)
+    {
+        c->draw();
+    }
+}
+
+void System::drawSystem()
+{
+    drawParticles();
+    drawForces();
+    drawConstraints();
+}

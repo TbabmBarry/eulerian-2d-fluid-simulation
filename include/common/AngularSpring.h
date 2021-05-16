@@ -5,7 +5,7 @@
 class AngularSpring : public Force {
     
  public:
-  AngularSpring(Particle *p1, Particle * p2,Particle * p3, double angle, double ks, double kd);
+  AngularSpring(Particle *p1, Particle * midpoint,Particle * p3, double angle, double ks, double kd);
   AngularSpring(vector<Particle*> particles, float angle, float m_ks, float m_kd);
   
   void setTarget(vector<Particle*> particles) override;
