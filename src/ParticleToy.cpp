@@ -4,16 +4,19 @@
 #include "Particle.h"
 #include "GravityForce.h"
 #include "SpringForce.h"
+#include "AngularSpring.h"
 #include "RodConstraint.h"
 #include "CircularWireConstraint.h"
 #include "System.h"
 #include "EulerSolver.h"
 #include "imageio.h"
+#include "GravityForce.h"
 
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL/glut.h>
+#include <gfx/vec2.h>
 
 /* macros */
 
@@ -183,6 +186,46 @@ static void draw_constraints ( void )
 	// if (delete_this_dummy_wire)
 	// 	delete_this_dummy_wire->draw();
 	sys->drawConstraints();
+}
+
+static System* Hair() {
+    System* sys = new System(new EulerSolver(EulerSolver::SEMI));
+
+    const int num_particles = 100;
+    const float deltay = 3.0f/num_particles;
+    const int numHairs = 8;
+	const float ks = 50.0f;
+    const float kd = 1.0f;
+
+    for (int i = 0; i < numHairs; i++) {
+        // Initialize particles
+        for (int j = 0; j < num_particles; j++) {
+            sys->addParticle(new Particle(Vec2f(-0.5f + 0.03f*i, 0.5f - j * deltay), 0.2f, i * num_particles + j));
+        }
+
+        // for (int j = 0; j < num_particles - 1; j++) {
+        //     sys->addForce(new SpringForce(sys->particles[i * num_particles + j],
+        //                                   sys->particles[i * num_particles + j + 1],
+        //                                   deltay, ks, kd));
+        // }
+        for (int j = 2; j < num_particles - 2; j++) {
+            sys->addForce(new AngularSpring(sys->particles[i * num_particles + j],
+											sys->particles[i * num_particles + j + 1],
+											sys->particles[i * num_particles + j + 2],
+											120, ks, kd));
+        }
+
+        float radius = 0.05f;
+        sys->addConstraint(new CircularWireConstraint(sys->particles[i * num_particles],
+                                                      Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),//暂时定义为(0,0)+(-r,0)
+                                                      radius));
+    }
+
+
+    // Add gravity and drag to all particles
+    sys->addForce(new GravityForce(sys->particles, Vec2f(0, -9.81f)));
+
+    return sys;
 }
 
 /*

@@ -34,7 +34,7 @@ void AngularSpring::apply(bool springsCanBreak)
     Vec2f length3_derivate = particles[2]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p3-velocity midpoint
 
     // force = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
-    //rest length r is represented by rest angle here
+    //rest length r is calculated by rest angle here
     Vec2f force1 = (m_ks*(norm(midtoP1)-p1restlength)+m_kd*((midtoP1*length1_derivate)/norm(midtoP1)))*(midtoP1/norm(midtoP1));
     Vec2f force3 = (m_ks*(norm(midtoP3)-p3restlength)+m_kd*((midtoP3*length3_derivate)/norm(midtoP3)))*(midtoP3/norm(midtoP3));
     particles[0]->m_Force += force1;
