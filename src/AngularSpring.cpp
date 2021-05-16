@@ -4,8 +4,8 @@
 #include <math.h>
 #include <assert.h>
 
-AngularSpring::AngularSpring(Particle *p1, Particle * p2,Particle * p3, double angle, double ks, double kd) :
-  AngularSpring({p1, p2, p3}, angle, m_ks, m_kd) {}
+AngularSpring::AngularSpring(Particle *p1, Particle * midpoint,Particle * p3, double angle, double ks, double kd) :
+  AngularSpring({p1, midpoint, p3}, angle, m_ks, m_kd) {}
 
 AngularSpring::AngularSpring(vector<Particle*> particles, float angle, float m_ks, float m_kd) : m_angle(angle), m_ks(m_ks), m_kd(m_kd)
 {
@@ -20,18 +20,32 @@ void AngularSpring::setTarget(vector<Particle*> particles)
 
 void AngularSpring::apply(bool springsCanBreak)
 {
-    Vec2f length = particles[0]->m_Position - particles[1]->m_Position; //l=particle p1-particle p2
-    Vec2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
-    bool active = true;
+    Vec2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
+    Vec2f midtoP3 = particles[2]->m_Position - particles[1]->m_Position; //l2=particle p1-particle midpoint
 
-    if(springsCanBreak && norm(length)>2*m_dist){//think of break(or not) length
-        active=false;
-    } else if(active){
-        // force1 = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
-        Vec2f force = (m_ks*(norm(length)-m_dist)+m_kd*((length*length_derivate)/norm(length)))*(length/norm(length));
-        particles[0]->m_Force += force;
-        particles[1]->m_Force += -force;
-    }
+    float current_angle = acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3)));
+    float delta_angle = (m_angle - current_angle)/2;
+
+    //new p1 pos=(dxcos+dysin+x_midpoint,-dxsin+dycos+y_midpoint) clockwise
+    Vec2f p1newpos = Vec2f(midtoP1[0] * cos(-delta_angle) + midtoP1[1] * sin(-delta_angle) + particles[1]->m_Position[0],\
+     midtoP1[1] * cos(-delta_angle) - midtoP1[0] * sin(-delta_angle) + particles[1]->m_Position[1]);
+    Vec2f p3newpos = Vec2f(midtoP3[0] * cos(delta_angle) + midtoP3[1] * sin(delta_angle) + particles[1]->m_Position[0],\
+     midtoP3[1] * cos(delta_angle) - midtoP3[0] * sin(delta_angle) + particles[1]->m_Position[1]);
+
+    Vec2f p1restlength=p1newpos-particles[1]->m_Position;
+    Vec2f p3restlength=p3newpos-particles[1]->m_Position;
+
+    Vec2f length1_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity midpoint
+    Vec2f length3_derivate = particles[2]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p3-velocity midpoint
+
+    // force = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
+    //rest length r is represented by rest angle here
+    Vec2f force1 = (m_ks*(norm(midtoP1-p1restlength))+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
+    Vec2f force3 = (m_ks*(norm(midtoP3-p3restlength))+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
+    particles[0]->m_Force += force1;
+    particles[1]->m_Force += -force1;
+    particles[2]->m_Force += force3;
+    particles[1]->m_Force += -force3;
 }
 
 void AngularSpring::draw()
