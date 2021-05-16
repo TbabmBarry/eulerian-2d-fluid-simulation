@@ -14,15 +14,20 @@ void Particle::reset()
 {
 	m_Position = m_ConstructPos;
 	m_Velocity = Vec2f(0.0, 0.0);
+	m_Force = Vec2f(0.0, 0.0);
 }
 void Particle::draw()//draw a square
 {
-	const double h = 0.03;
+	const float h = 1.f;
 	glColor3f(1.f, 1.f, 1.f); //rgb
-	glBegin(GL_QUADS);//square:4vertices
-	glVertex2f(m_Position[0]-h/2.0, m_Position[1]-h/2.0);
-	glVertex2f(m_Position[0]+h/2.0, m_Position[1]-h/2.0);
-	glVertex2f(m_Position[0]+h/2.0, m_Position[1]+h/2.0);
-	glVertex2f(m_Position[0]-h/2.0, m_Position[1]+h/2.0);
+	glPointSize(h);
+	glBegin(GL_POINTS);
+	glVertex2f(m_Position[0], m_Position[1]);
+	glEnd();
+
+	glColor3f(0.0, 0.6, 0.6);
+	glBegin(GL_LINES);
+	glVertex2f(m_Position[0], m_Position[1]);
+	glVertex2f(m_Position[0] + m_Force[0] * 0.2f, m_Position[1] + m_Force[1] * 0.2f);
 	glEnd();
 }

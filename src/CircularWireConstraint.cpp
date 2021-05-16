@@ -60,4 +60,10 @@ vector<Vec2f> CircularWireConstraint::jacobianDerivative() {
 void CircularWireConstraint::draw()
 {
 	draw_circle(m_center, m_radius);
+
+	glBegin(GL_LINES);
+    glColor3f(0.7,0.7,0.0);
+        glVertex2f(m_p->m_Position[0], m_p->m_Position[1]);
+        glVertex2f(m_center[0], m_center[1]);
+    glEnd();
 }

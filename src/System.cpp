@@ -2,7 +2,7 @@
 #include "ConstraintMaintainer.h"
 
 
-System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.005)
+System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.1f)
 {
 }
 

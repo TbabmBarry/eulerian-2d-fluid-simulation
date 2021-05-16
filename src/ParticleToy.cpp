@@ -87,7 +87,7 @@ static void init_system(void)
 	const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
-	sys = new System(new EulerSolver(EulerSolver::SEMI));
+	sys = new System(new EulerSolver(EulerSolver::EXPLICIT));
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
 
@@ -304,6 +304,8 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case ' ':
 		dsim = !dsim;
+		if (dsim)
+			sys->reset();
 		break;
 	}
 }
@@ -346,10 +348,10 @@ static void idle_func ( void )
 static void display_func ( void )
 {
 	pre_display ();
-
+	draw_particles();
 	draw_forces();
 	draw_constraints();
-	draw_particles();
+	
 
 	post_display ();//frame,img
 }
@@ -419,15 +421,15 @@ int main ( int argc, char ** argv )
 	dsim = 0;
 	dump_frames = 0;
 	frame_number = 0;
-	
-	init_system();//+3 new Particles
+	init_system();
+	//+3 new Particles
 	//-->springforce;-->circularwireconstraint;-->rodconstraint
 	
 	win_x = 512;
 	win_y = 512;
 	open_glut_window ();//open window-->pre-display;glutKeyboardFunc ( key_func );glutDisplayFunc ( display_func );
 	//displayfunc-->post-display i.e img frame...
-
+	
 	glutMainLoop ();
 
 	exit ( 0 );
