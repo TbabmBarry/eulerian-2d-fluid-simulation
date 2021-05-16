@@ -55,5 +55,7 @@ void AngularSpring::draw()
   glVertex2f( particles[0]->m_Position[0], particles[0]->m_Position[1] );
   glColor3f(0.6, 0.7, 0.8);
   glVertex2f( particles[1]->m_Position[0], particles[1]->m_Position[1] );
+  glColor3f(0.6, 0.7, 0.8);
+  glVertex2f( particles[2]->m_Position[0], particles[2]->m_Position[1] );
   glEnd();
 }
