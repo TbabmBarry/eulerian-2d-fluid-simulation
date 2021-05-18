@@ -104,6 +104,7 @@ static void init_system(void)
 	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
 	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 3));
 	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
+	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
 
 	// You shoud replace these with a vector generalized forces and one of
 	// constraints...
@@ -113,9 +114,10 @@ static void init_system(void)
 
 	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, 9.8f)));
 	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
-	sys->addForce(new SpringForce(sys->particles[2], sys->particles[3], dist, 150.f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 150.f, 1.5f));
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
-	sys->addConstraint(new RodConstraint(sys->particles[3], sys->particles[4], dist));
+	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
 	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
