@@ -2,6 +2,7 @@
 //
 
 #include "Particle.h"
+#include "DragForce.h"
 #include "GravityForce.h"
 #include "SpringForce.h"
 #include "AngularSpring.h"
@@ -97,7 +98,6 @@ static void init_system(void)
 	// pVector.push_back(new Particle(center + offset + offset + offset));
 	
 	sys->addParticle(new Particle(center + offset, 2.0f, 0));
-	// std::cout<<center + offset<<std::endl;
 	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
 	// printf("2nd");
@@ -111,11 +111,11 @@ static void init_system(void)
 	// delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
 	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
 	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
-
-	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, 9.8f)));
-	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
-	sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
-	sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 150.f, 1.5f));
+	sys->addForce(new DragForce(sys->particles, 0.6f));
+	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 20.f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 20.f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 20.f, 1.5f));
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
 	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
 	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
@@ -483,6 +483,7 @@ int main ( int argc, char ** argv )
 	dump_frames = 0;
 	frame_number = 0;
 	init_system();
+	// sys = Cloth();
 	//+3 new Particles
 	//-->springforce;-->circularwireconstraint;-->rodconstraint
 	

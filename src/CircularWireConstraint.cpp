@@ -10,7 +10,7 @@ static void draw_circle(const Vec2f & vect, float radius)
 	glColor3f(0.0,1.0,0.0); 
 	for (int i=0; i<360; i=i+18)
 	{
-		float degInRad = i*PI/180;
+		float degInRad = i * PI / 180.0f;
 		glVertex2f(vect[0]+cos(degInRad)*radius,vect[1]+sin(degInRad)*radius);
 	}
 	glEnd();
@@ -40,9 +40,9 @@ float CircularWireConstraint::legalVelocity() {//C'
 //     return 2 * vVector * vVector;
 // }
 
-Vec2f CircularWireConstraint::ConstraintF(){
-	return -(m_p->m_Force * m_p->m_Position/norm(m_p->m_Position))*m_p->m_Position/norm(m_p->m_Position);
-}
+// Vec2f CircularWireConstraint::ConstraintF(){
+// 	return -(m_p->m_Force * m_p->m_Position/norm(m_p->m_Position))*m_p->m_Position/norm(m_p->m_Position);
+// }
 
 vector<Vec2f> CircularWireConstraint::jacobian() {
     vector<Vec2f> j;
@@ -63,7 +63,7 @@ void CircularWireConstraint::draw()
 
 	glBegin(GL_LINES);
     glColor3f(0.7,0.7,0.0);
-        glVertex2f(m_p->m_Position[0], m_p->m_Position[1]);
-        glVertex2f(m_center[0], m_center[1]);
+    glVertex2f(m_p->m_Position[0], m_p->m_Position[1]);
+    glVertex2f(m_center[0], m_center[1]);
     glEnd();
 }
