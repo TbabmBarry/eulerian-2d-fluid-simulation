@@ -16,8 +16,9 @@ void GravityForce::setTarget(vector<Particle*> particles)
 
 void GravityForce::apply(bool springsCanBreak)
 {   // force = mg
-    for (Particle *p : particles)
+    for (Particle *p : particles){
       p->m_Force += p->mass * g;
+    }
 }
 
 

@@ -97,7 +97,10 @@ static void init_system(void)
 	// pVector.push_back(new Particle(center + offset + offset + offset));
 	
 	sys->addParticle(new Particle(center + offset, 2.0f, 0));
+	// std::cout<<center + offset<<std::endl;
+	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
+	// printf("2nd");
 	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
 	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 3));
 	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
@@ -409,8 +412,6 @@ static void display_func ( void )
 	draw_particles();
 	draw_forces();
 	draw_constraints();
-	
-
 	post_display ();//frame,img
 }
 

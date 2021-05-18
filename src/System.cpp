@@ -9,6 +9,7 @@ System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.1f)
 void System::addParticle(Particle* p)
 {
     particles.push_back(p);
+    // std::cout<<p->m_Position<<std::endl;
 }
 
 void System::addForce(Force* f)
@@ -84,6 +85,7 @@ VectorXf System::particleAcceleration()
     applyForces();
     // TBD: Compute constraint force
     ConstraintMaintainer::maintainConstraint(this, 88.0f, 11.0f);
+    
     return particleDerivative();
 }
 
@@ -119,6 +121,7 @@ void System::applyForces()
     for (Force *f : forces) 
     {
         f->apply(springsCanBreak);
+        // printf("hi");
     }
 }
 
@@ -127,6 +130,7 @@ void System::drawParticles()
     for (auto *p : particles)
     {
         p->draw();
+        // std::cout<<p->m_Position<<std::endl;
     }
 }
 
