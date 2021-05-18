@@ -53,10 +53,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
         // Retrieve and store the constraint
         C[i] = c->C();
-<<<<<<< HEAD
-        // cout << C[i] << endl;
-=======
->>>>>>> 33b40dff223dce46ef2523dad0d65b669036b79f
+
         // Retrieve and store the the legal velocity of a particular particle 
         CDot[i] = c->legalVelocity();
         // Retrieve and store the jacobian vector
