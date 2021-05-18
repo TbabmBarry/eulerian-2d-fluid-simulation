@@ -69,7 +69,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
             {
                 JDot(i, idx+k) = jacobianDerivative[j][k];
                 J(i, idx+k) = jacobian[j][k];
-                Jt(idx+k, j) = jacobian[j][k];
+                Jt(idx+k, i) = jacobian[j][k];
             }
         }
     }
@@ -80,6 +80,14 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
     // Gather and compute the right hand side object to do conjugate gradient
     VectorXf A = JDotqDot - JWQ - ksC - kdCDot;
+    std::cout<<J<<std::endl;
+    std::cout<<' '<<std::endl;
+    std::cout<<W<<std::endl;
+    std::cout<<' '<<std::endl;
+    std::cout<<Jt<<std::endl;
+    std::cout<<' '<<std::endl;
+    std::cout<<JWJt<<std::endl;
+    std::cout<<' '<<std::endl;
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(JWJt);
     VectorXf lambda = cg.solve(A);
