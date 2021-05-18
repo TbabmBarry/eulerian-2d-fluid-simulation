@@ -80,6 +80,16 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
     // Gather and compute the right hand side object to do conjugate gradient
     VectorXf b = JDotqDot - JWQ - ksC - kdCDot;
+    // std::cout<<J<<std::endl;
+    // std::cout<<' '<<std::endl;
+    // std::cout<<W<<std::endl;
+    // std::cout<<' '<<std::endl;
+    // std::cout<<Jt<<std::endl;
+    // std::cout<<' '<<std::endl;
+    // std::cout<<JWJt<<std::endl;
+    // std::cout<<' '<<std::endl;
+    // std::cout<<b<<std::endl;
+    // std::cout<<' '<<std::endl;
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(JWJt);
     VectorXf lambda = cg.solve(b);
