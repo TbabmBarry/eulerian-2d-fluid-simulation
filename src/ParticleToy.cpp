@@ -112,7 +112,7 @@ static void init_system(void)
 	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
 	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
 
-	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, 9.8f)));
+	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
 	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
 	sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
 	sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 150.f, 1.5f));

@@ -138,7 +138,7 @@ void System::drawForces()
 {
     for (auto *f : forces)
     {
-        // f->draw();
+        f->draw();
     }
 }
 
