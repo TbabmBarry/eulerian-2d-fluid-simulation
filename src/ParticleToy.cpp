@@ -19,7 +19,7 @@
 #include <GL/glut.h>
 #include <gfx/vec2.h>
 
-#include <unistd.h>
+#include "unistd.h"
 
 /* macros */
 
@@ -116,7 +116,7 @@ static void init_system(void)
 	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
 
 	// sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 150.f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 10.f, 2.0f));
 	// sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
 	// sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 150.f, 1.5f));
     // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
@@ -407,7 +407,7 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
-	sleep(1);
+	// sleep(1);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
