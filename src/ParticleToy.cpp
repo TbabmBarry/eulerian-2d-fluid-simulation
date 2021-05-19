@@ -18,9 +18,8 @@
 #include <stdio.h>
 #include <GL/glut.h>
 #include <gfx/vec2.h>
-#include "unistd.h"
 
-#include <unistd.h>
+#include "unistd.h"
 
 /* macros */
 
@@ -101,7 +100,7 @@ static void init_system(void)
 	// pVector.push_back(new Particle(center + offset + offset));
 	// pVector.push_back(new Particle(center + offset + offset + offset));
 	
-	sys->addParticle(new Particle(center + offset, 2.0f, 0));
+	sys->addParticle(new Particle(center + offset, 10.0f, 0));
 	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
 	// printf("2nd");
@@ -409,6 +408,8 @@ static void idle_func ( void )
 {
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
+
+	// sleep(0.5);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
