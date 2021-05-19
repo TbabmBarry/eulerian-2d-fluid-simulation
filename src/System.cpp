@@ -80,8 +80,18 @@ void System::particleSetState(VectorXf newState, float time)
 
 VectorXf System::particleAcceleration()
 {
+    for (int i = 0; i < particles.size(); i++)
+    {
+        std::cout << "before force" << particles[i]->m_Force << std::endl;
+        std::cout << "before velocity" << particles[i]->m_Velocity << std::endl;
+    }
+    
     clearForces();
+    // auto a = forces;
+    // std::cout  <<  a  <<std::endl;
+
     applyForces();
+
     // TBD: Compute constraint force
     ConstraintMaintainer::maintainConstraint(this, 20.f, 1.5f);
     

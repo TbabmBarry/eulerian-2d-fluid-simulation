@@ -20,6 +20,8 @@
 #include <gfx/vec2.h>
 #include "unistd.h"
 
+#include <unistd.h>
+
 /* macros */
 
 /* external definitions (from solver) */
@@ -89,6 +91,7 @@ static void init_system(void)
 	const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
+	// const Vec2f offset(0.0, dist);
 	sys = new System(new EulerSolver(EulerSolver::EXPLICIT));
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
@@ -103,9 +106,9 @@ static void init_system(void)
 	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
 	// printf("2nd");
 	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
-	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 3));
-	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
-	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
+	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 3));
+	// sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
+	// sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
 
 	// You shoud replace these with a vector generalized forces and one of
 	// constraints...
@@ -405,6 +408,11 @@ static void idle_func ( void )
 {
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
+<<<<<<< HEAD
+=======
+
+	sleep(0.5);
+>>>>>>> 17d9610de0cd4393f3f98cc5cff2bd3a714403d2
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
@@ -450,6 +458,7 @@ static void open_glut_window ( void )
 	glutReshapeFunc ( reshape_func );
 	glutIdleFunc ( idle_func );
 	glutDisplayFunc ( display_func );
+	
 }
 
 
