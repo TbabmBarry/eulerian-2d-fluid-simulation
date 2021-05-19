@@ -6,7 +6,7 @@
 void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float m_kd)
 {
 
-    std::cout << "in maintainConstraint "<< std::endl;
+    // std::cout << "in maintainConstraint "<< std::endl;
     vector<Particle*> particles = system->particles;
     vector<Constraint*> constraints = system->constraints;
 
@@ -95,7 +95,8 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
     VectorXf lambda = cg.solve(b);
     // Compute the constraint force Q hat
     VectorXf QHat = Jt * lambda;
-    std::cout <<"constraint forces "<< QHat << endl;
+    // cout << "Q hat: " << QHat << endl;
+    // cout << QHat << endl;
     for (int i = 0; i < particles.size(); i++)
     {
         Particle *p = particles[i];
@@ -105,8 +106,8 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
             p->m_Force[j] += QHat[idx + j];
         }
 
-        std::cout << "during force" << particles[i]->m_Force << std::endl;
-        std::cout << "during velocity" << particles[i]->m_Velocity << std::endl;
+        // std::cout << "during force" << particles[i]->m_Force << std::endl;
+        // std::cout << "during velocity" << particles[i]->m_Velocity << std::endl;
     }
     std::cout<<' '<<std::endl;
 }
