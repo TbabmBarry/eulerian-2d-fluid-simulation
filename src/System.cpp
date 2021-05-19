@@ -2,7 +2,7 @@
 #include "ConstraintMaintainer.h"
 
 
-System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.05f)
+System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.05f)
 {
 }
 
@@ -77,6 +77,37 @@ void System::particleSetState(VectorXf newState, float time)
     }
     this->time = time;
 }
+
+VectorXf System::collisionValidation(VectorXf newState)
+{
+    for (int i = 0; i < particles.size(); i++)
+    {
+        if (newState[i * 4] < -0.55f)
+        {
+            newState[i * 4] = -0.55f;
+        }
+
+        if (newState[i * 4] > 1.5f)
+        {
+            newState[i * 4] = 1.5f;
+        }
+
+        if (newState[i * 4 + 1] < -2.5f)
+        {
+            newState[i * 4 + 1] = -2.5f;
+        }
+
+
+        if (newState[i * 4 + 1] > 2.0f)
+        {
+            newState[i * 4 + 1] = 2.0f;
+        }
+    }
+    
+
+    return newState;
+}
+
 
 VectorXf System::particleAcceleration()
 {
