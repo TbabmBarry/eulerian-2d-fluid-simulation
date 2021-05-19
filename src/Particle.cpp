@@ -18,7 +18,7 @@ void Particle::reset()
 }
 void Particle::draw()//draw a square
 {
-	const float h = 3.f;
+	const float h = 6.f;
 	// std::cout<<m_Position<<std::endl;
 	glColor3f(1.f, 1.f, 1.f); //rgb
 	glPointSize(h);
