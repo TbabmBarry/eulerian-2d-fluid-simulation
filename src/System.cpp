@@ -74,18 +74,29 @@ void System::particleSetState(VectorXf newState, float time)
         particles[i]->m_Position[0] = newState[i * 4 + 0];
         particles[i]->m_Position[1] = newState[i * 4 + 1];
         particles[i]->m_Velocity[0] = newState[i * 4 + 2];
-        particles[i]->m_Velocity[0] = newState[i * 4 + 3];
+        particles[i]->m_Velocity[1] = newState[i * 4 + 3];
     }
     this->time = time;
 }
 
 VectorXf System::particleAcceleration()
 {
+    for (int i = 0; i < particles.size(); i++)
+    {
+        std::cout << "before force" << particles[i]->m_Force << std::endl;
+        std::cout << "before velocity" << particles[i]->m_Velocity << std::endl;
+    }
+    
     clearForces();
+    // auto a = forces;
+    // std::cout  <<  a  <<std::endl;
+
     applyForces();
+
     // TBD: Compute constraint force
     ConstraintMaintainer::maintainConstraint(this, 100.0f, 10.0f);
-    
+
+
     return particleDerivative();
 }
 
