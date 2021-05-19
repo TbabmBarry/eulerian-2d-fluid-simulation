@@ -95,7 +95,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
     VectorXf lambda = cg.solve(b);
     // Compute the constraint force Q hat
     VectorXf QHat = Jt * lambda;
-    // cout << QHat << endl;
+    std::cout <<"constraint forces "<< QHat << endl;
     for (int i = 0; i < particles.size(); i++)
     {
         Particle *p = particles[i];

@@ -93,7 +93,7 @@ VectorXf System::particleAcceleration()
     applyForces();
 
     // TBD: Compute constraint force
-    ConstraintMaintainer::maintainConstraint(this, 20.f, 1.5f);
+    ConstraintMaintainer::maintainConstraint(this, 1.0f, 20.0f);
     
     return particleDerivative();
 }
