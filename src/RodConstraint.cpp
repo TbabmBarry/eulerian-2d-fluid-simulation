@@ -13,7 +13,7 @@ float RodConstraint::C() {
 
 float RodConstraint::legalVelocity() {
     Vec2f pVector = (m_p1->m_Position - m_p2->m_Position) * 2;
-    Vec2f vVector = (m_p1->m_Velocity - m_p2->m_Velocity);
+    Vec2f vVector = (m_p1->m_Velocity - m_p2->m_Velocity) * 2;
     return pVector * vVector;
 }
 
