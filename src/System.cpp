@@ -158,9 +158,9 @@ void System::clearForces()
 
 void System::applyForces() 
 {
-    for (Force *f : forces) 
+    for (int i = 0; i < forces.size(); i++) 
     {
-        f->apply(springsCanBreak);
+        forces[i]->apply(springsCanBreak);
     }
 }
 
@@ -176,7 +176,11 @@ void System::drawForces()
 {
     for (auto *f : forces)
     {
-        f->draw();
+        if (f->active)
+        {
+            f->draw();
+        }
+        
     }
 }
 

@@ -11,7 +11,7 @@ class AngularSpring : public Force {
   void setTarget(vector<Particle*> particles) override;
   void apply(bool springsCanBreak) override;
   void draw() override;
-
+  
  private:
   double const m_angle;         // cosine of rest angle
   double const m_ks, m_kd;      // spring strength constants
