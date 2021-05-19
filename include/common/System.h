@@ -25,6 +25,7 @@ class System {
 
 
         bool springsCanBreak = false;
+        bool wall;
         Solver* solver;
         // Unit step time
         float dt;
@@ -42,6 +43,9 @@ class System {
         // Gather initial state from the particles into dst
         VectorXf particleGetIniState();
         VectorXf inits();
+
+        // Check the wall collision and update state
+        VectorXf collisionValidation(VectorXf newState);
 
         float particleGetTime();
         // Scatter state from src into the particles

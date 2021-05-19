@@ -109,5 +109,5 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
         // std::cout << "during force" << particles[i]->m_Force << std::endl;
         // std::cout << "during velocity" << particles[i]->m_Velocity << std::endl;
     }
-    std::cout<<' '<<std::endl;
+    // std::cout<<' '<<std::endl;
 }

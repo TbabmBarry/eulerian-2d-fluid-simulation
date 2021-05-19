@@ -2,7 +2,7 @@
 #include "ConstraintMaintainer.h"
 
 
-System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.05f)
+System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.05f)
 {
 }
 
@@ -56,9 +56,6 @@ VectorXf System::particleGetState()
     return s;
 }
 
-VectorXf System::particleGetIniState(){
-    return inis;
-};
 
 float System::particleGetTime()
 {
@@ -81,6 +78,37 @@ void System::particleSetState(VectorXf newState, float time)
     }
     this->time = time;
 }
+
+VectorXf System::collisionValidation(VectorXf newState)
+{
+    for (int i = 0; i < particles.size(); i++)
+    {
+        if (newState[i * 4] < -0.55f)
+        {
+            newState[i * 4] = -0.55f;
+        }
+
+        if (newState[i * 4] > 1.5f)
+        {
+            newState[i * 4] = 1.5f;
+        }
+
+        if (newState[i * 4 + 1] < -2.5f)
+        {
+            newState[i * 4 + 1] = -2.5f;
+        }
+
+
+        if (newState[i * 4 + 1] > 2.0f)
+        {
+            newState[i * 4 + 1] = 2.0f;
+        }
+    }
+    
+
+    return newState;
+}
+
 
 VectorXf System::particleAcceleration()
 {
@@ -131,9 +159,9 @@ void System::clearForces()
 
 void System::applyForces() 
 {
-    for (Force *f : forces) 
+    for (int i = 0; i < forces.size(); i++) 
     {
-        f->apply(springsCanBreak);
+        forces[i]->apply(springsCanBreak);
     }
 }
 
@@ -149,7 +177,11 @@ void System::drawForces()
 {
     for (auto *f : forces)
     {
-        f->draw();
+        if (f->active)
+        {
+            f->draw();
+        }
+        
     }
 }
 

@@ -7,6 +7,7 @@ class DragForce : public Force {
         void setTarget(vector<Particle*> particles) override;
         void apply(bool springsCanBreak) override;
         void draw() override;
+
     private:
         float drag_k;
 };

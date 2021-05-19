@@ -35,6 +35,8 @@ void RungeSovler::simulateStep(System *system, float h) {
     //Final state generation
     newState = oldState + 1.0f / 6.0f * k1 + 1.0f / 3.0f * k2 + 1.0f / 3.0f * k3 + 1.0f / 6.0f * k4;
 
+    if (system->wall)
+        newState = system->collisionValidation(newState);
     //Set final state
     system->particleSetState(newState, oldTime + h);
     

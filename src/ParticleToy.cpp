@@ -20,6 +20,7 @@
 #include <gfx/vec2.h>
 
 #include "unistd.h"
+#include "Mode.h"
 
 /* macros */
 
@@ -37,6 +38,7 @@ static int frame_number;
 // static Particle *pList;
 // static std::vector<Particle*> pVector;
 static System* sys;
+static Mode* mode;
 
 static int win_id;
 static int win_x, win_y;
@@ -92,36 +94,8 @@ static void init_system(void)
 	const Vec2f offset(dist, 0.0);
 	// const Vec2f offset(0.0, dist);
 	sys = new System(new EulerSolver(EulerSolver::EXPLICIT));
-	// Create three particles, attach them to each other, then add a
-	// circular wire constraint to the first.
-
-	// pVector.push_back(new Particle(center + offset));
-	//push_back:Adds a new element at the end of the vector, after its current last element.
-	// pVector.push_back(new Particle(center + offset + offset));
-	// pVector.push_back(new Particle(center + offset + offset + offset));
+	mode = new Mode();
 	
-	sys->addParticle(new Particle(center + offset, 2.0f, 0));
-	// printf("1st");
-	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
-	// printf("2nd");
-	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
-	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 3));
-	// sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
-	// sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
-
-	// You shoud replace these with a vector generalized forces and one of
-	// constraints...
-	// delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
-	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
-	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
-
-	// sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-	// sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 10.f, 0.6f));
-	sys->addForce(new SpringForce(sys->particles[1], sys->particles[2], dist/2, 10.f, 1.0f));
-	// sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 10.f, 1.5f));
-    sys->addConstraint(new RodConstraint(sys->particles[0], sys->particles[1], dist));
-	// sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
-	// sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
 /*
@@ -233,66 +207,7 @@ static System* Hair() {
     return sys;
 }
 
-static System* Cloth() {
-    System* sys = new System(new EulerSolver(EulerSolver::SEMI));
 
-    const int xSize = 3, ySize = 3;
-    const float deltax = 2.0f/xSize, deltay = 2.5f/ySize;
-    int index = 0;
-    // Initialize particles
-    for (int j = 0; j < ySize; j++) {
-        for (int i = 0; i < xSize; i++) {
-            sys->addParticle(new Particle(Vec2f(-0.5f + i * deltax, 0.5f - j * deltay), 0.2f, index));
-            index++;
-        }
-    }
-    // Add gravity and drag to all particles
-    sys->addForce(new GravityForce(sys->particles, Vec2f(0, -9.81f)));
-
-    float ks = 50.0f;
-    float kd = 1.0f;
-
-    for (int j = 0; j < ySize; j++) {//up down
-        for (int i = 0; i < xSize - 1; i++) {
-            sys->addForce(new SpringForce(sys->particles[i + j * xSize],
-                                          sys->particles[i + 1 + j * xSize],
-                                          deltax, ks, kd));
-        }
-    }
-
-    for (int j = 0; j < ySize - 1; j++) {//right,left
-        for (int i = 0; i < xSize; i++) {
-            sys->addForce(new SpringForce(sys->particles[i + j * xSize],
-                                          sys->particles[i + (j + 1) * xSize],
-                                          sqrt(pow(deltay, 2) + pow(deltay, 2)), ks, kd));
-        }
-    }
-
-    for (int j = 0; j < ySize - 1; j++) {//diagonal
-        for (int i = 0; i < xSize - 1; i++) {
-            sys->addForce(new SpringForce(sys->particles[i + j * xSize],
-                                          sys->particles[i + 1 + (j + 1) * xSize],
-                                          sqrt(pow(deltax, 2) + pow(deltay, 2) + pow(deltay, 2)), ks, kd));
-        }
-    }
-
-    for (int y = 0; y < ySize - 1; y++) {//diagonal
-        for (int x = 1; x < xSize; x++) {
-            sys->addForce(new SpringForce(sys->particles[x + y * xSize],
-                                          sys->particles[x - 1 + (y + 1) * xSize],
-                                          sqrt(pow(deltax, 2) + pow(deltay, 2) + pow(deltay, 2)), ks, kd));
-        }
-    }
-
-    float radius = 0.05f;
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0],
-                                                  Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),
-                                                  radius));
-    sys->addConstraint(new CircularWireConstraint(sys->particles[xSize-1],
-                                                  Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),
-                                                  radius));
-    return sys;
-}
 
 /*
 ----------------------------------------------------------------------
@@ -351,6 +266,46 @@ static void key_func ( unsigned char key, int x, int y )
 {
 	switch ( key )
 	{
+	case '1':
+		init_system();
+		// free_data();
+		mode->Spring(sys);
+		break;
+
+	case '2':
+		init_system();
+		mode->SpringRod(sys);
+		break;		
+	
+	case '3':
+		init_system();
+		mode->SpringCircular(sys);
+		break;
+	
+	case '4':
+		init_system();
+		mode->Rod(sys);
+		break;
+
+	case '5':
+		init_system();
+		mode->Gravity(sys);
+		break;
+
+	case '6':
+		init_system();
+		mode->mouse(sys);
+	
+	case '7':
+		init_system();
+		mode->hair(sys);
+		break;
+
+	case '8':
+		init_system();
+		mode->cloth(sys);
+		break;
+	
 	case 'c':
 	case 'C':
 		clear_data ();
@@ -373,6 +328,10 @@ static void key_func ( unsigned char key, int x, int y )
 		if (dsim)
 			sys->reset();
 		break;
+
+	case 'p':
+	case 'P':
+		// sleep(100);
 	}
 }
 
@@ -407,7 +366,7 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
-	// sleep(0.5);
+	// sleep(1);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
@@ -483,6 +442,11 @@ int main ( int argc, char ** argv )
 	printf ( "\t Toggle construction/simulation display with the spacebar key\n" );
 	printf ( "\t Dump frames by pressing the 'd' key\n" );
 	printf ( "\t Quit by pressing the 'q' key\n" );
+	printf ( "\t key '1' for Spring force\n" );
+	printf ( "\t key '2' for Spring force + Rod Constraint\n" );
+	printf ( "\t key '3' for Spring force + Circular Wire Constraint\n" );
+	printf ( "\t key '4' for Circular Wire Constraint + Spring force + Rod Constraint\n" );
+	printf ( "\t key '5' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity force\n" );
 
 	dsim = 0;
 	dump_frames = 0;
@@ -492,8 +456,8 @@ int main ( int argc, char ** argv )
 	//+3 new Particles
 	//-->springforce;-->circularwireconstraint;-->rodconstraint
 	
-	win_x = 512;
-	win_y = 512;
+	win_x = 1024;
+	win_y = 1024;
 	open_glut_window ();//open window-->pre-display;glutKeyboardFunc ( key_func );glutDisplayFunc ( display_func );
 	//displayfunc-->post-display i.e img frame...
 	
