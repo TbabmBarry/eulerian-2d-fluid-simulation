@@ -2,7 +2,7 @@
 #include "ConstraintMaintainer.h"
 
 
-System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.1f)
+System::System(Solver *solver) : solver(solver), time(0.0f), dt(0.05f)
 {
 }
 
@@ -80,11 +80,11 @@ void System::particleSetState(VectorXf newState, float time)
 
 VectorXf System::particleAcceleration()
 {
-    for (int i = 0; i < particles.size(); i++)
-    {
-        std::cout << "before force" << particles[i]->m_Force << std::endl;
-        std::cout << "before velocity" << particles[i]->m_Velocity << std::endl;
-    }
+    // for (int i = 0; i < particles.size(); i++)
+    // {
+    //     std::cout << "before force" << particles[i]->m_Force << std::endl;
+    //     std::cout << "before velocity" << particles[i]->m_Velocity << std::endl;
+    // }
     
     clearForces();
     // auto a = forces;
@@ -93,7 +93,7 @@ VectorXf System::particleAcceleration()
     applyForces();
 
     // TBD: Compute constraint force
-    ConstraintMaintainer::maintainConstraint(this, 20.f, 1.5f);
+    ConstraintMaintainer::maintainConstraint(this, 0.0f, 0.0f);
     
     return particleDerivative();
 }
