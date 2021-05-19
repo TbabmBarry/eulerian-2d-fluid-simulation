@@ -36,8 +36,9 @@ void SpringForce::apply(bool springsCanBreak)
         // std::cout<<norm(length)<<std::endl;
         Vec2f force = (m_ks*(norm(length)-m_dist)+m_kd*((length*length_derivate)/norm(length)))*(length/norm(length));
         // Vec2f force = -(m_ks * (norm(length) - m_dist) + m_kd * ((length * length_derivate) / norm(length))) * (length / norm(length));
-        particles[0]->m_Force += force;
-        particles[1]->m_Force -= force;
+        cout << "Force: " << force << " Length: " << length << endl;
+        particles[0]->m_Force -= force;
+        particles[1]->m_Force += force;
     }
 }
 
