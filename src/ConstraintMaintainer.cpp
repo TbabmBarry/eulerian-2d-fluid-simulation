@@ -55,6 +55,8 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
         C[i] = c->C();
         // Retrieve and store the the legal velocity of a particular particle 
         CDot[i] = c->legalVelocity();
+        // std::cout<<C[i]<<std::endl;
+        // std::cout<<' '<<std::endl;
         // Retrieve and store the jacobian vector
         vector<Vec2f> jacobian = c->jacobian();
         // Retrieve the first time derivative of the jacobian vector
@@ -103,5 +105,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
         {
             p->m_Force[j] += QHat[idx + j];
         }
+        std::cout<<p->m_Force<<std::endl;
     }
+    std::cout<<' '<<std::endl;
 }

@@ -32,9 +32,9 @@ void Particle::draw()//draw a square
 	glVertex2f(m_Position[0] + m_Velocity[0] * 0.2f, m_Position[1] + m_Velocity[1] * 0.2f);
 	glEnd();
 
-	glColor3f(0.0, 0.6, 0.6);
-	glBegin(GL_LINES);
-	glVertex2f(m_Position[0], m_Position[1]);
-	glVertex2f(m_Position[0] + m_Force[0] * 0.2f, m_Position[1] + m_Force[1] * 0.2f);
-	glEnd();
+	// glColor3f(0.0, 0.6, 0.6);
+	// glBegin(GL_LINES);
+	// glVertex2f(m_Position[0], m_Position[1]);
+	// glVertex2f(m_Position[0] + m_Force[0] * 0.2f, m_Position[1] + m_Force[1] * 0.2f);
+	// glEnd();
 }
