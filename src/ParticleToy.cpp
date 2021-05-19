@@ -408,11 +408,6 @@ static void idle_func ( void )
 {
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
-<<<<<<< HEAD
-=======
-
-	sleep(0.5);
->>>>>>> 17d9610de0cd4393f3f98cc5cff2bd3a714403d2
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
