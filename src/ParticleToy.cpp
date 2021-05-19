@@ -2,6 +2,7 @@
 //
 
 #include "Particle.h"
+#include "DragForce.h"
 #include "GravityForce.h"
 #include "SpringForce.h"
 #include "AngularSpring.h"
@@ -100,7 +101,6 @@ static void init_system(void)
 	// pVector.push_back(new Particle(center + offset + offset + offset));
 	
 	sys->addParticle(new Particle(center + offset, 2.0f, 0));
-	// std::cout<<center + offset<<std::endl;
 	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
 	// printf("2nd");
@@ -488,6 +488,7 @@ int main ( int argc, char ** argv )
 	dump_frames = 0;
 	frame_number = 0;
 	init_system();
+	// sys = Cloth();
 	//+3 new Particles
 	//-->springforce;-->circularwireconstraint;-->rodconstraint
 	

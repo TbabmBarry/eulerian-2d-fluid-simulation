@@ -55,6 +55,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
         // Retrieve and store the constraint
         C[i] = c->C();
+
         // Retrieve and store the the legal velocity of a particular particle 
         CDot[i] = c->legalVelocity();
         // Retrieve and store the jacobian vector
@@ -78,25 +79,21 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
 
     MatrixXf JW = J * W, JWJt = JW * Jt;
-    VectorXf ksC = m_ks * C, kdCDot = m_kd * CDot, JDotqDot = JDot * qDot, JWQ = JW * Q;
+    VectorXf ksC = m_ks * C;
+    VectorXf kdCDot = m_kd * CDot;
+    VectorXf JDotqDot = JDot * qDot;
+    VectorXf JWQ = JW * Q;
 
     // Gather and compute the right hand side object to do conjugate gradient
+
     VectorXf b = JDotqDot - JWQ - ksC - kdCDot;
-    // std::cout<<J<<std::endl;
-    // std::cout<<' '<<std::endl;
-    // std::cout<<W<<std::endl;
-    // std::cout<<' '<<std::endl;
-    // std::cout<<Jt<<std::endl;
-    // std::cout<<' '<<std::endl;
-    // std::cout<<JWJt<<std::endl;
-    // std::cout<<' '<<std::endl;
-    // std::cout<<b<<std::endl;
-    // std::cout<<' '<<std::endl;
+
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(JWJt);
     VectorXf lambda = cg.solve(b);
     // Compute the constraint force Q hat
     VectorXf QHat = Jt * lambda;
+    // cout << QHat << endl;
     for (int i = 0; i < particles.size(); i++)
     {
         Particle *p = particles[i];

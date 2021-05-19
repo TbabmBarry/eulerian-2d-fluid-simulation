@@ -20,10 +20,7 @@ void EulerSolver::simulateStep(System *system, float h) {
 }
 
 void EulerSolver::explicitS(System *system, float h) {
-    // for (Particle *p : system->particles) 
-    // {
-    //     std::cout<<p->m_Position<<std::endl;
-    // }
+
     // Get the old state
     VectorXf oldState = system->particleGetState();
     std::cout << "old state" << oldState << std::endl;
