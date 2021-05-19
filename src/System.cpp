@@ -56,6 +56,10 @@ VectorXf System::particleGetState()
     return s;
 }
 
+VectorXf System::particleGetIniState(){
+    return inis;
+};
+
 float System::particleGetTime()
 {
     return time;
@@ -93,7 +97,7 @@ VectorXf System::particleAcceleration()
     applyForces();
 
     // TBD: Compute constraint force
-    ConstraintMaintainer::maintainConstraint(this, 1.0f, 20.0f);
+    ConstraintMaintainer::maintainConstraint(this, 0.1f, 20.0f);
     
     return particleDerivative();
 }

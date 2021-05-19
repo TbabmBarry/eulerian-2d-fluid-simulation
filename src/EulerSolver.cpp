@@ -39,7 +39,7 @@ void EulerSolver::explicitS(System *system, float h) {
     //     std::cout << "after force" << system->particles[i]->m_Force << std::endl;
     //     std::cout << "after velocity" << system->particles[i]->m_Velocity << std::endl;
     // }        
-    // std::cout << "position1:" << system->particles[0]->m_Position <<"     position2:" << system->particles[1]->m_Position << std::endl;
+    std::cout << "position1:" << system->particles[0]->m_Position << std::endl;
     // std::cout << "" << std::endl;
 }
 
