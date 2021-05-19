@@ -24,15 +24,23 @@ void SpringForce::setTarget(vector<Particle*> particles)
 
 void SpringForce::apply(bool springsCanBreak)
 {
-    // printf("ciao");
     Vec2f length = particles[0]->m_Position - particles[1]->m_Position; //l=particle p1-particle p2
+<<<<<<< HEAD
     // std::cout<< "length" << length <<std::endl;
+=======
+    
+>>>>>>> 8baa2ab0ba6e61065ffb79d8f891d1230b5d073c
     Vec2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
-    bool active = true;
 
+<<<<<<< HEAD
     if(springsCanBreak && norm(length)>3*m_dist){//think of break(or not) length
         active=false;
     } else if(active){
+=======
+    if(springsCanBreak && norm(length) > 2 * m_dist){//think of break(or not) length
+        this->toggle();
+    } else if(this->active){
+>>>>>>> 8baa2ab0ba6e61065ffb79d8f891d1230b5d073c
         // force1 = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
         // std::cout<<norm(length)<<std::endl;
         Vec2f force = (m_ks*(norm(length)-m_dist)+m_kd*((length*length_derivate)/norm(length)))*(length/norm(length));

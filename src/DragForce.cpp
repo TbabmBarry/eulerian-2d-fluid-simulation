@@ -12,9 +12,13 @@ void DragForce::setTarget(vector<Particle*> particles)
 
 void DragForce::apply(bool springsCanBreak)
 {
-    for (Particle* p : particles) {
-        p->m_Force -= p->m_Velocity * drag_k;
+    if (this->active)
+    {
+        for (Particle* p : particles) {
+            p->m_Force -= p->m_Velocity * drag_k;
+        }
     }
+    
 }
 
 void DragForce::draw()

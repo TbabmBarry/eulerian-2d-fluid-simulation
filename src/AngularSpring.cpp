@@ -20,6 +20,8 @@ void AngularSpring::setTarget(vector<Particle*> particles)
 
 void AngularSpring::apply(bool springsCanBreak)
 {
+  if (this->active)
+  {
     Vec2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
     Vec2f midtoP3 = particles[2]->m_Position - particles[1]->m_Position; //l2=particle p1-particle midpoint
 
@@ -41,6 +43,7 @@ void AngularSpring::apply(bool springsCanBreak)
     particles[1]->m_Force += -force1;
     particles[2]->m_Force += force3;
     particles[1]->m_Force += -force3;
+  }
 }
 
 void AngularSpring::draw()
