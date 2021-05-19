@@ -20,21 +20,25 @@ void EulerSolver::simulateStep(System *system, float h) {
 }
 
 void EulerSolver::explicitS(System *system, float h) {
-    // for (Particle *p : system->particles) 
-    // {
-    //     std::cout<<p->m_Position<<std::endl;
-    // }
+
     // Get the old state
     VectorXf oldState = system->particleGetState();
-
+    std::cout << "old state" << oldState << std::endl;
     // Evaluate derivative
     VectorXf stateDeriv = system->particleAcceleration();
     
     // Calculate the new state
     VectorXf newState = oldState + h * stateDeriv;
+    std::cout << "new state" <<newState << std::endl;
 
     //set the new state
-    system->particleSetState(newState, system->particleGetTime() + h);              
+    system->particleSetState(newState, system->particleGetTime() + h);      
+
+    for (int i = 0; i < system->particles.size(); i++)
+    {
+        std::cout << "after force" << system->particles[i]->m_Force << std::endl;
+        std::cout << "after velocity" << system->particles[i]->m_Velocity << std::endl;
+    }        
 }
 
 void EulerSolver::semiS(System *system, float h) {

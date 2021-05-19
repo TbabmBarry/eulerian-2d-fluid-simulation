@@ -2,6 +2,7 @@
 //
 
 #include "Particle.h"
+#include "DragForce.h"
 #include "GravityForce.h"
 #include "SpringForce.h"
 #include "AngularSpring.h"
@@ -17,6 +18,8 @@
 #include <stdio.h>
 #include <GL/glut.h>
 #include <gfx/vec2.h>
+
+#include <unistd.h>
 
 /* macros */
 
@@ -87,6 +90,7 @@ static void init_system(void)
 	const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
+	// const Vec2f offset(0.0, dist);
 	sys = new System(new EulerSolver(EulerSolver::EXPLICIT));
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
@@ -97,7 +101,6 @@ static void init_system(void)
 	// pVector.push_back(new Particle(center + offset + offset + offset));
 	
 	sys->addParticle(new Particle(center + offset, 2.0f, 0));
-	// std::cout<<center + offset<<std::endl;
 	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
 	// printf("2nd");
@@ -112,13 +115,13 @@ static void init_system(void)
 	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
 	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
 
-	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 150.f, 1.5f));
-	sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
-	sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 150.f, 1.5f));
-    sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
-	sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
-	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
+	// sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 150.f, 1.5f));
+	// sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist, 150.f, 1.5f));
+	// sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 150.f, 1.5f));
+    // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
+	// sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
+	// sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
 /*
@@ -404,6 +407,7 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
+	sleep(1);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
@@ -449,6 +453,7 @@ static void open_glut_window ( void )
 	glutReshapeFunc ( reshape_func );
 	glutIdleFunc ( idle_func );
 	glutDisplayFunc ( display_func );
+	
 }
 
 
@@ -483,6 +488,7 @@ int main ( int argc, char ** argv )
 	dump_frames = 0;
 	frame_number = 0;
 	init_system();
+	// sys = Cloth();
 	//+3 new Particles
 	//-->springforce;-->circularwireconstraint;-->rodconstraint
 	
