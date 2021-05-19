@@ -40,9 +40,6 @@ class System {
         VectorXf particleDerivative();
         // Gather state from the particles into dst
         VectorXf particleGetState();
-        // Gather initial state from the particles into dst
-        VectorXf particleGetIniState();
-        VectorXf inits();
 
         // Check the wall collision and update state
         VectorXf collisionValidation(VectorXf newState);
@@ -67,7 +64,6 @@ class System {
         // Loop over all force objects, allowing each to add forces to the particles it influences
         void applyForces();
         float time;
-        VectorXf inis(int dim);
 
 };
 

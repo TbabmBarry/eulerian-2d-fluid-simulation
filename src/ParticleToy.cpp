@@ -95,7 +95,58 @@ static void init_system(void)
 	// const Vec2f offset(0.0, dist);
 	sys = new System(new EulerSolver(EulerSolver::EXPLICIT));
 	mode = new Mode();
+	// Create three particles, attach them to each other, then add a
+	// circular wire constraint to the first.
 	
+<<<<<<< HEAD
+	// sys->addParticle(new Particle(center + offset, 10.0f, 0));
+	// // printf("1st");
+	// sys->addParticle(new Particle(center + 2 * offset, 10.0f, 1));
+	// // printf("2nd");
+	// sys->addParticle(new Particle(center + 3 * offset, 10.0f, 2));
+	// // sys->addParticle(new Particle(center + 4 * offset, 10.0f, 3));
+	// // sys->addParticle(new Particle(center + 5 * offset, 10.0f, 4));
+	// // sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
+
+	// // You shoud replace these with a vector generalized forces and one of
+	// // constraints...
+	// // delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
+	// // delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
+	// // delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
+
+	// // sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+	// sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 10.f, 1.0f));
+	// // sys->addForce(new SpringForce(sys->particles[2], sys->particles[3], dist/2, 10.f, 1.0f));
+	// // sys->addForce(new SpringForce(sys->particles[3], sys->particles[4], dist, 10.f, 1.0f));
+    // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
+	// // sys->addConstraint(new RodConstraint(sys->particles[2], sys->particles[3], dist));
+	// // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
+=======
+	sys->addParticle(new Particle(center + offset, 10.0f, 0));
+	// printf("1st");
+	sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
+	// printf("2nd");
+	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
+	sys->addParticle(new Particle(center + 3 * offset, 2.0f, 3));
+	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 4));
+	sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
+
+	// You shoud replace these with a vector generalized forces and one of
+	// constraints...
+	// delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
+	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
+	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
+
+	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+	// sys->addForce(new DragForce(sys->particles, 0.5f));
+	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 100.0f, 1.5f));
+	sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist/2, 10.0f, 1.5f));
+	// sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 10.f, 1.5f));
+
+    // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
+	// sys->addConstraint(new RodConstraint(sys->particles[2], sys->particles[3], dist));
+>>>>>>> 8baa2ab0ba6e61065ffb79d8f891d1230b5d073c
+	// sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
 /*
@@ -331,7 +382,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case 'p':
 	case 'P':
-		// sleep(100);
+		sleep(100);
 	}
 }
 
@@ -366,7 +417,7 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
-	// sleep(1);
+	sleep(1);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }

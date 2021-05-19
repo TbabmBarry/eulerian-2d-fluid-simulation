@@ -56,7 +56,6 @@ VectorXf System::particleGetState()
     return s;
 }
 
-
 float System::particleGetTime()
 {
     return time;
@@ -81,6 +80,13 @@ void System::particleSetState(VectorXf newState, float time)
 
 VectorXf System::collisionValidation(VectorXf newState)
 {
+<<<<<<< HEAD
+    // for (int i = 0; i < particles.size(); i++)
+    // {
+    //     std::cout << "before force" << particles[i]->m_Force << std::endl;
+    //     std::cout << "before velocity" << particles[i]->m_Velocity << std::endl;
+    // }
+=======
     for (int i = 0; i < particles.size(); i++)
     {
         if (newState[i * 4] < -0.55f)
@@ -104,6 +110,7 @@ VectorXf System::collisionValidation(VectorXf newState)
             newState[i * 4 + 1] = 2.0f;
         }
     }
+>>>>>>> 8baa2ab0ba6e61065ffb79d8f891d1230b5d073c
     
 
     return newState;
@@ -125,7 +132,7 @@ VectorXf System::particleAcceleration()
     applyForces();
 
     // TBD: Compute constraint force
-    ConstraintMaintainer::maintainConstraint(this, 0.1f, 20.0f);
+    ConstraintMaintainer::maintainConstraint(this, 0.0f, 0.0f);
     
     return particleDerivative();
 }
