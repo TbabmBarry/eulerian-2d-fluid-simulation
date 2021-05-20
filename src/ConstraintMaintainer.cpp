@@ -8,6 +8,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
     // std::cout << "in maintainConstraint "<< std::endl;
     vector<Particle*> particles = system->particles;
+    cout <<"force at current step: "<< particles[0]->m_Force << endl;
     vector<Constraint*> constraints = system->constraints;
 
     // Check if no constraint is applied
@@ -39,11 +40,11 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
     size_t constraintSize = constraints.size();
 
-    // Initiate constraint and first time derivative constraint vector
+    // Initiate constraint and first order derivative constraint vector
     VectorXf C = VectorXf::Zero(constraintSize);
     VectorXf CDot = VectorXf::Zero(constraintSize);
 
-    // Initiate jacobian, first time derivative jacobian, and the transpose of jacobian matrix
+    // Initiate jacobian, first order derivative jacobian, and the transpose of jacobian matrix
     MatrixXf J = MatrixXf::Zero(constraintSize, particleSysSize);
     MatrixXf JDot = MatrixXf::Zero(constraintSize, particleSysSize);
     MatrixXf Jt = MatrixXf::Zero(particleSysSize, constraintSize);
@@ -58,7 +59,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
         // Retrieve and store the the legal velocity of a particular particle 
         CDot[i] = c->legalVelocity();
-        // std::cout<<C[i]<<std::endl;
+        std::cout<<"x^2+y^2-r^2 = "<<C[i]<<std::endl;
         // std::cout<<' '<<std::endl;
         // Retrieve and store the jacobian vector
         vector<Vec2f> jacobian = c->jacobian();
@@ -88,15 +89,16 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
     // Gather and compute the right hand side object to do conjugate gradient
 
-    VectorXf b = JDotqDot - JWQ - ksC - kdCDot;
+    VectorXf b = -JDotqDot - JWQ - ksC - kdCDot;
 
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(JWJt);
     VectorXf lambda = cg.solve(b);
     // Compute the constraint force Q hat
     VectorXf QHat = Jt * lambda;
-    // cout << "Q hat: " << QHat << endl;
-    // cout << QHat << endl;
+    cout << "Q hat: " << endl;
+    cout << QHat << endl;
+    cout << ' ' << endl;
     for (int i = 0; i < particles.size(); i++)
     {
         Particle *p = particles[i];

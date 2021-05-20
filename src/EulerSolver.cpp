@@ -35,7 +35,8 @@ void EulerSolver::explicitS(System *system, float h) {
         newState = system->collisionValidation(newState);
     //set the new state
     system->particleSetState(newState, system->particleGetTime() + h);      
-    cout << "Force: " << system->particles[0]->m_Force << " Velocity: " << system->particles[0]->m_Velocity << endl;
+    cout << "mass: " << system->particles[0]->mass<< endl;
+    // cout << "Force: " << system->particles[0]->m_Force << " Velocity: " << system->particles[0]->m_Velocity << endl;
     // for (int i = 0; i < system->particles.size(); i++)
     // {
     //     std::cout << "after force" << system->particles[i]->m_Force << std::endl;

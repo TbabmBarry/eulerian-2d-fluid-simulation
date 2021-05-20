@@ -22,6 +22,9 @@ void GravityForce::apply(bool springsCanBreak)
       p->m_Force += p->mass * g;
     }
   }
+  cout << "gravity "<<particles[0]->m_Force <<endl;
+  cout << "velocity "<<particles[0]->m_Velocity <<endl;
+  cout << "position "<<particles[0]->m_Position <<endl;
 }
 
 

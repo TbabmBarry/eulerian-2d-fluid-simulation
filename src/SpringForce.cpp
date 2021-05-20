@@ -25,7 +25,6 @@ void SpringForce::setTarget(vector<Particle*> particles)
 void SpringForce::apply(bool springsCanBreak)
 {
     Vec2f length = particles[0]->m_Position - particles[1]->m_Position; //l=particle p1-particle p2
-    
     Vec2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
 
     if(springsCanBreak && norm(length) > 2 * m_dist){//think of break(or not) length
@@ -38,7 +37,7 @@ void SpringForce::apply(bool springsCanBreak)
         // cout << "Force: " << force << " Length: " << length << endl;
         particles[0]->m_Force -= force;
         particles[1]->m_Force += force;
-        // std::cout << "p1_force" << particles[0]->m_Force << "p2_force" << particles[1]->m_Force << std::endl;
+        std::cout << "p1_force:" << particles[0]->m_Force << " p2_force:" << particles[1]->m_Force << std::endl;
     }
 }
 
