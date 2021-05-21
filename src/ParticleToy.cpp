@@ -295,26 +295,31 @@ static void key_func ( unsigned char key, int x, int y )
 	case '1':
 		init_system();
 		// free_data();
+		sys->dt=0.01;
 		mode->Spring(sys);
 		break;
 
 	case '2':
 		init_system();
+		sys->dt=0.01;
 		mode->SpringRod(sys);
 		break;		
 	
 	case '3':
 		init_system();
+		sys->dt=0.001;
 		mode->SpringCircular(sys);
 		break;
 	
 	case '4':
 		init_system();
+		sys->dt=0.01;
 		mode->Rod(sys);
 		break;
 
 	case '5':
 		init_system();
+		sys->dt=0.001;
 		mode->Gravity(sys);
 		break;
 
