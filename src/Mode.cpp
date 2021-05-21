@@ -100,8 +100,8 @@ void Mode::Gravity(System *sys) {
 	// const Vec2f offset(0.0, -dist);
 	const Vec2f offset(dist, 0.0);
 
-    sys->addParticle(new Particle(center + offset, 1.0f, 0));
-	sys->addParticle(new Particle(center + 2 * offset, 1.0f, 1));
+    sys->addParticle(new Particle(center + offset, 0.1f, 0));
+	sys->addParticle(new Particle(center + 2 * offset, 0.1f, 1));
 
     sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 50.f, 1.5f));
@@ -121,9 +121,12 @@ void Mode::cloth(System *sys) {
         }
     }
 
-    float ks = 10.0f;
+    float ks = 80.0f;
     float kd = 1.5f;
 
+    const Vec2f center(-sqrt(2)/2*dist, sqrt(2)/2*dist);
+    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
+    sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
     for (int j = 0; j < ySize; j++) {//right,left
         for (int i = 0; i < xSize - 1; i++) {
             sys->addForce(new SpringForce(sys->particles[i + j * xSize],
@@ -136,7 +139,7 @@ void Mode::cloth(System *sys) {
         for (int i = 0; i < xSize; i++) {
             sys->addForce(new SpringForce(sys->particles[i + j * xSize],
                                           sys->particles[i + (j + 1) * xSize],
-                                          dist/2, ks, kd));
+                                          dist, ks, kd));
         }
     }
 
@@ -144,7 +147,7 @@ void Mode::cloth(System *sys) {
         for (int i = 0; i < xSize - 1; i++) {
             sys->addForce(new SpringForce(sys->particles[i + j * xSize],
                                           sys->particles[i + 1 + (j + 1) * xSize],
-                                          sqrt(pow(dist,2) + pow(dist/2,2)), ks, kd));
+                                          sqrt(pow(dist,2) + pow(dist,2)), ks, kd));
                                         //   sqrt(pow(deltax, 2) + pow(deltay, 2) + pow(deltay, 2)), ks, kd));
         }
     }
@@ -153,7 +156,7 @@ void Mode::cloth(System *sys) {
         for (int x = 1; x < xSize; x++) {
             sys->addForce(new SpringForce(sys->particles[x + y * xSize],
                                           sys->particles[x - 1 + (y + 1) * xSize],
-                                          sqrt(pow(dist,2) + pow(dist/2,2)), ks, kd));
+                                          sqrt(pow(dist,2) + pow(dist,2)), ks, kd));
         }
     }
 }
