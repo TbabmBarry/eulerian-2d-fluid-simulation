@@ -313,7 +313,7 @@ static void key_func ( unsigned char key, int x, int y )
 	
 	case '4':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.001;
 		mode->Rod(sys);
 		break;
 

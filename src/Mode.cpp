@@ -88,7 +88,7 @@ void Mode::Rod(System *sys) {
 	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 10.0f, 1));
     sys->addParticle(new Particle(center + 3 * offset, 10.0f, 2));
-
+	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 10.f, 1.0f));
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
@@ -104,7 +104,7 @@ void Mode::Gravity(System *sys) {
 	sys->addParticle(new Particle(center + 2 * offset, 1.0f, 1));
 
     sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-    sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 10.f, 1.0f));
+    sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist, 50.f, 1.5f));
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
