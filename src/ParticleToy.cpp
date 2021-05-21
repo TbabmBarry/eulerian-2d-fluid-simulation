@@ -478,6 +478,9 @@ int main ( int argc, char ** argv )
 	printf ( "\t key '3' for Spring force + Circular Wire Constraint\n" );
 	printf ( "\t key '4' for Circular Wire Constraint + Spring force + Rod Constraint\n" );
 	printf ( "\t key '5' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity force\n" );
+	printf ( "\t key '6' for mouse");
+	printf ( "\t key '7' for hair");
+	printf ( "\t key '8' for cloth");
 
 	dsim = 0;
 	dump_frames = 0;
