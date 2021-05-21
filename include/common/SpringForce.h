@@ -13,6 +13,8 @@ class SpringForce : public Force {
   void draw() override;
   void setTarget(vector<Particle*> particles) override;
   void apply(bool springsCanBreak) override;
+  MatrixXf dx() override;
+  MatrixXf dv() override;
 
  private:
   float const m_dist;     // rest length

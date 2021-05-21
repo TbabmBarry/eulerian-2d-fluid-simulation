@@ -10,6 +10,8 @@ class GravityForce : public Force {
     GravityForce(vector<Particle*> particles, Vec2f g);
     void setTarget(vector<Particle*> particles) override;
     void apply(bool springsCanBreak) override;
+    MatrixXf dx() override;
+    MatrixXf dv() override;
     void draw() override;
   private:
     Vec2f g = Vec2f(0.0f, -9.8f);     // gravity

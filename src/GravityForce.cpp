@@ -24,6 +24,15 @@ void GravityForce::apply(bool springsCanBreak)
   }
 }
 
+MatrixXf GravityForce::dx()
+{
+    return MatrixXf();
+}
+
+MatrixXf GravityForce::dv()
+{
+    return MatrixXf();
+}
 
 void GravityForce::draw()
 {

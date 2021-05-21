@@ -21,6 +21,16 @@ void DragForce::apply(bool springsCanBreak)
     
 }
 
+MatrixXf DragForce::dx()
+{
+    return MatrixXf();
+}
+
+MatrixXf DragForce::dv()
+{
+    return drag_k * MatrixXf::Identity(2, 2);
+}
+
 void DragForce::draw()
 {
 

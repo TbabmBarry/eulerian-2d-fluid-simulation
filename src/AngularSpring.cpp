@@ -46,6 +46,16 @@ void AngularSpring::apply(bool springsCanBreak)
   }
 }
 
+MatrixXf AngularSpring::dx()
+{
+    return MatrixXf();
+}
+
+MatrixXf AngularSpring::dv()
+{
+    return m_ks * MatrixXf::Identity(2, 2);
+}
+
 void AngularSpring::draw()
 {
   glBegin( GL_LINES );

@@ -1,5 +1,7 @@
 #pragma once
 #include "EulerSolver.h"
+#include "Eigen/Dense"
+#include "Eigen/IterativeLinearSolvers"
 
 EulerSolver::EulerSolver(EulerSolver::TYPE type) : type(type) {}
 
@@ -62,6 +64,22 @@ void EulerSolver::semiS(System *system, float h) {
 
 
 void EulerSolver::implicitS(System *system, float h) {
+    // Get the old state
+    VectorXf oldState = system->particleGetState();
+    int particleDim = 2;
+    size_t particleSysSize = system->particles.size() * particleDim;
+    // Initiate mass matrix for the system
+    MatrixXf M = MatrixXf::Zero(particleSysSize, particleSysSize);
+    MatrixXf fdx = MatrixXf::Zero(particleSysSize, particleSysSize);
+    MatrixXf fdv = MatrixXf::Zero(particleSysSize, particleSysSize);
 
+    VectorXf f0 = VectorXf::Zero(particleSysSize);
+    VectorXf v0 = VectorXf::Zero(particleSysSize);
+    for (int i = 0; i < particleSysSize; i += particleDim)
+    {
+        Particle *p = system->particles[i / 2];
+        for (int j = 0; j < particleDim; j++)
+            M(i+j, i+j) = p->mass;
+    }
 }
     

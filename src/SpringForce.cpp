@@ -40,6 +40,16 @@ void SpringForce::apply(bool springsCanBreak)
     }
 }
 
+MatrixXf SpringForce::dx()
+{
+    return MatrixXf();
+}
+
+MatrixXf SpringForce::dv()
+{
+    return m_ks * MatrixXf::Identity(2, 2);
+}
+
 void SpringForce::draw()
 {
   glBegin( GL_LINES );
