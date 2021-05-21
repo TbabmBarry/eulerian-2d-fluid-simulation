@@ -8,7 +8,6 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
     // std::cout << "in maintainConstraint "<< std::endl;
     vector<Particle*> particles = system->particles;
-    cout <<"force at current step: "<< particles[0]->m_Force << endl;
     vector<Constraint*> constraints = system->constraints;
 
     // Check if no constraint is applied
@@ -59,8 +58,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
 
         // Retrieve and store the the legal velocity of a particular particle 
         CDot[i] = c->legalVelocity();
-        std::cout<<"x^2+y^2-r^2 = "<<C[i]<<std::endl;
-        // std::cout<<' '<<std::endl;
+
         // Retrieve and store the jacobian vector
         vector<Vec2f> jacobian = c->jacobian();
         // Retrieve the first time derivative of the jacobian vector
@@ -96,9 +94,6 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
     VectorXf lambda = cg.solve(b);
     // Compute the constraint force Q hat
     VectorXf QHat = Jt * lambda;
-    cout << "Q hat: " << endl;
-    cout << QHat << endl;
-    cout << ' ' << endl;
     for (int i = 0; i < particles.size(); i++)
     {
         Particle *p = particles[i];
@@ -107,9 +102,5 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
         {
             p->m_Force[j] += QHat[idx + j];
         }
-
-        // std::cout << "during force" << particles[i]->m_Force << std::endl;
-        // std::cout << "during velocity" << particles[i]->m_Velocity << std::endl;
     }
-    // std::cout<<' '<<std::endl;
 }

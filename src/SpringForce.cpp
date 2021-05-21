@@ -37,7 +37,6 @@ void SpringForce::apply(bool springsCanBreak)
         // cout << "Force: " << force << " Length: " << length << endl;
         particles[0]->m_Force -= force;
         particles[1]->m_Force += force;
-        std::cout << "p1_force:" << particles[0]->m_Force << " p2_force:" << particles[1]->m_Force << std::endl;
     }
 }
 
