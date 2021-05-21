@@ -23,19 +23,21 @@ void EulerSolver::explicitS(System *system, float h) {
 
     // Get the old state
     VectorXf oldState = system->particleGetState();
-    // std::cout << "old state" << oldState << std::endl;
+
     // Evaluate derivative
     VectorXf stateDeriv = system->particleAcceleration();
-    
+    cout << "oldState: " << oldState << endl;
+    cout << "stateDeriv: " << stateDeriv << endl;
     // Calculate the new state
     VectorXf newState = oldState + h * stateDeriv;
-    // std::cout << "new state" <<newState << std::endl;
+    cout << "newState: " << newState << endl;
 
     if (system->wall)
         newState = system->collisionValidation(newState);
     //set the new state
-    system->particleSetState(newState, system->particleGetTime() + h);      
-    cout << "mass: " << system->particles[0]->mass<< endl;
+    system->particleSetState(newState, system->particleGetTime() + h);
+    cout << "position " << system->particles[0]->m_Position <<endl;
+    // cout << "mass: " << system->particles[0]->mass<< endl;
     // cout << "Force: " << system->particles[0]->m_Force << " Velocity: " << system->particles[0]->m_Velocity << endl;
     // for (int i = 0; i < system->particles.size(); i++)
     // {
@@ -55,7 +57,6 @@ void EulerSolver::semiS(System *system, float h) {
 
     // Calculate the new state
     VectorXf newState = oldState + h * stateDeriv;
-
     //set the new state
     system->particleSetState(newState, system->particleGetTime() + h);
 

@@ -90,7 +90,7 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
     // Gather and compute the right hand side object to do conjugate gradient
 
     VectorXf b = -JDotqDot - JWQ - ksC - kdCDot;
-
+    
     ConjugateGradient<MatrixXf, Lower|Upper> cg;
     cg.compute(JWJt);
     VectorXf lambda = cg.solve(b);

@@ -2,7 +2,7 @@
 #include "ConstraintMaintainer.h"
 
 
-System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.05f)
+System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.001f)
 {
 }
 
@@ -44,13 +44,12 @@ VectorXf System::particleGetState()
 {
     VectorXf s(this->particleDims());
 
-    for (int i = 0; i < this->particles.size(); i++)
+    for (int i = 0; i < particles.size(); i++)
     {
-        Particle* p = particles[i];
-        s[i * 4 + 0] = p->m_Position[0];
-        s[i * 4 + 1] = p->m_Position[1];
-        s[i * 4 + 2] = p->m_Velocity[0];
-        s[i * 4 + 3] = p->m_Velocity[1];
+        s[i * 4 + 0] = particles[i]->m_Position[0];
+        s[i * 4 + 1] = particles[i]->m_Position[1];
+        s[i * 4 + 2] = particles[i]->m_Velocity[0];
+        s[i * 4 + 3] = particles[i]->m_Velocity[1];
     }
 
     return s;
@@ -61,10 +60,10 @@ float System::particleGetTime()
     return time;
 }
 
-void System::particleSetState(VectorXf src)
-{
-    this->particleSetState(src, this->particleGetTime());
-}
+// void System::particleSetState(VectorXf src)
+// {
+//     this->particleSetState(src, this->particleGetTime());
+// }
 
 void System::particleSetState(VectorXf newState, float time)
 {

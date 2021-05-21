@@ -97,7 +97,8 @@ void Mode::Rod(System *sys) {
 void Mode::Gravity(System *sys) {
     const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
-	const Vec2f offset(0.0, -dist);
+	// const Vec2f offset(0.0, -dist);
+	const Vec2f offset(dist, 0.0);
 
     sys->addParticle(new Particle(center + offset, 1.0f, 0));
 	sys->addParticle(new Particle(center + 2 * offset, 1.0f, 1));

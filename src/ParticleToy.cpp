@@ -93,7 +93,7 @@ static void init_system(void)
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
 	// const Vec2f offset(0.0, dist);
-	sys = new System(new EulerSolver(EulerSolver::EXPLICIT));
+	sys = new System(new EulerSolver(EulerSolver::SEMI));
 	mode = new Mode();
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
@@ -392,7 +392,7 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
-	sleep(1);
+	// sleep(1);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
