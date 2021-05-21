@@ -10,7 +10,7 @@ class AngularSpring : public Force {
   
   void setTarget(vector<Particle*> particles) override;
   void apply(bool springsCanBreak) override;
-  MatrixXf dx() override;
+  map<int, map<int, float>> dx() override;
   MatrixXf dv() override;
   void draw() override;
   

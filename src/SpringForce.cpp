@@ -40,14 +40,32 @@ void SpringForce::apply(bool springsCanBreak)
     }
 }
 
-MatrixXf SpringForce::dx()
+map<int, map<int, float>> SpringForce::dx()
 {
-    return MatrixXf();
+    map<int, map<int, float>> res = map<int, map<int, float>>();
+    MatrixXf I = MatrixXf::Identity(2, 2);
+
+    Vec2f length = particles[0]->m_Position - particles[1]->m_Position;
+
+    Vector2f xij = Vector2f(length[0], length[1]);
+    float xijn = xij.norm();
+
+    MatrixXf force = - m_ks * ((1 - m_dist / xijn) * (I - xij * xij.transpose()) + xij * xij.transpose());
+
+    for (int i = 0; i < force.rows(); i++) {
+        for (int j = 0; j < force.cols(); j++) {
+            res[particles[0]->index * 2 + i][particles[1]->index * 2 + j] = force(i,j);
+            res[particles[1]->index * 2 + i][particles[0]->index * 2 + j] = -force(i,j);
+        }
+    }
+    return res;
 }
 
 MatrixXf SpringForce::dv()
 {
-    return m_ks * MatrixXf::Identity(2, 2);
+    Vec2f length = particles[0]->m_Position - particles[1]->m_Position;
+    Vector2f xij = Vector2f(length[0], length[1]);
+    return m_kd * xij * xij.transpose();
 }
 
 void SpringForce::draw()

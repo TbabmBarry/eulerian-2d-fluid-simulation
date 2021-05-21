@@ -60,10 +60,10 @@ float System::particleGetTime()
     return time;
 }
 
-// void System::particleSetState(VectorXf src)
-// {
-//     this->particleSetState(src, this->particleGetTime());
-// }
+void System::particleSetState(VectorXf src)
+{
+    this->particleSetState(src, this->particleGetTime());
+}
 
 void System::particleSetState(VectorXf newState, float time)
 {

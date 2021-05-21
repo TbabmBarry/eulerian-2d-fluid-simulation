@@ -46,7 +46,7 @@ class System {
 
         float particleGetTime();
         // Scatter state from src into the particles
-        // void particleSetState(VectorXf src);
+        void particleSetState(VectorXf src);
         void particleSetState(VectorXf newState, float time);
         // Get length of state derivative, and force vectors
         int particleDims();

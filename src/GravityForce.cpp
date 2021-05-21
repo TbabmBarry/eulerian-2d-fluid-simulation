@@ -24,9 +24,9 @@ void GravityForce::apply(bool springsCanBreak)
   }
 }
 
-MatrixXf GravityForce::dx()
+map<int, map<int, float>> GravityForce::dx()
 {
-    return MatrixXf();
+    return map<int, map<int, float>>();
 }
 
 MatrixXf GravityForce::dv()

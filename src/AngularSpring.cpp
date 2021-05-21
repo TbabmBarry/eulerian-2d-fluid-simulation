@@ -46,14 +46,14 @@ void AngularSpring::apply(bool springsCanBreak)
   }
 }
 
-MatrixXf AngularSpring::dx()
+map<int, map<int, float>> AngularSpring::dx()
 {
-    return MatrixXf();
+    return map<int, map<int, float>>();
 }
 
 MatrixXf AngularSpring::dv()
 {
-    return m_ks * MatrixXf::Identity(2, 2);
+    return MatrixXf();
 }
 
 void AngularSpring::draw()

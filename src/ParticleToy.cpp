@@ -334,6 +334,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case '8':
 		init_system();
+		sys->dt=0.01;
 		mode->cloth(sys);
 		break;
 	

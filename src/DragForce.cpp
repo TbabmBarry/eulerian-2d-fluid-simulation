@@ -21,14 +21,14 @@ void DragForce::apply(bool springsCanBreak)
     
 }
 
-MatrixXf DragForce::dx()
+map<int, map<int, float>> DragForce::dx()
 {
-    return MatrixXf();
+    return map<int, map<int, float>>();
 }
 
 MatrixXf DragForce::dv()
 {
-    return drag_k * MatrixXf::Identity(2, 2);
+    return MatrixXf();
 }
 
 void DragForce::draw()
