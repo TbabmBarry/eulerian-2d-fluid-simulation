@@ -108,7 +108,6 @@ void Mode::Gravity(System *sys) {
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
-
 void Mode::cloth(System *sys) {
     const int xSize = 3, ySize = 3;
     const float dist = 0.3;
@@ -226,7 +225,33 @@ void Mode::cloth(System *sys) {
 // }
 
 void Mode::hair(System *sys){
+    const int num_particles = 100;
+    const float deltay = 3.0f / num_particles;
+    const int numHairs = 8;
+	const float ks = 10.0f;
+    const float kd = 1.0f;
 
+    for (int i = 0; i < numHairs; i++) {
+        // Initialize particles
+        for (int j = 0; j < num_particles; j += 2) {
+            sys->addParticle(new Particle(Vec2f(-0.5f + 0.03f * i, 0.5f - j * deltay), 0.02f, i * num_particles + j));
+            sys->addParticle(new Particle(Vec2f(-0.5f + 0.03f * (i + 1), 0.5f - (j + 1) * deltay), 0.02f, i * num_particles + j));
+        }
+        for (int j = 2; j < num_particles; j += 2) {
+            sys->addForce(new AngularSpring(sys->particles[i * num_particles + j - 2],
+											sys->particles[i * num_particles + j - 1],
+											sys->particles[i * num_particles + j],
+											180, ks, kd));
+        }
+
+        float radius = 0.05f;
+        sys->addConstraint(new CircularWireConstraint(sys->particles[i * num_particles],
+                                                      Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),//暂时定义为(0,0)+(-r,0)
+                                                      radius));
+    }
+    // Add gravity and drag to all particles
+    sys->addForce(new GravityForce(sys->particles, Vec2f(0, -9.81f)));
+    sys->addForce(new DragForce(sys->particles, 0.3f));
 }
 
 void Mode::mouse(System *sys){

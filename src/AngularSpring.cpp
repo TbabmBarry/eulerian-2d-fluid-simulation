@@ -4,6 +4,8 @@
 #include <math.h>
 #include <assert.h>
 
+#define PI 3.14159265
+
 AngularSpring::AngularSpring(Particle *p1, Particle * midpoint,Particle * p3, double angle, double ks, double kd) :
   AngularSpring({p1, midpoint, p3}, angle, m_ks, m_kd) {}
 
@@ -25,12 +27,12 @@ void AngularSpring::apply(bool springsCanBreak)
     Vec2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
     Vec2f midtoP3 = particles[2]->m_Position - particles[1]->m_Position; //l2=particle p1-particle midpoint
 
-    float current_angle = acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3)));
+    float current_angle = acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3))) * 180.0 / PI;
     float half_current_angle = current_angle / 2;
     float half_rest_angle = m_angle / 2;
 
-    float p1restlength=norm(midtoP1) * sin(half_current_angle) / sin(half_rest_angle);
-    float p3restlength=norm(midtoP3) * sin(half_current_angle) / sin(half_rest_angle);
+    float p1restlength=norm(midtoP1) * sin(half_current_angle * PI / 180.0) / sin(half_rest_angle * PI / 180.0);
+    float p3restlength=norm(midtoP3) * sin(half_current_angle * PI / 180.0) / sin(half_rest_angle * PI / 180.0);
 
     Vec2f length1_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity midpoint
     Vec2f length3_derivate = particles[2]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p3-velocity midpoint
@@ -61,6 +63,10 @@ void AngularSpring::draw()
   glBegin( GL_LINES );
   glColor3f(0.6, 0.7, 0.8);
   glVertex2f( particles[0]->m_Position[0], particles[0]->m_Position[1] );
+  glColor3f(0.6, 0.7, 0.8);
+  glVertex2f( particles[1]->m_Position[0], particles[1]->m_Position[1] );
+  glEnd();
+  glBegin( GL_LINES );
   glColor3f(0.6, 0.7, 0.8);
   glVertex2f( particles[1]->m_Position[0], particles[1]->m_Position[1] );
   glColor3f(0.6, 0.7, 0.8);
