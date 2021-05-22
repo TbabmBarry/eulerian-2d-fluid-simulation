@@ -67,6 +67,7 @@ void EulerSolver::semiS(System *system, float h) {
 void EulerSolver::implicitS(System *system, float h) {
     // Get the old state
     VectorXf oldState = system->particleGetState();
+    system->particleAcceleration();
     // Fill mass matrix
     SparseMatrix<float> M(system->particleDims() / 2, system->particleDims() / 2);
 
@@ -88,8 +89,8 @@ void EulerSolver::implicitS(System *system, float h) {
     for (Force *f : system->forces) {
         // Compute map for every force and update jxm appropriately
         auto fjx = f->dx();
-        for (auto const &i1 : fjx) {
-            for (auto const &i2 : i1.second) {
+        for (const auto &i1 : fjx) {
+            for (const auto &i2 : i1.second) {
                 if (jxm.count(i1.first) && jxm[i1.first].count(i2.first)) {
                     // todo maybe check if we can remove this, it should never happen?
                     // i1 and i2 exist
@@ -111,10 +112,10 @@ void EulerSolver::implicitS(System *system, float h) {
         }
     }
 
-    std::vector<Triplet<float>> JxTripletList;
+    vector<Triplet<float>> JxTripletList;
     JxTripletList.reserve(entries);
-    for (auto const &i1 : jxm) {
-        for (auto const &i2 : i1.second) {
+    for (const auto &i1 : jxm) {
+        for (const auto &i2 : i1.second) {
             JxTripletList.push_back(Triplet<float>(i1.first, i2.first, i2.second));
         }
     }
@@ -134,15 +135,14 @@ void EulerSolver::implicitS(System *system, float h) {
     }
 
     // Compute A
-    SparseMatrix<float> A = M - h * h * jx - h * jv;
+    SparseMatrix<float> A = M - h * h * jx; // - h * jv;
     SparseVector<float> b = h * (fold + h * jx * vold);
-
     // Solve for dy
     ConjugateGradient<SparseMatrix<float>, Lower|Upper> cg;
     cg.compute(A);
     SparseVector<float> dy = cg.solve(b);
 
-   std::cout << "dv:     " << dy << std::endl;
+//    std::cout << "dv:     " << dy << std::endl;
 
     // Set new state
     VectorXf newState(system->particleDims());

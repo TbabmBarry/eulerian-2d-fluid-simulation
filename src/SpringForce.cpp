@@ -46,11 +46,14 @@ map<int, map<int, float>> SpringForce::dx()
     MatrixXf I = MatrixXf::Identity(2, 2);
 
     Vec2f length = particles[0]->m_Position - particles[1]->m_Position;
-
+    Vec2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
     Vector2f xij = Vector2f(length[0], length[1]);
-    float xijn = xij.norm();
+    Vector2f vij = Vector2f(length_derivate[0], length_derivate[1]);
+    float xij_magnitude = xij.norm();
+    Vector2f xij_norm = Vector2f(length[0] / xij_magnitude, length[1] / xij_magnitude);
 
-    MatrixXf force = - m_ks * ((1 - m_dist / xijn) * (I - xij * xij.transpose()) + xij * xij.transpose());
+    MatrixXf force = - m_ks * ((1 - m_dist / xij_magnitude) * (I - xij_norm * xij_norm.transpose()) + xij_norm * xij_norm.transpose());// \
+                     - m_kd * vij * ((I - xij_norm * xij_norm.transpose()) / xij_magnitude * xij_norm + xij_norm * (I - xij_norm * xij_norm.transpose()) / xij_magnitude);
 
     for (int i = 0; i < force.rows(); i++) {
         for (int j = 0; j < force.cols(); j++) {
@@ -65,7 +68,9 @@ MatrixXf SpringForce::dv()
 {
     Vec2f length = particles[0]->m_Position - particles[1]->m_Position;
     Vector2f xij = Vector2f(length[0], length[1]);
-    return m_kd * xij * xij.transpose();
+    float xij_magnitude = xij.norm();
+    Vector2f xij_norm = Vector2f(length[0] / xij_magnitude, length[1] / xij_magnitude);
+    return m_kd * xij_norm * xij_norm.transpose();
 }
 
 void SpringForce::draw()

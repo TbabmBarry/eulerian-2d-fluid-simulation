@@ -95,7 +95,7 @@ static void init_system(void)
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
 	// const Vec2f offset(0.0, dist);
-	sys = new System(new EulerSolver(EulerSolver::SEMI));
+	sys = new System(new EulerSolver(EulerSolver::IMPLICIT));
 	mode = new Mode();
 	// Create three particlereConstraint(sys->particles[0], center, dist));
 }
@@ -283,19 +283,19 @@ static void key_func ( unsigned char key, int x, int y )
 	
 	case '3':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->SpringCircular(sys);
 		break;
 	
 	case '4':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->Rod(sys);
 		break;
 
 	case '5':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->Gravity(sys);
 		break;
 
