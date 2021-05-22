@@ -173,42 +173,42 @@ static void draw_constraints ( void )
 	sys->drawConstraints();
 }
 
-static System* Hair() {
-    System* sys = new System(new EulerSolver(EulerSolver::SEMI));
+// static System* Hair() {
+//     System* sys = new System(new EulerSolver(EulerSolver::SEMI));
 
-    const int num_particles = 100;
-    const float deltay = 3.0f/num_particles;
-    const int numHairs = 8;
-	const float ks = 50.0f;
-    const float kd = 1.0f;
+//     const int num_particles = 100;
+//     const float deltay = 3.0f/num_particles;
+//     const int numHairs = 8;
+// 	const float ks = 50.0f;
+//     const float kd = 1.0f;
 
-    for (int i = 0; i < numHairs; i++) {
-        // Initialize particles
-        for (int j = 0; j < num_particles; j++) {
-            sys->addParticle(new Particle(Vec2f(-0.5f + 0.03f*i, 0.5f - j * deltay), 0.2f, i * num_particles + j));
-        }
+//     for (int i = 0; i < numHairs; i++) {
+//         // Initialize particles
+//         for (int j = 0; j < num_particles; j++) {
+//             sys->addParticle(new Particle(Vec2f(-0.5f + 0.03f*i, 0.5f - j * deltay), 0.2f, i * num_particles + j));
+//         }
 
-        // for (int j = 0; j < num_particles - 1; j++) {
-        //     sys->addForce(new SpringForce(sys->particles[i * num_particles + j],
-        //                                   sys->particles[i * num_particles + j + 1],
-        //                                   deltay, ks, kd));
-        // }
-        for (int j = 2; j < num_particles - 2; j++) {
-            sys->addForce(new AngularSpring(sys->particles[i * num_particles + j],
-											sys->particles[i * num_particles + j + 1],
-											sys->particles[i * num_particles + j + 2],
-											120, ks, kd));
-        }
+//         // for (int j = 0; j < num_particles - 1; j++) {
+//         //     sys->addForce(new SpringForce(sys->particles[i * num_particles + j],
+//         //                                   sys->particles[i * num_particles + j + 1],
+//         //                                   deltay, ks, kd));
+//         // }
+//         for (int j = 2; j < num_particles - 2; j++) {
+//             sys->addForce(new AngularSpring(sys->particles[i * num_particles + j],
+// 											sys->particles[i * num_particles + j + 1],
+// 											sys->particles[i * num_particles + j + 2],
+// 											120, ks, kd));
+//         }
 
-        float radius = 0.05f;
-        sys->addConstraint(new CircularWireConstraint(sys->particles[i * num_particles],
-                                                      Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),//暂时定义为(0,0)+(-r,0)
-                                                      radius));
-    }
-    // Add gravity and drag to all particles
-    sys->addForce(new GravityForce(sys->particles, Vec2f(0, -9.81f)));
-    return sys;
-}
+//         float radius = 0.05f;
+//         sys->addConstraint(new CircularWireConstraint(sys->particles[i * num_particles],
+//                                                       Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),//暂时定义为(0,0)+(-r,0)
+//                                                       radius));
+//     }
+//     // Add gravity and drag to all particles
+//     sys->addForce(new GravityForce(sys->particles, Vec2f(0, -9.81f)));
+//     return sys;
+// }
 
 
 
@@ -272,13 +272,13 @@ static void key_func ( unsigned char key, int x, int y )
 	case '1':
 		init_system();
 		// free_data();
-		sys->dt=0.01;
+		sys->dt=0.1;
 		mode->Spring(sys);
 		break;
 
 	case '2':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.1;
 		mode->SpringRod(sys);
 		break;		
 	
@@ -307,6 +307,7 @@ static void key_func ( unsigned char key, int x, int y )
 	
 	case '7':
 		init_system();
+		sys->dt=0.01;
 		mode->hair(sys);
 		break;
 
