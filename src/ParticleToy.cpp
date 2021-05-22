@@ -93,7 +93,7 @@ static void init_system(void)
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
 	// const Vec2f offset(0.0, dist);
-	sys = new System(new EulerSolver(EulerSolver::SEMI));
+	sys = new System(new EulerSolver(EulerSolver::IMPLICIT));
 	mode = new Mode();
 	// Create three particles, attach them to each other, then add a
 	// circular wire constraint to the first.
@@ -334,7 +334,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case '8':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.001;
 		mode->cloth(sys);
 		break;
 	
