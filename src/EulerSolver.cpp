@@ -135,7 +135,7 @@ void EulerSolver::implicitS(System *system, float h) {
     }
 
     // Compute A
-    SparseMatrix<float> A = M - h * h * jx - h * jv;
+    SparseMatrix<float> A = M - h * h * jx; // - h * jv;
     SparseVector<float> b = h * (fold + h * jx * vold);
     // Solve for dy
     ConjugateGradient<SparseMatrix<float>, Lower|Upper> cg;

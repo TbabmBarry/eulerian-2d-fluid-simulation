@@ -52,7 +52,7 @@ map<int, map<int, float>> SpringForce::dx()
     float xij_magnitude = xij.norm();
     Vector2f xij_norm = Vector2f(length[0] / xij_magnitude, length[1] / xij_magnitude);
 
-    MatrixXf force = - m_ks * ((1 - m_dist / xij_magnitude) * (I - xij_norm * xij_norm.transpose()) + xij_norm * xij_norm.transpose()) \
+    MatrixXf force = - m_ks * ((1 - m_dist / xij_magnitude) * (I - xij_norm * xij_norm.transpose()) + xij_norm * xij_norm.transpose());// \
                      - m_kd * vij * ((I - xij_norm * xij_norm.transpose()) / xij_magnitude * xij_norm + xij_norm * (I - xij_norm * xij_norm.transpose()) / xij_magnitude);
 
     for (int i = 0; i < force.rows(); i++) {

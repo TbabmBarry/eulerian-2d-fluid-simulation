@@ -307,19 +307,19 @@ static void key_func ( unsigned char key, int x, int y )
 	
 	case '3':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->SpringCircular(sys);
 		break;
 	
 	case '4':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->Rod(sys);
 		break;
 
 	case '5':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->Gravity(sys);
 		break;
 
@@ -334,7 +334,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case '8':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->cloth(sys);
 		break;
 	
