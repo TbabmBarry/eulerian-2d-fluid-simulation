@@ -368,14 +368,15 @@ static void mouse_func ( int button, int state, int x, int y )
         glGetIntegerv(GL_VIEWPORT, viewMatrix);
 
 		int mouse_x = x - int(win_x/2);
-		int mouse_y = y - int(win_y/2);
+		int mouse_y = int(win_y/2) - y;
 		Particle *closestParticle;
 		double closestDist = 100000;
 		for (int i = 0; i < sys->particles.size(); i++) {
 			Vec2f position = sys->particles[i]->m_Position;
 			// std::cout << "particle index" << i << "x" << position[0]*(win_x/2)<< "     y"<< position[1]*(win_x/2) << std::endl;
-            double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
-            if (distance < closestDist) {
+            double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y + (position[1]*(win_y/2)),2));
+            std::cout<<"particles index: "<< i << "   distance:  "<< distance << std::endl;
+			if (distance < closestDist) {
                 closestDist = distance;
                 closestParticle = sys->particles[i];
             }
@@ -392,11 +393,12 @@ static void mouse_func ( int button, int state, int x, int y )
 static void motion_func ( int x, int y )
 {
 	mx = x - int(win_x/2);
-	my = y - int(win_y/2);
+	my = int(win_y/2) - y;
 	// std::cout << "in motion_func   x" << x << "   y" << y << std::endl;
 
 	Vec2f position = mouseForce->particles[0]->m_Position;
-	mouseForce->direction = 0.1f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
+	//mode 3 8 use 5.0, others 0.005 
+	mouseForce->direction = 5.0f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
 }
 
 static void reshape_func ( int width, int height )
