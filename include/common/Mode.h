@@ -7,7 +7,7 @@ class Mode {
         void SpringCircular(System* system);
         void Rod(System* system);
         void Gravity(System* system);
-        void mouse(System* system);
+        void test(System* system);
         void hair(System* system);
         void cloth(System* system);
 };

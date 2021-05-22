@@ -42,6 +42,7 @@ static System* sys;
 static Mode* mode;
 static ExternalForce* mouseForce;
 
+
 static int win_id;
 static int win_x, win_y;
 static int mouse_down[3];
@@ -95,7 +96,7 @@ static void init_system(void)
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
 	// const Vec2f offset(0.0, dist);
-	sys = new System(new EulerSolver(EulerSolver::IMPLICIT));
+	sys = new System(new EulerSolver(EulerSolver::SEMI));
 	mode = new Mode();
 	// Create three particlereConstraint(sys->particles[0], center, dist));
 }
@@ -283,25 +284,26 @@ static void key_func ( unsigned char key, int x, int y )
 	
 	case '3':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.001;
 		mode->SpringCircular(sys);
 		break;
 	
 	case '4':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.001;
 		mode->Rod(sys);
 		break;
 
 	case '5':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.001;
 		mode->Gravity(sys);
 		break;
 
 	case '6':
 		init_system();
-		mode->mouse(sys);
+		mode->test(sys);
+		break;
 	
 	case '7':
 		init_system();
@@ -310,7 +312,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case '8':
 		init_system();
-		sys->dt=0.01;
+		sys->dt=0.001;
 		mode->cloth(sys);
 		break;
 	
@@ -353,39 +355,47 @@ static void mouse_func ( int button, int state, int x, int y )
 	mouse_down[button] = state == GLUT_DOWN;
 
 	if (state == GLUT_UP){
-		// mouseForce->setActive(false);
-		std::cout << "GLUT_UP   x" << x << "   y" << y << std::endl;	
+		mouseForce->setActive(false);
+		// std::cout << "GLUT_UP   x" << x << "   y" << y << std::endl;	
 	} else {
-		// int mouse_x = x - int(win_x/2);
-		// int mouse_y = y - int(win_y/2);
-		// GLdouble modelMatrix[16];
-        // glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-        // GLdouble projectionMatrix[16];
-        // glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
-        // GLint viewMatrix[4];
-        // glGetIntegerv(GL_VIEWPORT, viewMatrix);
-		// Particle *closestParticle;
-		// double closestDist = 100000;
-		// for (int i = 0; i < sys->particles.size(); i++) {
-		// 	Vec2f position = sys->particles[i]->m_Position;
-		// // // 	double screenCoordinates[3];
-		// // // 	gluProject(position[0], position[1], modelMatrix, projectionMatrix, viewMatrix,
-        // // //                &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
-        //     double distance = abs(x - (win_x/2) - position[0]) + abs(y - (win_y/2) - position[1]);
-        //     if (distance < closestDist) {
-        //         closestDist = distance;
-        //         closestParticle = sys->particles[i];
-        //     }
-		// }
-		// std::cout << "GLUT_UP   x" << mouse_x << "   y" << y << std::endl;
-		std::cout << "x" << x<<"y"<<y << std::endl;
+
+		GLdouble modelMatrix[16];
+        glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+        GLdouble projectionMatrix[16];
+        glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
+        GLint viewMatrix[4];
+        glGetIntegerv(GL_VIEWPORT, viewMatrix);
+
+		int mouse_x = x - int(win_x/2);
+		int mouse_y = y - int(win_y/2);
+		Particle *closestParticle;
+		double closestDist = 100000;
+		for (int i = 0; i < sys->particles.size(); i++) {
+			Vec2f position = sys->particles[i]->m_Position;
+			// std::cout << "particle index" << i << "x" << position[0]*(win_x/2)<< "     y"<< position[1]*(win_x/2) << std::endl;
+            double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
+            if (distance < closestDist) {
+                closestDist = distance;
+                closestParticle = sys->particles[i];
+            }
+		}
+
+		mouseForce = new ExternalForce({closestParticle}, Vec2f(0.0f,0.0f));
+		sys->addForce(mouseForce);
+		// std::cout << "GLUT_UP   x" << mouse_x << "   y" << mouse_y << std::endl;
+		std::cout << "closest particle   " << closestParticle->index<<"   position    "<< closestParticle->m_Position << std::endl;
+		
 	}
 }
 
 static void motion_func ( int x, int y )
 {
-	mx = x;
-	my = y;
+	mx = x - int(win_x/2);
+	my = y - int(win_y/2);
+	// std::cout << "in motion_func   x" << x << "   y" << y << std::endl;
+
+	Vec2f position = mouseForce->particles[0]->m_Position;
+	mouseForce->direction = 0.1f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
 }
 
 static void reshape_func ( int width, int height )
@@ -483,8 +493,8 @@ int main ( int argc, char ** argv )
 	printf ( "\t key '3' for Spring force + Circular Wire Constraint\n" );
 	printf ( "\t key '4' for Circular Wire Constraint + Spring force + Rod Constraint\n" );
 	printf ( "\t key '5' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity force\n" );
-	printf ( "\t key '6' for mouse");
-	printf ( "\t key '7' for hair");
+	printf ( "\t key '6' for test\n");
+	printf ( "\t key '7' for hair\n");
 	printf ( "\t key '8' for cloth\n");
 
 	dsim = 0;
