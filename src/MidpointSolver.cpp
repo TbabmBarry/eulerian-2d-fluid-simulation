@@ -12,7 +12,7 @@ void MidpointSolver::simulateStep(System *system, float h) {
     Vector2f midPointState = oldState + h * 0.5f * stateDeriv;
 
     // Set the state to this midpoint
-    system->particleSetState(midPointState, system->particleGetTime() + h * 0.5f);
+    system->particleSetState(midPointState, system->particleGetTime() + h);
 
     // Evaluate derivative at the midpoint
     stateDeriv = system->particleAcceleration();
