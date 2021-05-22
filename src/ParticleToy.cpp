@@ -12,6 +12,7 @@
 #include "EulerSolver.h"
 #include "imageio.h"
 #include "GravityForce.h"
+#include "ExternalForce.h"
 
 #include <vector>
 #include <stdlib.h>
@@ -39,6 +40,7 @@ static int frame_number;
 // static std::vector<Particle*> pVector;
 static System* sys;
 static Mode* mode;
+static ExternalForce* mouseForce;
 
 static int win_id;
 static int win_x, win_y;
@@ -95,33 +97,7 @@ static void init_system(void)
 	// const Vec2f offset(0.0, dist);
 	sys = new System(new EulerSolver(EulerSolver::SEMI));
 	mode = new Mode();
-	// Create three particles, attach them to each other, then add a
-	// circular wire constraint to the first.
-	
-	// sys->addParticle(new Particle(center + offset, 10.0f, 0));
-	// printf("1st");
-	// sys->addParticle(new Particle(center + 2 * offset, 2.0f, 1));
-	// printf("2nd");
-	// sys->addParticle(new Particle(center + 3 * offset, 2.0f, 2));
-	// sys->addParticle(new Particle(center + 4 * offset, 2.0f, 3));
-	// sys->addParticle(new Particle(center + 5 * offset, 2.0f, 4));
-	// sys->addParticle(new Particle(center + 6 * offset, 2.0f, 5));
-
-	// You shoud replace these with a vector generalized forces and one of
-	// constraints...
-	// delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
-	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
-	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
-
-	// sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-	// sys->addForce(new DragForce(sys->particles, 0.5f));
-	// sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 100.0f, 1.5f));
-	// sys->addForce(new SpringForce(sys->particles[2], sys->particles[4], dist/2, 10.0f, 1.5f));
-	// sys->addForce(new SpringForce(sys->particles[3], sys->particles[5], dist, 10.f, 1.5f));
-
-    // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
-	// sys->addConstraint(new RodConstraint(sys->particles[2], sys->particles[3], dist));
-	// sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
+	// Create three particlereConstraint(sys->particles[0], center, dist));
 }
 
 /*
@@ -371,11 +347,39 @@ static void mouse_func ( int button, int state, int x, int y )
 {
 	omx = mx = x;
 	omx = my = y;
-
 	if(!mouse_down[0]){hmx=x; hmy=y;}
 	if(mouse_down[button]) mouse_release[button] = state == GLUT_UP;
 	if(mouse_down[button]) mouse_shiftclick[button] = glutGetModifiers()==GLUT_ACTIVE_SHIFT;
 	mouse_down[button] = state == GLUT_DOWN;
+
+	if (state == GLUT_UP){
+		// mouseForce->setActive(false);
+		std::cout << "GLUT_UP   x" << x << "   y" << y << std::endl;	
+	} else {
+		// int mouse_x = x - int(win_x/2);
+		// int mouse_y = y - int(win_y/2);
+		// GLdouble modelMatrix[16];
+        // glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+        // GLdouble projectionMatrix[16];
+        // glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
+        // GLint viewMatrix[4];
+        // glGetIntegerv(GL_VIEWPORT, viewMatrix);
+		// Particle *closestParticle;
+		// double closestDist = 100000;
+		// for (int i = 0; i < sys->particles.size(); i++) {
+		// 	Vec2f position = sys->particles[i]->m_Position;
+		// // // 	double screenCoordinates[3];
+		// // // 	gluProject(position[0], position[1], modelMatrix, projectionMatrix, viewMatrix,
+        // // //                &screenCoordinates[0], &screenCoordinates[1], &screenCoordinates[2]);
+        //     double distance = abs(x - (win_x/2) - position[0]) + abs(y - (win_y/2) - position[1]);
+        //     if (distance < closestDist) {
+        //         closestDist = distance;
+        //         closestParticle = sys->particles[i];
+        //     }
+		// }
+		// std::cout << "GLUT_UP   x" << mouse_x << "   y" << y << std::endl;
+		std::cout << "x" << x<<"y"<<y << std::endl;
+	}
 }
 
 static void motion_func ( int x, int y )
