@@ -145,40 +145,44 @@ void Mode::cloth(System *sys) {
 
 
 void Mode::hair(System *sys){
-    const double dist = 0.05;
-	const Vec2f center(0.0, 0.0);
+	const Vec2f center(0.0, 0.5);
 
-    const int num_particles = 5;
-    const float deltay = 0.4f / num_particles;
     const int numHairs = 1;
+    vector<Vec2f> start;
+    const int num_particles = 10;
+    vector<Vec2f> end;
+    for(int i=0; i<numHairs;i++){
+        start.push_back(new Vec2f(0.0+0.1*i, -0.5f));
+        end.push_back(new Vec2f(0.0+0.1*i,0.5f));
+    }
+    Vec2f step=end[0]-start[0]/(num_particles+1);
+    const float rest = norm(step);
+    // Vec2f step = (end-start)/(num_particles+1);
 	const float ks = 80.0f;
-    const float kd = 1.0f;
-    const float dist = 0.3;
+    const float kd = 1.5f;
 
     for (int i = 0; i < numHairs; i++) {
         // Initialize particles
-        for (int j = 0; j < num_particles; j += 1) {
-            sys->addParticle(new Particle(Vec2f(0.0f + 0.05f * i, 0.0f - j * deltay), 0.2f, i * num_particles + j));
-            // sys->addParticle(new Particle(Vec2f(0.0f + 0.05f * (i + 1), 0.0f - (j + 1) * deltay), 0.2f, i * num_particles + j + 1));
+        for (int j = 0; j < num_particles+2; j += 1) {
+            sys->addParticle(new Particle(start[i]+step * j, 0.1f, i * (num_particles+2) + j));
         }
-        for (int j = 0; j < num_particles-1; j += 1) {
-            sys->addForce(new SpringForce(sys->particles[i * num_particles + j],
-											sys->particles[i * num_particles + j + 1],
-											dist, ks, kd));
+        for (int j = 0; j < num_particles+1; j += 1) {
+            sys->addForce(new SpringForce(sys->particles[i * (num_particles+2) + j],
+											sys->particles[i * (num_particles+2) + j + 1],
+											rest, ks, kd));
         }
         for (int j = 1; j < num_particles-1; j += 1) {
-            sys->addForce(new AngularSpring(sys->particles[i * num_particles + j - 1],
-											sys->particles[i * num_particles + j],
-											sys->particles[i * num_particles + j + 1],
-											180/num_particles, ks, kd));
+            sys->addForce(new AngularSpring(sys->particles[i * (num_particles+2) + j - 1],
+											sys->particles[i * (num_particles+2) + j],
+											sys->particles[i * (num_particles+2) + j + 1],
+											180/(num_particles+2), ks, kd));
         }
 
-        float radius = 0.05f;
-        // sys->addConstraint(new FixedPointConstraint(sys->particles[i * num_particles], center));
+        sys->addConstraint(new FixedPointConstraint(sys->particles[i * num_particles + num_particles + 1], center));
     }
     // Add gravity and drag to all particles
-    // sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-    // sys->addForce(new DragForce(sys->particles, 0.3f));
+    sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+    sys->addForce(new DragForce(sys->particles, 0.3f));
 }
 
 void Mode::test(System *sys){

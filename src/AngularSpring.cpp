@@ -29,16 +29,16 @@ void AngularSpring::apply(bool springsCanBreak)
 
     float current_angle = acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3))) * 180.0 / PI;
     float delta_angle = (m_angle - current_angle)/2;
-    float half_current_angle = current_angle / 2;
-    float half_rest_angle = m_angle / 2;
+    // float half_current_angle = current_angle / 2;
+    // float half_rest_angle = m_angle / 2;
 
-    Vec2f p1newpos = Vec2f(midtoP1[0] * cos(delta_angle) + midtoP1[1] * sin(delta_angle) + particles[1]->m_Position[0],\
-     midtoP1[1] * cos(delta_angle) - midtoP1[0] * sin(delta_angle) + particles[1]->m_Position[1]);
-    Vec2f p3newpos = Vec2f(midtoP3[0] * cos(-delta_angle) + midtoP3[1] * sin(-delta_angle) + particles[1]->m_Position[0],\
-     midtoP3[1] * cos(-delta_angle) - midtoP3[0] * sin(-delta_angle) + particles[1]->m_Position[1]);
+    Vec2f p1newpos = Vec2f(midtoP1[0] * cos(-delta_angle) - midtoP1[1] * sin(-delta_angle) + particles[1]->m_Position[0],\
+     midtoP1[1] * cos(-delta_angle) + midtoP1[0] * sin(-delta_angle) + particles[1]->m_Position[1]);
+    Vec2f p3newpos = Vec2f(midtoP3[0] * cos(delta_angle) - midtoP3[1] * sin(delta_angle) + particles[1]->m_Position[0],\
+     midtoP3[1] * cos(delta_angle) + midtoP3[0] * sin(delta_angle) + particles[1]->m_Position[1]);
 
     Vec2f p1restlength=p1newpos-particles[0]->m_Position;
-    Vec2f p3restlength=p3newpos-particles[0]->m_Position;
+    Vec2f p3restlength=p3newpos-particles[2]->m_Position;
     // float p1restlength=norm(midtoP1) * sin(half_current_angle * PI / 180.0) / sin(half_rest_angle * PI / 180.0);
     // float p3restlength=norm(midtoP3) * sin(half_current_angle * PI / 180.0) / sin(half_rest_angle * PI / 180.0);
 
@@ -47,15 +47,16 @@ void AngularSpring::apply(bool springsCanBreak)
 
     // force = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
     //rest length r is calculated by rest angle here
-    Vec2f force1 = (m_ks*(norm(p1restlength))+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
-    Vec2f force3 = (m_ks*(norm(p3restlength))+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
+    Vec2f force1 = (m_ks*(norm(midtoP1)-norm(p1restlength))+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
+    Vec2f force3 = (m_ks*(norm(midtoP3)-norm(p3restlength))+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
     // Vec2f force1 = (m_ks*(norm(midtoP1)-p1restlength)+m_kd*((midtoP1*length1_derivate)/norm(midtoP1)))*(midtoP1/norm(midtoP1));
     // Vec2f force3 = (m_ks*(norm(midtoP3)-p3restlength)+m_kd*((midtoP3*length3_derivate)/norm(midtoP3)))*(midtoP3/norm(midtoP3));
-    cout <<"index: "<< particles[0]->index<<particles[1]->index<<particles[2]->index << "Force: " << force1 << " Length: " << norm(midtoP3)<<" restlength: "<< norm(p3restlength) << endl;
-    particles[0]->m_Force += force1;
-    particles[1]->m_Force -= force1;
-    particles[1]->m_Force -= force3;
-    particles[2]->m_Force += force3;
+    particles[0]->m_Force -= force1;
+    particles[1]->m_Force += force1;
+    particles[1]->m_Force += force3;
+    particles[2]->m_Force -= force3;
+    cout <<"index: "<< particles[0]->index<<particles[1]->index<<particles[2]->index << endl;
+    cout <<"Force1: " << force1 << " Length: " << norm(midtoP1)<<" restlength: "<< norm(p3restlength) << endl;
   }
 }
 
