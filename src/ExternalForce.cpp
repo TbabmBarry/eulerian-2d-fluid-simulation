@@ -19,7 +19,7 @@ void ExternalForce::apply(bool springCanBreak)
     if (!active)
         return;
     for (Particle* p : particles) {
-        p->m_Force += 1.0f * direction;
+        p->m_Force += 0.1f * direction;
     }
 }
 

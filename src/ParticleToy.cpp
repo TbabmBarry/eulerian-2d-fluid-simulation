@@ -296,7 +296,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case '5':
 		init_system();
-		sys->dt=0.001;
+		sys->dt=0.01;
 		mode->Gravity(sys);
 		break;
 
@@ -415,7 +415,7 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
-	sleep(0.5);
+	// sleep(0.5);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }

@@ -2,6 +2,7 @@
 #include <GL/glut.h>
 #include <gfx/vec2.h>
 #include <math.h>
+#include "unistd.h"
 #include <assert.h>
 
 #define PI 3.14159265
@@ -28,7 +29,7 @@ void AngularSpring::apply(bool springsCanBreak)
     Vec2f midtoP3 = particles[2]->m_Position - particles[1]->m_Position; //l2=particle p1-particle midpoint
 
     float current_angle = acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3))) * 180.0 / PI;
-    float delta_angle = (m_angle - current_angle)/2;
+    float delta_angle = (m_angle - current_angle)/2 * PI/180.0;
     // float half_current_angle = current_angle / 2;
     // float half_rest_angle = m_angle / 2;
 
@@ -55,8 +56,9 @@ void AngularSpring::apply(bool springsCanBreak)
     particles[1]->m_Force += force1;
     particles[1]->m_Force += force3;
     particles[2]->m_Force -= force3;
-    cout <<"index: "<< particles[0]->index<<particles[1]->index<<particles[2]->index << endl;
-    cout <<"Force1: " << force1 << " Length: " << norm(midtoP1)<<" restlength: "<< norm(p3restlength) << endl;
+    usleep(500);
+    // cout <<"index: "<< particles[0]->index<<particles[1]->index<<particles[2]->index << endl;
+    // cout <<"Force1: " << force1 << " Length: " << norm(midtoP1)<<" restlength: "<< p1restlength << endl;
   }
 }
 
