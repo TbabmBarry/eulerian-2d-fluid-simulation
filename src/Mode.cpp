@@ -5,6 +5,7 @@
 #include "AngularSpring.h"
 #include "RodConstraint.h"
 #include "CircularWireConstraint.h"
+#include "FixedPointConstraint.h"
 #include "System.h"
 #include "EulerSolver.h"
 #include "imageio.h"
@@ -42,10 +43,10 @@ void Mode::SpringRod(System* sys) {
 	sys->addParticle(new Particle(center + 2 * offset, 10.0f, 1));
     sys->addParticle(new Particle(center + 3 * offset, 10.0f, 2));
 	sys->addParticle(new Particle(center + 4 * offset, 10.0f, 3));
+    // sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
 	sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 10.f, 1.0f));
     sys->addForce(new SpringForce(sys->particles[2], sys->particles[3], dist/2, 10.f, 1.0f));
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
-
 }
 
 
@@ -55,27 +56,7 @@ void Mode::SpringCircular(System* sys) {
 	const Vec2f offset(dist, 0.0);
 
     sys->addParticle(new Particle(center + offset, 10.0f, 0));
-	// printf("1st");
-	// sys->addParticle(new Particle(center + 2 * offset, 10.0f, 1));
-	// printf("2nd");
-	// sys->addParticle(new Particle(center + 3 * offset, 10.0f, 2));
-	// sys->addParticle(new Particle(center + 4 * offset, 10.0f, 3));
-	// sys->addParticle(new Particle(center + 5 * offset, 10.0f, 4));
-	// sys->addParticle(new Particle(center + 4 * offset, 2.0f, 5));
-
-	// You shoud replace these with a vector generalized forces and one of
-	// constraints...
-	// delete_this_dummy_spring = new SpringForce(pVector[0], pVector[1], dist, 1.0, 1.0);
-	// delete_this_dummy_rod = new RodConstraint(pVector[1], pVector[2], dist);
-	// delete_this_dummy_wire = new CircularWireConstraint(pVector[0], center, dist);
-
 	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
-	// sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 10.f, 1.0f));
-	// sys->addForce(new SpringForce(sys->particles[2], sys->particles[3], dist/2, 10.f, 1.0f));
-	// sys->addForce(new SpringForce(sys->particles[3], sys->particles[4], dist, 10.f, 1.0f));
-    // sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
-	// sys->addConstraint(new RodConstraint(sys->particles[2], sys->particles[3], dist));
-	// sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[3], dist));
 	sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
 }
 
@@ -123,8 +104,8 @@ void Mode::cloth(System *sys) {
     float ks = 80.0f;
     float kd = 1.5f;
 
-    const Vec2f center(-sqrt(2)/2*dist, sqrt(2)/2*dist);
-    sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
+    const Vec2f center(0.0f, 0.0f);
+    sys->addConstraint(new FixedPointConstraint(sys->particles[0], center));
     sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
     sys->addForce(new DragForce(sys->particles, 0.3f));
     for (int j = 0; j < ySize; j++) {//right,left

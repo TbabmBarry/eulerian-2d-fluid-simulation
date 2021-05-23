@@ -278,7 +278,7 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case '2':
 		init_system();
-		sys->dt=0.1;
+		sys->dt=0.001;
 		mode->SpringRod(sys);
 		break;		
 	
@@ -374,7 +374,7 @@ static void mouse_func ( int button, int state, int x, int y )
 		for (int i = 0; i < sys->particles.size(); i++) {
 			Vec2f position = sys->particles[i]->m_Position;
 			// std::cout << "particle index" << i << "x" << position[0]*(win_x/2)<< "     y"<< position[1]*(win_x/2) << std::endl;
-            double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y + (position[1]*(win_y/2)),2));
+            double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
             std::cout<<"particles index: "<< i << "   distance:  "<< distance << std::endl;
 			if (distance < closestDist) {
                 closestDist = distance;

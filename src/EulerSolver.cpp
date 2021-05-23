@@ -1,4 +1,3 @@
-#pragma once
 #include "EulerSolver.h"
 #include "Eigen/Dense"
 #include <Eigen/Sparse>
