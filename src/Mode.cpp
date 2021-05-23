@@ -148,14 +148,10 @@ void Mode::hair(System *sys){
 	const Vec2f center(0.0, 0.5);
 
     const int numHairs = 1;
-    vector<Vec2f> start;
+    Vec2f start(0.0,-0.5);
     const int num_particles = 10;
-    vector<Vec2f> end;
-    for(int i=0; i<numHairs;i++){
-        start.push_back(new Vec2f(0.0+0.1*i, -0.5f));
-        end.push_back(new Vec2f(0.0+0.1*i,0.5f));
-    }
-    Vec2f step=end[0]-start[0]/(num_particles+1);
+    Vec2f end(0.0,0.5);
+    Vec2f step=(end-start)/(num_particles+1);
     const float rest = norm(step);
     // Vec2f step = (end-start)/(num_particles+1);
 	const float ks = 80.0f;
@@ -164,7 +160,7 @@ void Mode::hair(System *sys){
     for (int i = 0; i < numHairs; i++) {
         // Initialize particles
         for (int j = 0; j < num_particles+2; j += 1) {
-            sys->addParticle(new Particle(start[i]+step * j, 0.1f, i * (num_particles+2) + j));
+            sys->addParticle(new Particle(start+step * j, 0.1f, i * (num_particles+2) + j));
         }
         for (int j = 0; j < num_particles+1; j += 1) {
             sys->addForce(new SpringForce(sys->particles[i * (num_particles+2) + j],
