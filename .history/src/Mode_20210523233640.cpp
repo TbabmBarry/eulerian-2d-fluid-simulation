@@ -152,9 +152,9 @@ void Mode::hair(System *sys){
     const int num_particles = 4;
     vector<Vec2f> end;
     for(int i=0;i<numHairs;++i){
-        center.push_back(Vec2f(0.0+0.02*i, 0.5f));
-        start.push_back(Vec2f(0.0+0.02*i, -0.5f));
-        end.push_back(Vec2f(0.0+0.02*i,0.5f));
+        center.push_back(Vec2f(0.0+0.2*i, 0.5f));
+        start.push_back(Vec2f(0.0+0.2*i, -0.5f));
+        end.push_back(Vec2f(0.0+0.2*i,0.5f));
     }
     Vec2f step=(end[0]-start[0])/(num_particles+1);
     const float rest = norm(step);

@@ -147,14 +147,14 @@ void Mode::cloth(System *sys) {
 void Mode::hair(System *sys){
 	vector<Vec2f> center;
 
-    const int numHairs = 10;
+    const int numHairs = 2;
     vector<Vec2f> start;
-    const int num_particles = 4;
+    const int num_particles = 10;
     vector<Vec2f> end;
     for(int i=0;i<numHairs;++i){
-        center.push_back(Vec2f(0.0+0.02*i, 0.5f));
-        start.push_back(Vec2f(0.0+0.02*i, -0.5f));
-        end.push_back(Vec2f(0.0+0.02*i,0.5f));
+        center.push_back(Vec2f(0.0+0.2*i, 0.5f));
+        start.push_back(Vec2f(0.0+0.2*i, -0.5f));
+        end.push_back(Vec2f(0.0+0.2*i,0.5f));
     }
     Vec2f step=(end[0]-start[0])/(num_particles+1);
     const float rest = norm(step);
@@ -176,7 +176,7 @@ void Mode::hair(System *sys){
             sys->addForce(new AngularSpring(sys->particles[i * (num_particles+2) + j - 1],
 											sys->particles[i * (num_particles+2) + j],
 											sys->particles[i * (num_particles+2) + j + 1],
-											180/(num_particles), ks, kd));
+											180/(num_particles+2), ks, kd));
         }
         // cout<<center[i]<<endl;
         sys->addConstraint(new FixedPointConstraint(sys->particles[i * (num_particles+2) + num_particles + 1], center[i]));
