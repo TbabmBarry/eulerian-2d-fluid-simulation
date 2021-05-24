@@ -373,9 +373,7 @@ static void mouse_func ( int button, int state, int x, int y )
 		double closestDist = 100000;
 		for (int i = 0; i < sys->particles.size(); i++) {
 			Vec2f position = sys->particles[i]->m_Position;
-			// std::cout << "particle index" << i << "x" << position[0]*(win_x/2)<< "     y"<< position[1]*(win_x/2) << std::endl;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
-            std::cout<<"particles index: "<< i << "   distance:  "<< distance << std::endl;
 			if (distance < closestDist) {
                 closestDist = distance;
                 closestParticle = sys->particles[i];
@@ -384,8 +382,6 @@ static void mouse_func ( int button, int state, int x, int y )
 
 		mouseForce = new ExternalForce({closestParticle}, Vec2f(0.0f,0.0f));
 		sys->addForce(mouseForce);
-		// std::cout << "GLUT_UP   x" << mouse_x << "   y" << mouse_y << std::endl;
-		std::cout << "closest particle   " << closestParticle->index<<"   position    "<< closestParticle->m_Position << std::endl;
 		
 	}
 }
@@ -394,7 +390,6 @@ static void motion_func ( int x, int y )
 {
 	mx = x - int(win_x/2);
 	my = int(win_y/2) - y;
-	// std::cout << "in motion_func   x" << x << "   y" << y << std::endl;
 
 	Vec2f position = mouseForce->particles[0]->m_Position;
 	//mode 3 8 use 5.0, others 0.005 

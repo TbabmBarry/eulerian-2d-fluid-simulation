@@ -147,9 +147,9 @@ void Mode::cloth(System *sys) {
 void Mode::hair(System *sys){
 	vector<Vec2f> center;
 
-    const int numHairs = 2;
+    const int numHairs = 8;
     vector<Vec2f> start;
-    const int num_particles = 4;
+    const int num_particles = 10;
     vector<Vec2f> end;
     for(int i=0;i<numHairs;++i){
         center.push_back(Vec2f(0.0+0.2*i, 0.5f));
@@ -164,19 +164,20 @@ void Mode::hair(System *sys){
 
     for (int i = 0; i < numHairs; i++) {
         // Initialize particles
-        for (int j = 0; j < num_particles+2; j += 1) {
+        for (int j = 0; j < num_particles+2; j +=2) {
+            sys->addParticle(new Particle(start[i]+step * j, 0.1f, i * (num_particles+2) + j));
             sys->addParticle(new Particle(start[i]+step * j, 0.1f, i * (num_particles+2) + j));
         }
-        for (int j = 0; j < num_particles+1; j += 1) {
+        for (int j = 0; j < num_particles+1; j ++) {
             sys->addForce(new SpringForce(sys->particles[i * (num_particles+2) + j],
 											sys->particles[i * (num_particles+2) + j + 1],
 											rest, ks, kd));
         }
-        for (int j = 1; j < num_particles-1; j += 1) {
+        for (int j = 1; j < num_particles-1; j ++) {
             sys->addForce(new AngularSpring(sys->particles[i * (num_particles+2) + j - 1],
 											sys->particles[i * (num_particles+2) + j],
 											sys->particles[i * (num_particles+2) + j + 1],
-											180/(num_particles), ks, kd));
+											2.5f, ks / 5, kd));
         }
         // cout<<center[i]<<endl;
         sys->addConstraint(new FixedPointConstraint(sys->particles[i * (num_particles+2) + num_particles + 1], center[i]));

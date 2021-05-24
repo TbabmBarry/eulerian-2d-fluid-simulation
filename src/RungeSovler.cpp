@@ -1,4 +1,3 @@
-#pragma once
 #include "RungeSovler.h"
 
 void RungeSovler::simulateStep(System *system, float h) {
