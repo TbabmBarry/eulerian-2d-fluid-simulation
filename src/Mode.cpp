@@ -152,15 +152,15 @@ void Mode::hair(System *sys){
     const int num_particles = 10;
     vector<Vec2f> end;
     for(int i=0;i<numHairs;++i){
-        center.push_back(Vec2f(0.0+0.2*i, 0.5f));
-        start.push_back(Vec2f(0.0+0.2*i, -0.5f));
-        end.push_back(Vec2f(0.0+0.2*i,0.5f));
+        center.push_back(Vec2f(0.0+0.02*i, 0.5f));
+        start.push_back(Vec2f(0.0+0.02*i, -0.5f));
+        end.push_back(Vec2f(0.0+0.02*i,0.5f));
     }
     Vec2f step=(end[0]-start[0])/(num_particles+1);
     const float rest = norm(step);
     // Vec2f step = (end-start)/(num_particles+1);
-	const float ks = 80.0f;
-    const float kd = 1.5f;
+	float ks = 180.0f;
+    float kd = 1.5f;
 
     for (int i = 0; i < numHairs; i++) {
         // Initialize particles
