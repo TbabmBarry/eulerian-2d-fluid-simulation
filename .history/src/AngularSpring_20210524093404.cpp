@@ -48,8 +48,8 @@ void AngularSpring::apply(bool springsCanBreak)
 
     // force = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
     //rest length r is calculated by rest angle here
-    Vec2f force1 = (m_ks*(norm(p1restlength)-0.02)+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
-    Vec2f force3 = (m_ks*(norm(p3restlength)-0.02)+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
+    Vec2f force1 = (m_ks*(norm(p1restlength))+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
+    Vec2f force3 = (m_ks*(norm(p3restlength))+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
     // Vec2f force1 = (m_ks*(norm(midtoP1)-p1restlength)+m_kd*((midtoP1*length1_derivate)/norm(midtoP1)))*(midtoP1/norm(midtoP1));
     // Vec2f force3 = (m_ks*(norm(midtoP3)-p3restlength)+m_kd*((midtoP3*length3_derivate)/norm(midtoP3)))*(midtoP3/norm(midtoP3));
     particles[0]->m_Force -= force1;

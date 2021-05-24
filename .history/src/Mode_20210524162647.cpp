@@ -159,8 +159,8 @@ void Mode::hair(System *sys){
     Vec2f step=(end[0]-start[0])/(num_particles+1);
     const float rest = norm(step);
     // Vec2f step = (end-start)/(num_particles+1);
-	float ks = 180.0f;
-    float kd = 1.5f;
+	const float ks = 80.0f;
+    const float kd = 1.5f;
 
     for (int i = 0; i < numHairs; i++) {
         // Initialize particles
@@ -172,13 +172,11 @@ void Mode::hair(System *sys){
 											sys->particles[i * (num_particles+2) + j + 1],
 											rest, ks, kd));
         }
-        float ks = 80.0f;
-        float kd = 1.5f;
         for (int j = 1; j < num_particles-1; j += 1) {
             sys->addForce(new AngularSpring(sys->particles[i * (num_particles+2) + j - 1],
 											sys->particles[i * (num_particles+2) + j],
 											sys->particles[i * (num_particles+2) + j + 1],
-											170, ks, kd));
+											180, ks, kd));
         }
         // cout<<center[i]<<endl;
         sys->addConstraint(new FixedPointConstraint(sys->particles[i * (num_particles+2) + num_particles + 1], center[i]));

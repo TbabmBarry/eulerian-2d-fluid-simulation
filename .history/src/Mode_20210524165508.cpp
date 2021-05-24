@@ -147,7 +147,7 @@ void Mode::cloth(System *sys) {
 void Mode::hair(System *sys){
 	vector<Vec2f> center;
 
-    const int numHairs = 10;
+    const int numHairs = 100;
     vector<Vec2f> start;
     const int num_particles = 5;
     vector<Vec2f> end;
@@ -159,7 +159,7 @@ void Mode::hair(System *sys){
     Vec2f step=(end[0]-start[0])/(num_particles+1);
     const float rest = norm(step);
     // Vec2f step = (end-start)/(num_particles+1);
-	float ks = 180.0f;
+	float ks = 80.0f;
     float kd = 1.5f;
 
     for (int i = 0; i < numHairs; i++) {

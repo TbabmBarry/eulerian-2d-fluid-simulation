@@ -56,7 +56,7 @@ void AngularSpring::apply(bool springsCanBreak)
     particles[1]->m_Force += force1;
     particles[1]->m_Force += force3;
     particles[2]->m_Force -= force3;
-    usleep(500);
+    // usleep(500);
     // cout <<"index: "<< particles[0]->index<<particles[1]->index<<particles[2]->index << endl;
     // cout <<"Force1: " << force1 << " Length: " << norm(midtoP1)<<" restlength: "<< p1restlength << endl;
   }

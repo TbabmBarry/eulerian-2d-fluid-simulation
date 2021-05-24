@@ -28,8 +28,8 @@ void AngularSpring::apply(bool springsCanBreak)
     Vec2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
     Vec2f midtoP3 = particles[2]->m_Position - particles[1]->m_Position; //l2=particle p1-particle midpoint
 
-    float current_angle = (acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3))) * 180.0 / PI);
-    float delta_angle = ((m_angle - current_angle)/2 * PI/180.0);
+    float current_angle = abs(acos((midtoP1 * midtoP3)/(norm(midtoP1) * norm(midtoP3))) * 180.0 / PI);
+    float delta_angle = abs((m_angle - current_angle)/2 * PI/180.0);
     // float half_current_angle = current_angle / 2;
     // float half_rest_angle = m_angle / 2;
 
@@ -48,8 +48,8 @@ void AngularSpring::apply(bool springsCanBreak)
 
     // force = [ ks * ( |l| - r ) + kd * l' * l /|l| ] * l / |l|
     //rest length r is calculated by rest angle here
-    Vec2f force1 = (m_ks*(norm(p1restlength)-0.02)+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
-    Vec2f force3 = (m_ks*(norm(p3restlength)-0.02)+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
+    Vec2f force1 = (m_ks*(norm(p1restlength))+m_kd*((p1restlength*length1_derivate)/norm(p1restlength)))*(p1restlength/norm(p1restlength));
+    Vec2f force3 = (m_ks*(norm(p3restlength))+m_kd*((p3restlength*length3_derivate)/norm(p3restlength)))*(p3restlength/norm(p3restlength));
     // Vec2f force1 = (m_ks*(norm(midtoP1)-p1restlength)+m_kd*((midtoP1*length1_derivate)/norm(midtoP1)))*(midtoP1/norm(midtoP1));
     // Vec2f force3 = (m_ks*(norm(midtoP3)-p3restlength)+m_kd*((midtoP3*length3_derivate)/norm(midtoP3)))*(midtoP3/norm(midtoP3));
     particles[0]->m_Force -= force1;
