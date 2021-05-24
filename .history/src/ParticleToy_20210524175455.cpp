@@ -270,10 +270,6 @@ static void key_func ( unsigned char key, int x, int y )
 	switch ( key )
 	{
 	case '1':
-	switch ( key )
-	{
-		case '1':sys->solver=new EulerSolver(EulerSolver::SEMI);
-	}
 		init_system();
 		// free_data();
 		sys->dt=0.1;
