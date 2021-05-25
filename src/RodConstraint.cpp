@@ -27,7 +27,6 @@ std::vector <Vec2f> RodConstraint::jacobian() {
     std::vector <Vec2f> j;
     j.push_back((m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 1
     j.push_back(-(m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 2
-    //but why push twice??? cuz 2 particles?
     return j;
 }
 

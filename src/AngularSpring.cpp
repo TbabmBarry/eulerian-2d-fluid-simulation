@@ -7,10 +7,10 @@
 
 #define PI 3.14159265
 
-AngularSpring::AngularSpring(Particle *p1, Particle * midpoint,Particle * p3, float m_dist, float m_ks, float m_kd) :
-  AngularSpring({p1, midpoint, p3}, m_dist, m_ks, m_kd) {}
+AngularSpring::AngularSpring(Particle *p1, Particle * midpoint,Particle * p3, float m_angle, float m_ks, float m_kd) :
+  AngularSpring({p1, midpoint, p3}, m_angle, m_ks, m_kd) {}
 
-AngularSpring::AngularSpring(vector<Particle*> particles, float m_dist, float m_ks, float m_kd) : m_dist(m_dist), m_ks(m_ks), m_kd(m_kd)
+AngularSpring::AngularSpring(vector<Particle*> particles, float m_angle, float m_ks, float m_kd) : m_angle(m_angle * PI / 180.0), m_ks(m_ks), m_kd(m_kd)
 {
     this->setTarget(particles);
 }
@@ -25,23 +25,24 @@ void AngularSpring::apply(bool springsCanBreak)
 {
   if (this->active)
   {
-    Vec2f p1toMid = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
-    Vec2f midtoP3 = particles[1]->m_Position - particles[2]->m_Position; //l2=particle p1-particle midpoint
-    float cos_angle = (p1toMid * midtoP3)/(norm(p1toMid) * norm(midtoP3));
+    Vec2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
+    Vec2f P3tomid = particles[1]->m_Position - particles[2]->m_Position; //l2=particle p1-particle midpoint
+    float cos_angle = (midtoP1 * P3tomid)/(norm(midtoP1) * norm(P3tomid));
     if (cos_angle > 1.0) cos_angle = 1.0;
     if (cos_angle < -1.0) cos_angle = -1.0;
-    float current_angle = acos(cos_angle) * 180.0 / PI;
-    cout << "current angle: " << cos_angle << endl;
-    double angle = acos(current_angle);
+    // float current_angle = acos(cos_angle) * 180.0 / PI;
+    // cout << "current angle: " << cos_angle << endl;
+    // double angle = acos(current_angle);
     Vec2f length = particles[0]->m_Position - particles[2]->m_Position;
     Vec2f velocity = particles[0]->m_Velocity - particles[2]->m_Velocity;
 
     // Compute spring force
-    double b = norm(p1toMid);
-    double c = norm(midtoP3);
-    Vec2f result = -(m_ks * (norm(length) - sqrt(b * b + c * c - 2 * b * c * cos(m_dist))) + m_kd * ((length * velocity) / norm(length))) *
+    double b = norm(midtoP1);
+    double c = norm(P3tomid);
+    Vec2f result = -(m_ks * (norm(length) - sqrt(b * b + c * c - 2 * b * c * cos(m_angle))) + m_kd * ((length * velocity) / norm(length))) *
                    (length / norm(length));
 
+    // usleep(300);
     particles[0]->m_Force += result;
     particles[2]->m_Force -= result;
   }
