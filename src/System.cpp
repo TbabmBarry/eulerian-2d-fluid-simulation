@@ -81,25 +81,33 @@ VectorXf System::collisionValidation(VectorXf newState)
 {
     for (int i = 0; i < particles.size(); i++)
     {
-        if (newState[i * 4] < -0.55f)
+        if (newState[i * 4] < -0.9f)
         {
-            newState[i * 4] = -0.55f;
+            // particles[i]->m_Force+= Vec2f(10,0);
+            newState[i * 4] = -0.9f;
+            newState[i * 4 + 2] = -newState[i * 4 + 2];
         }
 
-        if (newState[i * 4] > 1.5f)
+        if (newState[i * 4] > 0.9f)
         {
-            newState[i * 4] = 1.5f;
+            // particles[i]->m_Force+= Vec2f(-10,0);
+            newState[i * 4] = 0.9f;
+            newState[i * 4 + 2] = -newState[i * 4 + 2];
         }
 
-        if (newState[i * 4 + 1] < -2.5f)
+        if (newState[i * 4 + 1] < -0.9f)
         {
-            newState[i * 4 + 1] = -2.5f;
+            // particles[i]->m_Force+= Vec2f(0,100);
+            newState[i * 4 + 1] = -0.9f;
+            newState[i * 4 + 3] = -newState[i * 4 + 3];
         }
 
 
-        if (newState[i * 4 + 1] > 2.0f)
+        if (newState[i * 4 + 1] > 0.9f)
         {
-            newState[i * 4 + 1] = 2.0f;
+            // particles[i]->m_Force+= Vec2f(0,-100);
+            newState[i * 4 + 1] = 0.9f;
+            newState[i * 4 + 3] = -newState[i * 4 + 3];
         }
     }
     

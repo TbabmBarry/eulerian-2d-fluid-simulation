@@ -105,9 +105,10 @@ void Mode::cloth(System *sys) {
     float kd = 1.5f;
 
     const Vec2f center(0.0f, 0.0f);
-    sys->addConstraint(new FixedPointConstraint(sys->particles[0], center));
+    // sys->addConstraint(new FixedPointConstraint(sys->particles[0], center));
     sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
     sys->addForce(new DragForce(sys->particles, 0.3f));
+    sys->wall=true;
     for (int j = 0; j < ySize; j++) {//right,left
         for (int i = 0; i < xSize - 1; i++) {
             sys->addForce(new SpringForce(sys->particles[i + j * xSize],
