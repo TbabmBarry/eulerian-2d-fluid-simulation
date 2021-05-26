@@ -7,7 +7,7 @@
 
 class ExternalForce : public Force {
 public:
-    ExternalForce(std::vector<Particle*> particles, Vec2f direction);
+    ExternalForce(std::vector<Particle*> particles, float force, Vec2f direction);
 
     void setTarget(std::vector<Particle*> particles) override;
     void apply(bool springsCanBreak) override;
@@ -16,5 +16,7 @@ public:
     void draw() override;
 
     void setActive(bool state);
+    void setForce(float f);
     Vec2f direction;
+    float force;
 };

@@ -20,9 +20,6 @@ CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec2f & center
 	Constraint({p}), m_p(p), m_center(center), m_radius(radius) {}
 
 float CircularWireConstraint::C() {
-    // float dx = m_p->m_Position[0] - m_center[0];
-	// float dy = m_p->m_Position[1] - m_center[1];
-    // return pow(dx,2) + pow(dy,2) - pow(m_radius,2);
     Vec2f pVector = m_p->m_Position - m_center;
     return pVector * pVector - m_radius * m_radius;
 }
@@ -36,15 +33,6 @@ float CircularWireConstraint::legalVelocity() {//C'
     Vec2f vVector = m_p->m_Velocity;
     return 2 * pVector * vVector;
 }
-
-// float CircularWireConstraint::legal_accelerate() {//C''
-//     Vec2f vVector = m_p->m_Velocity;
-//     return 2 * vVector * vVector;
-// }
-
-// Vec2f CircularWireConstraint::ConstraintF(){
-// 	return -(m_p->m_Force * m_p->m_Position/norm(m_p->m_Position))*m_p->m_Position/norm(m_p->m_Position);
-// }
 
 vector<Vec2f> CircularWireConstraint::jacobian() {
     vector<Vec2f> j;

@@ -13,6 +13,8 @@
 #include "imageio.h"
 #include "GravityForce.h"
 #include "ExternalForce.h"
+#include "MidpointSolver.h"
+#include "RungeSovler.h"
 
 #include <vector>
 #include <stdlib.h>
@@ -36,8 +38,6 @@ static int dsim;
 static int dump_frames;
 static int frame_number;
 
-// static Particle *pList;
-// static std::vector<Particle*> pVector;
 static System* sys;
 static Mode* mode;
 static ExternalForce* mouseForce;
@@ -50,10 +50,8 @@ static int mouse_release[3];
 static int mouse_shiftclick[3];
 static int omx, omy, mx, my;
 static int hmx, hmy;
-
-// static SpringForce * delete_this_dummy_spring = NULL;
-// static RodConstraint * delete_this_dummy_rod = NULL;
-// static CircularWireConstraint * delete_this_dummy_wire = NULL;
+static float external_force;
+static int mode_index;
 
 
 /*
@@ -64,29 +62,11 @@ free/clear/allocate simulation data
 
 static void free_data ( void )
 {
-	// pVector.clear();
-	// if (delete_this_dummy_rod) {
-	// 	delete delete_this_dummy_rod;
-	// 	delete_this_dummy_rod = NULL;
-	// }
-	// if (delete_this_dummy_spring) {
-	// 	delete delete_this_dummy_spring;
-	// 	delete_this_dummy_spring = NULL;
-	// }
-	// if (delete_this_dummy_wire) {
-	// 	delete delete_this_dummy_wire;
-	// 	delete_this_dummy_wire = NULL;
-	// }
 	sys->free ();
 }
 
 static void clear_data ( void )
 {
-	// int ii, size = pVector.size();
-
-	// for(ii=0; ii<size; ii++){
-	// 	pVector[ii]->reset();
-	// }
 	sys->reset();
 }
 
@@ -95,10 +75,8 @@ static void init_system(void)
 	const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
-	// const Vec2f offset(0.0, dist);
 	sys = new System(new EulerSolver(EulerSolver::SEMI));
 	mode = new Mode();
-	// Create three particlereConstraint(sys->particles[0], center, dist));
 }
 
 /*
@@ -110,7 +88,6 @@ OpenGL specific drawing routines
 static void pre_display ( void )
 {
 	glViewport ( 0, 0, win_x, win_y );
-	// printf("hello"); recursively running
 	glMatrixMode ( GL_PROJECTION );
 	glLoadIdentity ();
 	gluOrtho2D ( -1.0, 1.0, -1.0, 1.0 );
@@ -146,70 +123,18 @@ static void post_display ( void )
 
 static void draw_particles ( void )
 {
-	// int size = pVector.size();
-
-	// for(int ii=0; ii< size; ii++)
-	// {
-	// 	pVector[ii]->draw();
-	// }
 	sys->drawParticles();
 }
 
 static void draw_forces ( void )
 {
-	// change this to iteration over full set
-	// if (delete_this_dummy_spring)
-	// 	delete_this_dummy_spring->draw();
 	sys->drawForces();
 }
 
 static void draw_constraints ( void )
 {
-	// change this to iteration over full set
-	// if (delete_this_dummy_rod)
-	// 	delete_this_dummy_rod->draw();
-	// if (delete_this_dummy_wire)
-	// 	delete_this_dummy_wire->draw();
 	sys->drawConstraints();
 }
-
-// static System* Hair() {
-//     System* sys = new System(new EulerSolver(EulerSolver::SEMI));
-
-//     const int num_particles = 100;
-//     const float deltay = 3.0f/num_particles;
-//     const int numHairs = 8;
-// 	const float ks = 50.0f;
-//     const float kd = 1.0f;
-
-//     for (int i = 0; i < numHairs; i++) {
-//         // Initialize particles
-//         for (int j = 0; j < num_particles; j++) {
-//             sys->addParticle(new Particle(Vec2f(-0.5f + 0.03f*i, 0.5f - j * deltay), 0.2f, i * num_particles + j));
-//         }
-
-//         // for (int j = 0; j < num_particles - 1; j++) {
-//         //     sys->addForce(new SpringForce(sys->particles[i * num_particles + j],
-//         //                                   sys->particles[i * num_particles + j + 1],
-//         //                                   deltay, ks, kd));
-//         // }
-//         for (int j = 2; j < num_particles - 2; j++) {
-//             sys->addForce(new AngularSpring(sys->particles[i * num_particles + j],
-// 											sys->particles[i * num_particles + j + 1],
-// 											sys->particles[i * num_particles + j + 2],
-// 											120, ks, kd));
-//         }
-
-//         float radius = 0.05f;
-//         sys->addConstraint(new CircularWireConstraint(sys->particles[i * num_particles],
-//                                                       Vec2f(0.0f,0.0f) + Vec2f(-radius, 0.f),//暂时定义为(0,0)+(-r,0)
-//                                                       radius));
-//     }
-//     // Add gravity and drag to all particles
-//     sys->addForce(new GravityForce(sys->particles, Vec2f(0, -9.81f)));
-//     return sys;
-// }
-
 
 
 /*
@@ -221,9 +146,7 @@ relates mouse movements to particle toy construction
 static void get_from_UI ()
 {
 	int i, j;
-	// int size, flag;
 	int hi, hj;
-	// float x, y;
 	if ( !mouse_down[0] && !mouse_down[2] && !mouse_release[0] 
 	&& !mouse_shiftclick[0] && !mouse_shiftclick[2] ) return;
 
@@ -270,64 +193,163 @@ static void key_func ( unsigned char key, int x, int y )
 	switch ( key )
 	{
 	case '1':
-	switch ( key )
-	{
-		case '1':sys->solver=new EulerSolver(EulerSolver::SEMI);
-	}
+		if (dsim)
+			dsim = !dsim;
 		init_system();
-		// free_data();
-		sys->dt=0.1;
+		sys->dt=0.05;
+		external_force = 0.008f;
+		mode_index = 1;
 		mode->Spring(sys);
 		break;
 
 	case '2':
-		init_system();
-		sys->dt=0.001;
-		mode->SpringRod(sys);
-		break;		
-	
-	case '3':
-		init_system();
-		sys->dt=0.001;
-		mode->SpringCircular(sys);
-		break;
-	
-	case '4':
-		init_system();
-		sys->dt=0.001;
-		mode->Rod(sys);
-		break;
-
-	case '5':
+		if (dsim)
+			dsim = !dsim;
 		init_system();
 		sys->dt=0.01;
+		external_force = 0.1f;
+		mode_index = 2;
 		mode->Gravity(sys);
 		break;
 
-	case '6':
+	case '3':
+		if (dsim)
+			dsim = !dsim;
 		init_system();
-		mode->test(sys);
+		sys->dt=0.05;
+		external_force = 0.001f;
+		mode_index = 3;
+		mode->SpringRod(sys);
+		break;		
+	
+	case '4':
+		if (dsim)
+			dsim = !dsim;
+		init_system();
+		sys->dt=0.001;
+		external_force = 0.065f;
+		sys->solver = new RungeSovler();
+		mode_index = 4; 
+		mode->CircularGravity(sys);
 		break;
 	
-	case '7':
+	case '5':
+		if (dsim)
+			dsim = !dsim;
+		init_system();
+		sys->dt=0.001;
+		external_force = 1.0f;
+		sys->solver = new RungeSovler(); 
+		mode_index = 5;
+		mode->CircularGravityRod(sys);
+		break;
+	
+	case '6':
+		if (dsim)
+			dsim = !dsim;
 		init_system();
 		sys->dt=0.01;
+		external_force = 0.05f;
+		sys->solver = new EulerSolver(EulerSolver::SEMI); 
+		mode_index = 6;
 		mode->hair(sys);
 		break;
 
-	case '8':
+	case '7':
+		if (dsim)
+			dsim = !dsim;
 		init_system();
 		sys->dt=0.001;
-		mode->cloth(sys);
+		external_force = 0.1f;
+		mode_index = 7;
+		sys->solver = new RungeSovler();
+		mode->Cloth(sys);
+		break;
+
+	case '8':
+		if (dsim)
+			dsim = !dsim;
+		init_system();
+		sys->dt=0.001;
+		external_force = 0.1f;
+		mode_index = 7;
+		sys->solver = new RungeSovler();
+		mode->CircularCloth(sys);
 		break;
 	
+	case 'w':
+	case 'W':
+		if (dsim)
+			dsim = !dsim;
+		sys->reset();	
+		printf("Using SEMI Euler\n");
+		sys->solver = new EulerSolver(EulerSolver::SEMI); 
+		break;
+
+	case 'e':
+	case 'E':
+		if (dsim)
+			dsim = !dsim;
+		sys->reset();
+		if (mode_index != 6) {
+			printf("Using Explicit Euler\n");
+        	sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
+		} else {
+			printf("Only SEMI\n");
+		}
+		
+		break;
+
+	case 'r':
+	case 'R':
+		if (dsim)
+			dsim = !dsim;
+		sys->reset();
+		if (mode_index != 6) {
+			printf("Using Implicit Euler\n");
+        	sys->solver = new EulerSolver(EulerSolver::IMPLICIT);
+		} else {
+			printf("Only SEMI\n");
+		}
+		 
+		break;
+
+	case 't':
+	case 'T':
+		if (dsim)
+			dsim = !dsim;
+		sys->reset();
+		if (mode_index != 6) {
+			printf("Using Midpoint Solver\n");
+        	sys->solver = new MidpointSolver();
+		} else {
+			printf("Only SEMI\n");
+		}
+		 
+		break;
+
+	case 'y':
+	case 'Y':
+		if (dsim)
+			dsim = !dsim;
+		sys->reset();
+		if (mode_index != 6) {
+			printf("Using Runge4 Solver\n");
+       	 	sys->solver = new RungeSovler();
+		} else {
+			printf("Only SEMI\n");
+		}				 
+		break;
+
 	case 'c':
 	case 'C':
+		free_data();
 		clear_data ();
 		break;
 
 	case 'd':
 	case 'D':
+		free_data();
 		dump_frames = !dump_frames;//dump-frames initially=0,not save img.
 		//post_display
 		break;
@@ -361,15 +383,7 @@ static void mouse_func ( int button, int state, int x, int y )
 
 	if (state == GLUT_UP){
 		mouseForce->setActive(false);
-		// std::cout << "GLUT_UP   x" << x << "   y" << y << std::endl;	
 	} else {
-
-		GLdouble modelMatrix[16];
-        glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
-        GLdouble projectionMatrix[16];
-        glGetDoublev(GL_PROJECTION_MATRIX, projectionMatrix);
-        GLint viewMatrix[4];
-        glGetIntegerv(GL_VIEWPORT, viewMatrix);
 
 		int mouse_x = x - int(win_x/2);
 		int mouse_y = int(win_y/2) - y;
@@ -384,7 +398,7 @@ static void mouse_func ( int button, int state, int x, int y )
             }
 		}
 
-		mouseForce = new ExternalForce({closestParticle}, Vec2f(0.0f,0.0f));
+		mouseForce = new ExternalForce({closestParticle}, external_force, Vec2f(0.0f,0.0f));
 		sys->addForce(mouseForce);
 		
 	}
@@ -396,8 +410,7 @@ static void motion_func ( int x, int y )
 	my = int(win_y/2) - y;
 
 	Vec2f position = mouseForce->particles[0]->m_Position;
-	//mode 3 8 use 5.0, others 0.005 
-	mouseForce->direction = 5.0f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
+	mouseForce->direction = 3.0f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
 }
 
 static void reshape_func ( int width, int height )
@@ -414,7 +427,6 @@ static void idle_func ( void )
 	if ( dsim ) sys->simulationStep();
 	else        {get_from_UI();remap_GUI();}
 
-	// sleep(0.5);
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
@@ -486,26 +498,27 @@ int main ( int argc, char ** argv )
 		d = atof(argv[3]);
 	}
 
-	printf ( "\n\nHow to use this application:\n\n" );
+	printf ( "\n\nHow to use this application:\n" );
 	printf ( "\t Toggle construction/simulation display with the spacebar key\n" );
 	printf ( "\t Dump frames by pressing the 'd' key\n" );
 	printf ( "\t Quit by pressing the 'q' key\n" );
-	printf ( "\t key '1' for Spring force\n" );
-	printf ( "\t key '2' for Spring force + Rod Constraint\n" );
-	printf ( "\t key '3' for Spring force + Circular Wire Constraint\n" );
-	printf ( "\t key '4' for Circular Wire Constraint + Spring force + Rod Constraint\n" );
-	printf ( "\t key '5' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity force\n" );
-	printf ( "\t key '6' for test\n");
-	printf ( "\t key '7' for hair\n");
-	printf ( "\t key '8' for cloth\n");
+	printf ( "\t key '1' for Spring force (default: Semi)\n" );
+	printf ( "\t key '2' for Gravity (default: Semi)\n" );
+	printf ( "\t key '3' for Spring force + Rod Constraint (default: Semi)\n" );
+	printf ( "\t key '4' for Circular Wire Constraint + Gravity (default: Runge4)\n" );
+	printf ( "\t key '5' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity (default: Runge4)\n" );
+	printf ( "\t key '6' for hair (Only Semi)\n");
+	printf ( "\t key '7' for cloth (default: Implicit)\n");
+	printf ( "\t key 'w' turn to Semi Euler solver\n");
+	printf ( "\t key 'e' turn to Explicit Euler solver\n");
+	printf ( "\t key 'r' turn to Implicit Euler solver\n");
+	printf ( "\t key 't' turn to Midpoint solver\n");
+	printf ( "\t key 'y' turn to Runge4 solver\n");
 
 	dsim = 0;
 	dump_frames = 0;
 	frame_number = 0;
 	init_system();
-	// sys = Cloth();
-	//+3 new Particles
-	//-->springforce;-->circularwireconstraint;-->rodconstraint
 	
 	win_x = 1024;
 	win_y = 1024;

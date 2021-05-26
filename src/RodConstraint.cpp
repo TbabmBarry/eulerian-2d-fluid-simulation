@@ -18,10 +18,6 @@ float RodConstraint::legalVelocity() {
 }
 
 // Legal accelaeration is not needed to compute the constraint force
-// float RodConstraint::legal_accelerate() {
-//     Vec2f vVector = (m_p1->m_Velocity - m_p2->m_Velocity);
-//     return 2 * vVector * vVector;
-// }
 
 std::vector <Vec2f> RodConstraint::jacobian() {
     std::vector <Vec2f> j;

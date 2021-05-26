@@ -1,5 +1,7 @@
 #include "RungeSovler.h"
 
+RungeSovler::RungeSovler(){}
+
 void RungeSovler::simulateStep(System *system, float h) {
 
     // Get the old state

@@ -15,7 +15,6 @@ class implicitMatrix
 {
  public:
   virtual void matVecMult(double x[], double r[]) = 0;
-  //virtual matVecMult类似java public method一样,随class implicitMatrixWithTrans:public implicitMatrix的matVecMult override而改变
 };
 
 // Matrix class the solver will accept

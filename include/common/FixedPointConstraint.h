@@ -7,7 +7,6 @@ class FixedPointConstraint : public Constraint {
   FixedPointConstraint(Particle *p, const Vec2f & center);
   float C() override;
   float legalVelocity() override;
-  // Vec2f ConstraintF();
   vector<Vec2f> jacobian() override;
   vector<Vec2f> jacobianDerivative() override;
   void draw() override;

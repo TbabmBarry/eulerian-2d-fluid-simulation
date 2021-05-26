@@ -20,9 +20,6 @@ FixedPointConstraint::FixedPointConstraint(Particle *p, const Vec2f & center) :
 	Constraint({p}), m_p(p), m_center(center) {}
 
 float FixedPointConstraint::C() {
-    // float dx = m_p->m_Position[0] - m_center[0];
-	// float dy = m_p->m_Position[1] - m_center[1];
-    // return pow(dx,2) + pow(dy,2) - pow(m_radius,2);
     Vec2f pVector = m_p->m_Position - m_center;
     return pVector * pVector / 2;
 }

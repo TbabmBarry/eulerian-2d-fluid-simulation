@@ -50,7 +50,6 @@ void EulerSolver::semiS(System *system, float h) {
     system->particleSetState(newState, system->particleGetTime() + h);
 
     //Use new vectory
-    // VectorXf semiState(system->particleDims());
     for (int i = 0; i < newState.size(); i += 4) {
         newState[i + 0] = oldState[i + 0] + h * newState[i + 2];
         newState[i + 1] = oldState[i + 1] + h * newState[i + 3];
@@ -91,7 +90,6 @@ void EulerSolver::implicitS(System *system, float h) {
         for (const auto &i1 : fjx) {
             for (const auto &i2 : i1.second) {
                 if (jxm.count(i1.first) && jxm[i1.first].count(i2.first)) {
-                    // todo maybe check if we can remove this, it should never happen?
                     // i1 and i2 exist
                     // Hence, we update the already existing value
                     jxm[i1.first][i2.first] += i2.second;
@@ -153,6 +151,8 @@ void EulerSolver::implicitS(System *system, float h) {
         newState[si + 3] = oldState[si + 3] + dy.coeff(i+1);// * h;
     }
 
+    if (system->wall)
+        newState = system->collisionValidation(newState);
     //set the new state
     system->particleSetState(newState, system->particleGetTime() + h);
 }

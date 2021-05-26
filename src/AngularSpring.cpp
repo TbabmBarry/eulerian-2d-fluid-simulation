@@ -30,9 +30,6 @@ void AngularSpring::apply(bool springsCanBreak)
     float cos_angle = (midtoP1 * P3tomid)/(norm(midtoP1) * norm(P3tomid));
     if (cos_angle > 1.0) cos_angle = 1.0;
     if (cos_angle < -1.0) cos_angle = -1.0;
-    // float current_angle = acos(cos_angle) * 180.0 / PI;
-    // cout << "current angle: " << cos_angle << endl;
-    // double angle = acos(current_angle);
     Vec2f length = particles[0]->m_Position - particles[2]->m_Position;
     Vec2f velocity = particles[0]->m_Velocity - particles[2]->m_Velocity;
 
@@ -60,16 +57,4 @@ MatrixXf AngularSpring::dv()
 
 void AngularSpring::draw()
 {
-  // glBegin( GL_LINES );
-  // glColor3f(0.6, 0.7, 0.8);
-  // glVertex2f( particles[0]->m_Position[0], particles[0]->m_Position[1] );
-  // glColor3f(0.6, 0.7, 0.8);
-  // glVertex2f( particles[1]->m_Position[0], particles[1]->m_Position[1] );
-  // glEnd();
-  // glBegin( GL_LINES );
-  // glColor3f(0.6, 0.7, 0.8);
-  // glVertex2f( particles[1]->m_Position[0], particles[1]->m_Position[1] );
-  // glColor3f(0.6, 0.7, 0.8);
-  // glVertex2f( particles[2]->m_Position[0], particles[2]->m_Position[1] );
-  // glEnd();
 }
