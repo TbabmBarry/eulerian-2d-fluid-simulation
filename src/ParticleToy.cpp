@@ -28,7 +28,7 @@
 
 /* macros */
 
-#define IX(i,j) ((i)+(N+2)*(j))
+#define IX(i,j) ((i)+(grid_N+2)*(j))
 /* external definitions (from solver) */
 // extern void simulation_step( std::vector<Particle*> pVector, float dt );
 // extern void dens_step ( int N, float * x, float * x0, float * u, float * v, float diff, float dt );
@@ -94,7 +94,7 @@ static void clear_data ( void )
 	sys->reset();
 
 	// for gird based system
-		int i, size=(N+2)*(N+2);
+	int i, size=(grid_N+2)*(grid_N+2);
 
 	for ( i=0 ; i<size ; i++ ) {
 		u[i] = v[i] = u_prev[i] = v_prev[i] = dens[i] = dens_prev[i] = 0.0f;
@@ -191,7 +191,7 @@ static void draw_velocity ( void )
 	int i, j;
 	float x, y, h;
 
-	h = 1.0f/grid_N;
+	h = 2.0f/grid_N;
 
 	glColor3f ( 1.0f, 1.0f, 1.0f );
 	glLineWidth ( 1.0f );
@@ -200,10 +200,10 @@ static void draw_velocity ( void )
 
 		for ( i=1 ; i<=grid_N ; i++ ) {
 			x = (i-0.5f)*h;
-			// x = -1 + x*2;
+			x = -1 + x;
 			for ( j=1 ; j<=grid_N ; j++ ) {
 				y = (j-0.5f)*h;
-				// y = -1 + x*2;
+				y = -1 + y;
 				glVertex2f ( x, y );
 				glVertex2f ( x+u[IX(i,j)], y+v[IX(i,j)] );
 			}
@@ -217,17 +217,17 @@ static void draw_density ( void )
 	int i, j;
 	float x, y, h, d00, d01, d10, d11;
 
-	h = 1.0f/grid_N;
+	h = 2.0f/grid_N;
 
 	glBegin ( GL_QUADS );
 
 		for ( i=0 ; i<=grid_N ; i++ ) {
 			x = (i-0.5f)*h;
-			// x = -1 + x*2;
+			x = -1 + x;
 			for ( j=0 ; j<=grid_N ; j++ ) {
 				y = (j-0.5f)*h;
-				// y = -1 + x*2;
-
+				y = -1 + y;
+				
 				d00 = dens[IX(i,j)];
 				d01 = dens[IX(i,j+1)];
 				d10 = dens[IX(i+1,j)];
@@ -290,10 +290,10 @@ static void get_from_UI_grid (float * d, float * u, float * v)
 
 	if ( !mouse_down[0] && !mouse_down[2] ) return;
 
-	i = (int)((       gmx /(float)win_x)*N+1);
-	j = (int)(((win_y-gmy)/(float)win_y)*N+1);
+	i = (int)((       gmx /(float)win_x)*grid_N+1);
+	j = (int)(((win_y-gmy)/(float)win_y)*grid_N+1);
 
-	if ( i<1 || i>N || j<1 || j>N ) return;
+	if ( i<1 || i>grid_N || j<1 || j>grid_N ) return;
 
 	if ( mouse_down[0] ) {
 		u[IX(i,j)] = force * (gmx-gomx);
@@ -502,10 +502,10 @@ static void mouse_func ( int button, int state, int x, int y )
 		
 	}
 
-	if (sys_type == true) {
-		gomx = x;
-		gomy = y;
-	}
+	
+	gomx = x;
+	gomy = y;
+
 	
 
 }
@@ -518,10 +518,9 @@ static void motion_func ( int x, int y )
 	Vec2f position = mouseForce->particles[0]->m_Position;
 	mouseForce->direction = 3.0f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
 
-	if (sys_type == true) {
-		gomx = x;
-		gomy = y;
-	}
+
+	gmx = x;
+	gmy = y;
 }
 
 static void reshape_func ( int width, int height )
@@ -541,8 +540,8 @@ static void idle_func ( void )
 	} 
 	else if (sys_type == true) {
 		get_from_UI_grid ( dens_prev, u_prev, v_prev );
-		fsolver->vel_step ( N, u, v, u_prev, v_prev, visc, dt );
-		fsolver->dens_step ( N, dens, dens_prev, u, v, diff, dt );
+		fsolver->vel_step ( grid_N, u, v, u_prev, v_prev, visc, dt );
+		fsolver->dens_step ( grid_N, dens, dens_prev, u, v, diff, dt );
 	}
 	
 	glutSetWindow ( win_id );
