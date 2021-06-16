@@ -192,48 +192,8 @@ static void key_func ( unsigned char key, int x, int y )
 {
 	switch ( key )
 	{
+
 	case '1':
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt=0.05;
-		external_force = 0.008f;
-		mode_index = 1;
-		mode->Spring(sys);
-		break;
-
-	case '2':
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt=0.01;
-		external_force = 0.1f;
-		mode_index = 2;
-		mode->Gravity(sys);
-		break;
-
-	case '3':
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt=0.05;
-		external_force = 0.001f;
-		mode_index = 3;
-		mode->SpringRod(sys);
-		break;		
-	
-	case '4':
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt=0.001;
-		external_force = 0.065f;
-		sys->solver = new RungeSovler();
-		mode_index = 4; 
-		mode->CircularGravity(sys);
-		break;
-	
-	case '5':
 		if (dsim)
 			dsim = !dsim;
 		init_system();
@@ -244,7 +204,7 @@ static void key_func ( unsigned char key, int x, int y )
 		mode->CircularGravityRod(sys);
 		break;
 	
-	case '6':
+	case '2':
 		if (dsim)
 			dsim = !dsim;
 		init_system();
@@ -255,18 +215,7 @@ static void key_func ( unsigned char key, int x, int y )
 		mode->hair(sys);
 		break;
 
-	case '7':
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt=0.001;
-		external_force = 0.1f;
-		mode_index = 7;
-		sys->solver = new RungeSovler();
-		mode->Cloth(sys);
-		break;
-
-	case '8':
+	case '3':
 		if (dsim)
 			dsim = !dsim;
 		init_system();
