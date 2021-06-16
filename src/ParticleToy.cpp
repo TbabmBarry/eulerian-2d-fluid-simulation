@@ -15,6 +15,7 @@
 #include "ExternalForce.h"
 #include "MidpointSolver.h"
 #include "RungeSovler.h"
+#include "FluidSolver.h"
 
 #include <vector>
 #include <stdlib.h>
@@ -27,11 +28,15 @@
 
 /* macros */
 
+#define IX(i,j) ((i)+(N+2)*(j))
 /* external definitions (from solver) */
 // extern void simulation_step( std::vector<Particle*> pVector, float dt );
+// extern void dens_step ( int N, float * x, float * x0, float * u, float * v, float diff, float dt );
+// extern void vel_step ( int N, float * u, float * v, float * u0, float * v0, float visc, float dt );
 
 /* global variables */
-
+static bool sys_type = false; // false = particle, true = fluid
+// for particle based system
 static int N;
 static float dt, d;
 static int dsim;
@@ -53,7 +58,16 @@ static int hmx, hmy;
 static float external_force;
 static int mode_index;
 
+// for grid based system
+static int grid_N;
+static float diff, visc;
+static float force, source;
+static int dvel;
 
+static float * u, * v, * u_prev, * v_prev;
+static float * dens, * dens_prev;
+static int gomx, gomy, gmx, gmy;
+FluidSolver *fsolver = new FluidSolver();
 /*
 ----------------------------------------------------------------------
 free/clear/allocate simulation data
@@ -62,12 +76,29 @@ free/clear/allocate simulation data
 
 static void free_data ( void )
 {
+	// for particle based system
 	sys->free ();
+
+	// for gird based system
+	if ( u ) free ( u );
+	if ( v ) free ( v );
+	if ( u_prev ) free ( u_prev );
+	if ( v_prev ) free ( v_prev );
+	if ( dens ) free ( dens );
+	if ( dens_prev ) free ( dens_prev );
 }
 
 static void clear_data ( void )
 {
+	// for particle based system
 	sys->reset();
+
+	// for gird based system
+		int i, size=(N+2)*(N+2);
+
+	for ( i=0 ; i<size ; i++ ) {
+		u[i] = v[i] = u_prev[i] = v_prev[i] = dens[i] = dens_prev[i] = 0.0f;
+	}
 }
 
 static void init_system(void)
@@ -79,6 +110,25 @@ static void init_system(void)
 	mode = new Mode();
 }
 
+
+static int allocate_data ( void )
+{
+	int size = (grid_N+2)*(grid_N+2);
+
+	u			= (float *) malloc ( size*sizeof(float) );
+	v			= (float *) malloc ( size*sizeof(float) );
+	u_prev		= (float *) malloc ( size*sizeof(float) );
+	v_prev		= (float *) malloc ( size*sizeof(float) );
+	dens		= (float *) malloc ( size*sizeof(float) );	
+	dens_prev	= (float *) malloc ( size*sizeof(float) );
+
+	if ( !u || !v || !u_prev || !v_prev || !dens || !dens_prev ) {
+		fprintf ( stderr, "cannot allocate data\n" );
+		return ( 0 );
+	}
+
+	return ( 1 );
+}
 /*
 ----------------------------------------------------------------------
 OpenGL specific drawing routines
@@ -136,6 +186,62 @@ static void draw_constraints ( void )
 	sys->drawConstraints();
 }
 
+static void draw_velocity ( void )
+{
+	int i, j;
+	float x, y, h;
+
+	h = 1.0f/grid_N;
+
+	glColor3f ( 1.0f, 1.0f, 1.0f );
+	glLineWidth ( 1.0f );
+
+	glBegin ( GL_LINES );
+
+		for ( i=1 ; i<=grid_N ; i++ ) {
+			x = (i-0.5f)*h;
+			// x = -1 + x*2;
+			for ( j=1 ; j<=grid_N ; j++ ) {
+				y = (j-0.5f)*h;
+				// y = -1 + x*2;
+				glVertex2f ( x, y );
+				glVertex2f ( x+u[IX(i,j)], y+v[IX(i,j)] );
+			}
+		}
+
+	glEnd ();
+}
+
+static void draw_density ( void )
+{
+	int i, j;
+	float x, y, h, d00, d01, d10, d11;
+
+	h = 1.0f/grid_N;
+
+	glBegin ( GL_QUADS );
+
+		for ( i=0 ; i<=grid_N ; i++ ) {
+			x = (i-0.5f)*h;
+			// x = -1 + x*2;
+			for ( j=0 ; j<=grid_N ; j++ ) {
+				y = (j-0.5f)*h;
+				// y = -1 + x*2;
+
+				d00 = dens[IX(i,j)];
+				d01 = dens[IX(i,j+1)];
+				d10 = dens[IX(i+1,j)];
+				d11 = dens[IX(i+1,j+1)];
+
+				glColor3f ( d00, d00, d00 ); glVertex2f ( x, y );
+				glColor3f ( d10, d10, d10 ); glVertex2f ( x+h, y );
+				glColor3f ( d11, d11, d11 ); glVertex2f ( x+h, y+h );
+				glColor3f ( d01, d01, d01 ); glVertex2f ( x, y+h );
+			}
+		}
+
+	glEnd ();
+}
 
 /*
 ----------------------------------------------------------------------
@@ -143,7 +249,7 @@ relates mouse movements to particle toy construction
 ----------------------------------------------------------------------
 */
 
-static void get_from_UI ()
+static void get_from_UI_particle ()
 {
 	int i, j;
 	int hi, hj;
@@ -173,6 +279,37 @@ static void get_from_UI ()
 	omy = my;
 }
 
+
+static void get_from_UI_grid (float * d, float * u, float * v)
+{
+	int i, j, size = (grid_N+2)*(grid_N+2);
+
+	for ( i=0 ; i<size ; i++ ) {
+		u[i] = v[i] = d[i] = 0.0f;
+	}
+
+	if ( !mouse_down[0] && !mouse_down[2] ) return;
+
+	i = (int)((       gmx /(float)win_x)*N+1);
+	j = (int)(((win_y-gmy)/(float)win_y)*N+1);
+
+	if ( i<1 || i>N || j<1 || j>N ) return;
+
+	if ( mouse_down[0] ) {
+		u[IX(i,j)] = force * (gmx-gomx);
+		v[IX(i,j)] = force * (gomy-gmy);
+	}
+
+	if ( mouse_down[2] ) {
+		d[IX(i,j)] = source;
+	}
+
+	gomx = gmx;
+	gomy = gmy;
+
+	return;
+}
+
 static void remap_GUI()
 {
 	for(int i=0; i < sys->particles.size(); i++)
@@ -194,6 +331,7 @@ static void key_func ( unsigned char key, int x, int y )
 	{
 
 	case '1':
+		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
 		init_system();
@@ -205,6 +343,7 @@ static void key_func ( unsigned char key, int x, int y )
 		break;
 	
 	case '2':
+		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
 		init_system();
@@ -216,6 +355,7 @@ static void key_func ( unsigned char key, int x, int y )
 		break;
 
 	case '3':
+		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
 		init_system();
@@ -226,6 +366,11 @@ static void key_func ( unsigned char key, int x, int y )
 		mode->CircularCloth(sys);
 		break;
 	
+	case '4':
+		sys_type = true;
+		init_system();
+
+
 	case 'w':
 	case 'W':
 		if (dsim)
@@ -292,7 +437,6 @@ static void key_func ( unsigned char key, int x, int y )
 
 	case 'c':
 	case 'C':
-		free_data();
 		clear_data ();
 		break;
 
@@ -300,7 +444,13 @@ static void key_func ( unsigned char key, int x, int y )
 	case 'D':
 		free_data();
 		dump_frames = !dump_frames;//dump-frames initially=0,not save img.
+		exit ( 0 );
 		//post_display
+		break;
+
+	case 'v':
+	case 'V':
+		dvel = !dvel;
 		break;
 
 	case 'q':
@@ -351,6 +501,13 @@ static void mouse_func ( int button, int state, int x, int y )
 		sys->addForce(mouseForce);
 		
 	}
+
+	if (sys_type == true) {
+		gomx = x;
+		gomy = y;
+	}
+	
+
 }
 
 static void motion_func ( int x, int y )
@@ -360,6 +517,11 @@ static void motion_func ( int x, int y )
 
 	Vec2f position = mouseForce->particles[0]->m_Position;
 	mouseForce->direction = 3.0f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
+
+	if (sys_type == true) {
+		gomx = x;
+		gomy = y;
+	}
 }
 
 static void reshape_func ( int width, int height )
@@ -373,20 +535,38 @@ static void reshape_func ( int width, int height )
 
 static void idle_func ( void )
 {
-	if ( dsim ) sys->simulationStep();
-	else        {get_from_UI();remap_GUI();}
-
+	if (sys_type == false) {
+		if ( dsim ) sys->simulationStep();
+		else        {get_from_UI_particle();remap_GUI();}
+	} 
+	else if (sys_type == true) {
+		get_from_UI_grid ( dens_prev, u_prev, v_prev );
+		fsolver->vel_step ( N, u, v, u_prev, v_prev, visc, dt );
+		fsolver->dens_step ( N, dens, dens_prev, u, v, diff, dt );
+	}
+	
 	glutSetWindow ( win_id );
 	glutPostRedisplay ();
 }
 
 static void display_func ( void )
 {
-	pre_display ();
-	draw_particles();
-	draw_forces();
-	draw_constraints();
-	post_display ();//frame,img
+	if (sys_type == false) {
+		pre_display ();
+		draw_particles();
+		draw_forces();
+		draw_constraints();
+		post_display ();//frame,img
+	} 
+	else if (sys_type == true)
+	{
+		pre_display ();
+		if ( dvel ) draw_velocity ();
+		else		draw_density ();
+		post_display ();
+	}
+	
+	
 }
 
 
@@ -436,11 +616,24 @@ int main ( int argc, char ** argv )
 	glutInit ( &argc, argv );
 
 	if ( argc == 1 ) {
+		
+		// for particle based system
 		N = 64;
 		dt = 0.1f;
 		d = 5.f;
 		fprintf ( stderr, "Using defaults : N=%d dt=%g d=%g\n",
 			N, dt, d );
+
+		// for grid based system
+		grid_N = 128;               //number of grid
+		diff = 0.0f;
+		visc = 0.0f;
+		force = 5.0f;
+		source = 100.0f;
+		fprintf ( stderr, "Using defaults : grid_N=%d dt=%g diff=%g visc=%g force = %g source=%g\n",
+			grid_N, dt, diff, visc, force, source );
+
+	
 	} else {
 		N = atoi(argv[1]);
 		dt = atof(argv[2]);
@@ -451,24 +644,27 @@ int main ( int argc, char ** argv )
 	printf ( "\t Toggle construction/simulation display with the spacebar key\n" );
 	printf ( "\t Dump frames by pressing the 'd' key\n" );
 	printf ( "\t Quit by pressing the 'q' key\n" );
-	printf ( "\t key '1' for Spring force (default: Semi)\n" );
-	printf ( "\t key '2' for Gravity (default: Semi)\n" );
-	printf ( "\t key '3' for Spring force + Rod Constraint (default: Semi)\n" );
-	printf ( "\t key '4' for Circular Wire Constraint + Gravity (default: Runge4)\n" );
-	printf ( "\t key '5' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity (default: Runge4)\n" );
-	printf ( "\t key '6' for hair (Only Semi)\n");
-	printf ( "\t key '7' for cloth (default: Implicit)\n");
+	printf ( "\t key '1' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity (default: Runge4)\n" );
+	printf ( "\t key '2' for hair (Only Semi)\n");
+	printf ( "\t key '3' for cloth (default: Implicit)\n");
 	printf ( "\t key 'w' turn to Semi Euler solver\n");
 	printf ( "\t key 'e' turn to Explicit Euler solver\n");
 	printf ( "\t key 'r' turn to Implicit Euler solver\n");
 	printf ( "\t key 't' turn to Midpoint solver\n");
 	printf ( "\t key 'y' turn to Runge4 solver\n");
 
+	// for particle based system
 	dsim = 0;
 	dump_frames = 0;
 	frame_number = 0;
 	init_system();
 	
+	// for grid based system
+	dvel = 0;
+
+	if ( !allocate_data () ) exit ( 1 );
+	clear_data ();
+
 	win_x = 1024;
 	win_y = 1024;
 	open_glut_window ();//open window-->pre-display;glutKeyboardFunc ( key_func );glutDisplayFunc ( display_func );
