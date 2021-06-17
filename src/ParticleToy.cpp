@@ -15,8 +15,7 @@
 #include "ExternalForce.h"
 #include "MidpointSolver.h"
 #include "RungeSovler.h"
-#include "FluidSolver.h"
-
+#include "FluidField.h"
 #include <vector>
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,7 +45,7 @@ static int frame_number;
 static System* sys;
 static Mode* mode;
 static ExternalForce* mouseForce;
-
+static FluidField* fluid;
 
 static int win_id;
 static int win_x, win_y;
@@ -64,10 +63,9 @@ static float diff, visc;
 static float force, source;
 static int dvel;
 
-static float * u, * v, * u_prev, * v_prev;
-static float * dens, * dens_prev;
+// static float * u, * v, * u_prev, * v_prev;
+// static float * dens, * dens_prev;
 static int gomx, gomy, gmx, gmy;
-FluidSolver *fsolver = new FluidSolver();
 /*
 ----------------------------------------------------------------------
 free/clear/allocate simulation data
@@ -77,15 +75,9 @@ free/clear/allocate simulation data
 static void free_data ( void )
 {
 	// for particle based system
-	sys->free ();
+	sys->free();
 
-	// for gird based system
-	if ( u ) free ( u );
-	if ( v ) free ( v );
-	if ( u_prev ) free ( u_prev );
-	if ( v_prev ) free ( v_prev );
-	if ( dens ) free ( dens );
-	if ( dens_prev ) free ( dens_prev );
+	fluid->freeData();
 }
 
 static void clear_data ( void )
@@ -93,12 +85,7 @@ static void clear_data ( void )
 	// for particle based system
 	sys->reset();
 
-	// for gird based system
-	int i, size=(grid_N+2)*(grid_N+2);
-
-	for ( i=0 ; i<size ; i++ ) {
-		u[i] = v[i] = u_prev[i] = v_prev[i] = dens[i] = dens_prev[i] = 0.0f;
-	}
+	fluid->reset();
 }
 
 static void init_system(void)
@@ -107,28 +94,29 @@ static void init_system(void)
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
 	sys = new System(new EulerSolver(EulerSolver::SEMI));
+	fluid = new FluidField(sys, grid_N);
 	mode = new Mode();
 }
 
 
-static int allocate_data ( void )
-{
-	int size = (grid_N+2)*(grid_N+2);
+// static int allocate_data ( void )
+// {
+// 	int size = (grid_N+2)*(grid_N+2);
 
-	u			= (float *) malloc ( size*sizeof(float) );
-	v			= (float *) malloc ( size*sizeof(float) );
-	u_prev		= (float *) malloc ( size*sizeof(float) );
-	v_prev		= (float *) malloc ( size*sizeof(float) );
-	dens		= (float *) malloc ( size*sizeof(float) );	
-	dens_prev	= (float *) malloc ( size*sizeof(float) );
+// 	fluid->u			= (float *) malloc ( size*sizeof(float) );
+// 	fluid->v			= (float *) malloc ( size*sizeof(float) );
+// 	fluid->u_previous		= (float *) malloc ( size*sizeof(float) );
+// 	fluid->v_previous		= (float *) malloc ( size*sizeof(float) );
+// 	fluid->density		= (float *) malloc ( size*sizeof(float) );	
+// 	fluid->density_previous	= (float *) malloc ( size*sizeof(float) );
 
-	if ( !u || !v || !u_prev || !v_prev || !dens || !dens_prev ) {
-		fprintf ( stderr, "cannot allocate data\n" );
-		return ( 0 );
-	}
+// 	if ( !u || !v || !fluid->u_previous || !fluid->v_previous || !fluid->density || !fluid->density_previous ) {
+// 		fprintf ( stderr, "cannot allocate data\n" );
+// 		return ( 0 );
+// 	}
 
-	return ( 1 );
-}
+// 	return ( 1 );
+// }
 /*
 ----------------------------------------------------------------------
 OpenGL specific drawing routines
@@ -188,59 +176,12 @@ static void draw_constraints ( void )
 
 static void draw_velocity ( void )
 {
-	int i, j;
-	float x, y, h;
-
-	h = 2.0f/grid_N;
-
-	glColor3f ( 1.0f, 1.0f, 1.0f );
-	glLineWidth ( 1.0f );
-
-	glBegin ( GL_LINES );
-
-		for ( i=1 ; i<=grid_N ; i++ ) {
-			x = (i-0.5f)*h;
-			x = -1 + x;
-			for ( j=1 ; j<=grid_N ; j++ ) {
-				y = (j-0.5f)*h;
-				y = -1 + y;
-				glVertex2f ( x, y );
-				glVertex2f ( x+u[IX(i,j)], y+v[IX(i,j)] );
-			}
-		}
-
-	glEnd ();
+	fluid->drawVelocity();
 }
 
 static void draw_density ( void )
 {
-	int i, j;
-	float x, y, h, d00, d01, d10, d11;
-
-	h = 2.0f/grid_N;
-
-	glBegin ( GL_QUADS );
-
-		for ( i=0 ; i<=grid_N ; i++ ) {
-			x = (i-0.5f)*h;
-			x = -1 + x;
-			for ( j=0 ; j<=grid_N ; j++ ) {
-				y = (j-0.5f)*h;
-				y = -1 + y;
-				
-				d00 = dens[IX(i,j)];
-				d01 = dens[IX(i,j+1)];
-				d10 = dens[IX(i+1,j)];
-				d11 = dens[IX(i+1,j+1)];
-
-				glColor3f ( d00, d00, d00 ); glVertex2f ( x, y );
-				glColor3f ( d10, d10, d10 ); glVertex2f ( x+h, y );
-				glColor3f ( d11, d11, d11 ); glVertex2f ( x+h, y+h );
-				glColor3f ( d01, d01, d01 ); glVertex2f ( x, y+h );
-			}
-		}
-
-	glEnd ();
+	fluid->drawDensity();
 }
 
 /*
@@ -280,12 +221,12 @@ static void get_from_UI_particle ()
 }
 
 
-static void get_from_UI_grid (float * d, float * u, float * v)
+static void get_from_UI_grid ()
 {
 	int i, j, size = (grid_N+2)*(grid_N+2);
 
 	for ( i=0 ; i<size ; i++ ) {
-		u[i] = v[i] = d[i] = 0.0f;
+		fluid->u[i] = fluid->v[i] = fluid->density[i] = 0.0f;
 	}
 
 	if ( !mouse_down[0] && !mouse_down[2] ) return;
@@ -296,12 +237,12 @@ static void get_from_UI_grid (float * d, float * u, float * v)
 	if ( i<1 || i>grid_N || j<1 || j>grid_N ) return;
 
 	if ( mouse_down[0] ) {
-		u[IX(i,j)] = force * (gmx-gomx);
-		v[IX(i,j)] = force * (gomy-gmy);
+		fluid->u[IX(i,j)] = force * (gmx-gomx);
+		fluid->v[IX(i,j)] = force * (gomy-gmy);
 	}
 
 	if ( mouse_down[2] ) {
-		d[IX(i,j)] = source;
+		fluid->density[IX(i,j)] = source;
 	}
 
 	gomx = gmx;
@@ -369,7 +310,7 @@ static void key_func ( unsigned char key, int x, int y )
 	case '4':
 		sys_type = true;
 		init_system();
-
+		// fluid->allocate ();
 
 	case 'w':
 	case 'W':
@@ -539,10 +480,8 @@ static void idle_func ( void )
 		else        {get_from_UI_particle();remap_GUI();}
 	} 
 	else if (sys_type == true) {
-		get_from_UI_grid ( dens_prev, u_prev, v_prev );
-		fsolver->vel_step ( grid_N, u, v, u_prev, v_prev, visc, dt );
-		fsolver->dens_step ( grid_N, dens, dens_prev, u, v, diff, dt );
-		fsolver->vorticity_confinement( grid_N, dt, dens_prev, u, v, u_prev, v_prev );
+		get_from_UI_grid();
+		fluid->simulationStep();
 	}
 	
 	glutSetWindow ( win_id );
@@ -662,7 +601,7 @@ int main ( int argc, char ** argv )
 	// for grid based system
 	dvel = 0;
 
-	if ( !allocate_data () ) exit ( 1 );
+	// if ( !fluid->allocate () ) exit ( 1 );
 	clear_data ();
 
 	win_x = 1024;
