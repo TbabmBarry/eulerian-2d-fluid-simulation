@@ -8,10 +8,6 @@
 #define SWAP(x0,x) {float * tmp=x0;x0=x;x=tmp;}
 
 FluidSolver::FluidSolver() {}
-FluidSolver::FluidSolver(float* u,float* v) : u(u), v(v){
-    for (int i = 0; i < (N+2)*(N+2); i++)
-        u_previous[i] = v_previous[i] = density_previous[i] = 0.0;
-}
 
 void FluidSolver::simulateStep(System *system, float h){
 }
@@ -122,8 +118,8 @@ void FluidSolver::project ( int N, float* u, float* v, float* p, float* div )
     set_bnd ( N, 2, v );//set velocity field
 }
 
-void FluidSolver::vorticity_confinement(int N, float dt){
-    float* curl = density_previous;
+void FluidSolver::vorticity_confinement(int N, float dt, float* d0, float* u, float* v, float * u0, float * v0){
+    float* curl = d0;
     //compute vorticity
     //totalDens = 0;
     float x,y,z;
@@ -150,8 +146,8 @@ void FluidSolver::vorticity_confinement(int N, float dt){
             len = 1/(sqrt(Nx*Nx + Ny*Ny) + 0.0000000000000000001);
             Nx *= len;
             Ny *= len;
-            u[IX(i,j)] += Nx*u_previous[IX(i,j)];
-            v[IX(i,j)] += Ny*v_previous[IX(i,j)];
+            u[IX(i,j)] += Nx*u0[IX(i,j)];
+            v[IX(i,j)] += Ny*v0[IX(i,j)];
         }
     }
 }
