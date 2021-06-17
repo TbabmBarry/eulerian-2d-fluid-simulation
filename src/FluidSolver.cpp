@@ -131,9 +131,9 @@ void FluidSolver::vorticity_confinement(int N, float dt){
         for (int j = 1; j <= N; j++) {
             //totalDens += this.dens[IX(i,j)];
             // curlx = dw/dy - dv/dz
-            x = (u[IX(i+1,j)] - u[IX(i-1,j)]) / 2;
+            x = (u[IX(i+1,j)] - u[IX(i-1,j)]) * 0.5;
             // curly = du/dz - dw/dx
-            y = (v[IX(i, j+1)] - v[IX(i, j-1)]) / 2;
+            y = (v[IX(i, j+1)] - v[IX(i, j-1)]) * 0.5;
             // curlz = dv/dx - du/dy
             z = 0;
             // curl = |curl|
@@ -141,18 +141,21 @@ void FluidSolver::vorticity_confinement(int N, float dt){
         }
     }
     //add vorticity confinement
+    float Nx, Ny, len;
     for (int i = 1; i <= N; i++) {
         for (int j = 1; j < N; j++) {
-            float Nx = (curl[IX(i+1, j)] - curl[IX(i-1, j)]) * 0.5;
-            float Ny = (curl[IX(i, j+1)] - curl[IX(i, j-1)]) * 0.5;
+            Nx = (curl[IX(i+1, j)] - curl[IX(i-1, j)]) * 0.5;
+            Ny = (curl[IX(i, j+1)] - curl[IX(i, j-1)]) * 0.5;
             //normalize
-            float len1 = 1/(sqrt(Nx*Nx + Ny*Ny) + 0.0000000000000000001);
-            Nx *= len1;
-            Ny *= len1;
+            len = 1/(sqrt(Nx*Nx + Ny*Ny) + 0.0000000000000000001);
+            Nx *= len;
+            Ny *= len;
             u[IX(i,j)] += Nx*u_previous[IX(i,j)];
             v[IX(i,j)] += Ny*v_previous[IX(i,j)];
         }
     }
+    set_bnd ( N, 1, u );//set velocity field
+    set_bnd ( N, 2, v );//set velocity field
 }
 
 void FluidSolver::dens_step ( int N, float* x, float* x0, float* u, float* v, float diff, float dt )
