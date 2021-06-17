@@ -154,8 +154,6 @@ void FluidSolver::vorticity_confinement(int N, float dt){
             v[IX(i,j)] += Ny*v_previous[IX(i,j)];
         }
     }
-    set_bnd ( N, 1, u );//set velocity field
-    set_bnd ( N, 2, v );//set velocity field
 }
 
 void FluidSolver::dens_step ( int N, float* x, float* x0, float* u, float* v, float diff, float dt )
