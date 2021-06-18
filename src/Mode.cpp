@@ -26,10 +26,10 @@ void Mode::CircularGravityRod(System *sys) {
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
 
-    sys->addParticle(new Particle(center + offset, 10.0f, 0));
+    sys->addParticle(new Particle(center + offset, 10.0f, 0, Particle::NORMAL));
 	// printf("1st");
-	sys->addParticle(new Particle(center + 2 * offset, 1.0f, 1));
-    sys->addParticle(new Particle(center + 3 * offset, 1.0f, 2));
+	sys->addParticle(new Particle(center + 2 * offset, 1.0f, 1, Particle::NORMAL));
+    sys->addParticle(new Particle(center + 3 * offset, 1.0f, 2, Particle::NORMAL));
 	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 120.f, 1.0f));
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
@@ -43,7 +43,7 @@ void Mode::CircularCloth(System *sys) {
 
     for (int j = 0; j < ySize; j++) {
         for (int i = 0; i < xSize; i++) {
-            sys->addParticle(new Particle(Vec2f(-0.6f + i * dist, 0.4f - j * dist), 0.1f, index));
+            sys->addParticle(new Particle(Vec2f(-0.6f + i * dist, 0.4f - j * dist), 0.1f, index, Particle::NORMAL));
             index++;
         }
     }
@@ -111,10 +111,10 @@ void Mode::hair(System *sys){
         // Initialize particles
         for (int j = 0; j < num_particles; j++) {
             if(j==0){
-                sys->addParticle(new Particle(Vec2f(0.0f + 0.03f * i, 0.5f - j * 0.05), 0.1f, i * num_particles + j));
+                sys->addParticle(new Particle(Vec2f(0.0f + 0.03f * i, 0.5f - j * 0.05), 0.1f, i * num_particles + j, Particle::NORMAL));
             }
             else{
-                sys->addParticle(new Particle(Vec2f(0.0f + 0.03f * i + pow(-1,j) * 0.02, 0.5f - j * 0.05), 0.1f, i * num_particles + j));
+                sys->addParticle(new Particle(Vec2f(0.0f + 0.03f * i + pow(-1,j) * 0.02, 0.5f - j * 0.05), 0.1f, i * num_particles + j, Particle::NORMAL));
             }
         }
         for (int j = 0; j < num_particles - 1; j++) {
