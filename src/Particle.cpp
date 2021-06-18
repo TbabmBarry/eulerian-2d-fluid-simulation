@@ -5,8 +5,8 @@
     #define M_PI 3.14159265358979323846
 #endif
 
-Particle::Particle(const Vec2f & ConstructPos, float mass, int index, TYPE type) :
-	m_ConstructPos(ConstructPos), m_Position(Vec2f(0.0, 0.0)), m_Velocity(Vec2f(0.0, 0.0)), mass(mass), index(index), 
+Particle::Particle(const Vector2f & ConstructPos, float mass, int index, TYPE type) :
+	m_ConstructPos(ConstructPos), m_Position(Vector2f(0.0, 0.0)), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index), 
 	type(NORMAL), MassCenter(ConstructPos), dimension(5)
 {
 	switch (type)
@@ -28,18 +28,17 @@ Particle::~Particle(void)
 void Particle::reset()
 {
 	m_Position = m_ConstructPos;
-	m_Velocity = Vec2f(0.0, 0.0);
-	m_Force = Vec2f(0.0, 0.0);
+	m_Velocity = Vector2f(0.0, 0.0);
+	m_Force = Vector2f(0.0, 0.0);
 
 	//rigid specific
 	I = 0.0;
 	x = MassCenter;
     R = Matrix2f::Identity();
-    P = Vec2f(0, 0);//M*v(t)
+    P = Vector2f(0, 0);//M*v(t)
     L = 0.0;//I*w(t)
-    v = Vec2f(0, 0);
+    v = Vector2f(0, 0);
     omega = L/I;
-    force = Vec2f(0, 0);
     torque = 0.0;
     angle = 10 * 180 / M_PI;
 }
@@ -66,13 +65,13 @@ void Particle::draw()//draw a square
 void Particle::setBoundingBox(){
 	//local positions wrt masscenter, in order to deal with rotation
 	//to be changed
-	corners.push_back(Vec2f(dimension/2 , dimension/2));//local topright
-	corners.push_back(Vec2f(-dimension/2 , dimension/2));//local topleft
-	corners.push_back(Vec2f(dimension/2 , -dimension/2));//local bottomright
-	corners.push_back(Vec2f(-dimension/2 , -dimension/2));//local bottomleft
+	corners.push_back(Vector2f(dimension/2 , dimension/2));//local topright
+	corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
+	corners.push_back(Vector2f(dimension/2 , -dimension/2));//local bottomright
+	corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
 }
 
-vector<Vec2f> Particle::getBoundingBox(){
+vector<Vector2f> Particle::getBoundingBox(){
 	switch (type)
     {
     case NORMAL:

@@ -25,19 +25,19 @@ void AngularSpring::apply(bool springsCanBreak)
 {
   if (this->active)
   {
-    Vec2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
-    Vec2f P3tomid = particles[1]->m_Position - particles[2]->m_Position; //l2=particle p1-particle midpoint
-    float cos_angle = (midtoP1 * P3tomid)/(norm(midtoP1) * norm(P3tomid));
+    Vector2f midtoP1 = particles[0]->m_Position - particles[1]->m_Position; //l1=particle p1-particle midpoint
+    Vector2f P3tomid = particles[1]->m_Position - particles[2]->m_Position; //l2=particle p1-particle midpoint
+    float cos_angle = midtoP1.dot(P3tomid) / (midtoP1.norm() * P3tomid.norm());
     if (cos_angle > 1.0) cos_angle = 1.0;
     if (cos_angle < -1.0) cos_angle = -1.0;
-    Vec2f length = particles[0]->m_Position - particles[2]->m_Position;
-    Vec2f velocity = particles[0]->m_Velocity - particles[2]->m_Velocity;
+    Vector2f length = particles[0]->m_Position - particles[2]->m_Position;
+    Vector2f velocity = particles[0]->m_Velocity - particles[2]->m_Velocity;
 
     // Compute spring force
-    double b = norm(midtoP1);
-    double c = norm(P3tomid);
-    Vec2f result = -(m_ks * (norm(length) - sqrt(b * b + c * c - 2 * b * c * cos(m_angle))) + m_kd * ((length * velocity) / norm(length))) *
-                   (length / norm(length));
+    float b = midtoP1.norm();
+    float c = P3tomid.norm();
+    Vector2f result = -(m_ks * (length.norm() - sqrt(b * b + c * c - 2 * b * c * cos(m_angle))) + m_kd * (length.dot(velocity) / length.norm())) *
+                   (length / length.norm());
 
     // usleep(300);
     particles[0]->m_Force += result;

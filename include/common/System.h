@@ -42,7 +42,7 @@ class System {
         // Calculate the derivative: Divide force by mass to get acceleration, and gather the derivatives into a global vector for the solver
         VectorXf particleDerivative();
         // Gather state from the particles/rigids into dst
-        // VectorXf rigidDerivative();
+        VectorXf rigidDerivative();
         // void updateForce();
         // void updateTorque();
         
@@ -56,8 +56,8 @@ class System {
         // Scatter state from src into the particles
         void particleSetState(VectorXf src);
         void particleSetState(VectorXf newState, float time);
-        // void rigidSetState(VectorXf src);
-        // void rigidSetState(VectorXf newState, float time);
+        void rigidSetState(VectorXf src);
+        void rigidSetState(VectorXf newState, float time);
         // Get length of state derivative, and force vectors
         int particleDims();
         int rigidDims();

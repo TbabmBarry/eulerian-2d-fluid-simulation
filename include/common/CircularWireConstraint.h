@@ -5,16 +5,16 @@
 
 class CircularWireConstraint : public Constraint {
  public:
-  CircularWireConstraint(Particle *p, const Vec2f & center, const float radius);
+  CircularWireConstraint(Particle *p, const Vector2f & center, const float radius);
   float C() override;
   float legalVelocity() override;
-  vector<Vec2f> jacobian() override;
-  vector<Vec2f> jacobianDerivative() override;
+  vector<Vector2f> jacobian() override;
+  vector<Vector2f> jacobianDerivative() override;
   void draw() override;
 
  private:
 
   Particle * const m_p;
-  Vec2f const m_center;
+  Vector2f const m_center;
   float const m_radius;
 };

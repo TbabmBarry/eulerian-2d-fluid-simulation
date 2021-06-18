@@ -12,22 +12,22 @@ float RodConstraint::C() {
 }
 
 float RodConstraint::legalVelocity() {
-    Vec2f pVector = (m_p1->m_Position - m_p2->m_Position) * 2;
-    Vec2f vVector = (m_p1->m_Velocity - m_p2->m_Velocity) * 2;
-    return pVector * vVector;
+    Vector2f pVector = (m_p1->m_Position - m_p2->m_Position) * 2;
+    Vector2f vVector = (m_p1->m_Velocity - m_p2->m_Velocity) * 2;
+    return pVector.dot(vVector);
 }
 
 // Legal accelaeration is not needed to compute the constraint force
 
-std::vector <Vec2f> RodConstraint::jacobian() {
-    std::vector <Vec2f> j;
+std::vector <Vector2f> RodConstraint::jacobian() {
+    std::vector <Vector2f> j;
     j.push_back((m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 1
     j.push_back(-(m_p1->m_Position - m_p2->m_Position) * 2);//for partcle 2
     return j;
 }
 
-std::vector<Vec2f> RodConstraint::jacobianDerivative() {
-    std::vector <Vec2f> jd;
+std::vector<Vector2f> RodConstraint::jacobianDerivative() {
+    std::vector <Vector2f> jd;
     jd.push_back((m_p1->m_Velocity-m_p2->m_Velocity) * 2);
     jd.push_back(-(m_p1->m_Velocity-m_p2->m_Velocity) * 2);
     return jd;

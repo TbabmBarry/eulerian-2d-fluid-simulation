@@ -4,15 +4,15 @@
 
 class FixedPointConstraint : public Constraint {
  public:
-  FixedPointConstraint(Particle *p, const Vec2f & center);
+  FixedPointConstraint(Particle *p, const Vector2f & center);
   float C() override;
   float legalVelocity() override;
-  vector<Vec2f> jacobian() override;
-  vector<Vec2f> jacobianDerivative() override;
+  vector<Vector2f> jacobian() override;
+  vector<Vector2f> jacobianDerivative() override;
   void draw() override;
 
  private:
 
   Particle * const m_p;
-  Vec2f const m_center;
+  Vector2f const m_center;
 };

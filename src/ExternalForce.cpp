@@ -1,6 +1,6 @@
 #include "ExternalForce.h"
 
-ExternalForce::ExternalForce(std::vector<Particle*> particles, float force, Vec2f direction) : direction(direction)
+ExternalForce::ExternalForce(std::vector<Particle*> particles, float force, Vector2f direction) : direction(direction)
 {
     this->setTarget(particles);
     this->setForce(force);

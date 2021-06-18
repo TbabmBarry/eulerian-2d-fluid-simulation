@@ -4,7 +4,7 @@
 
 #define PI 3.1415926535897932384626433832795
 
-static void draw_circle(const Vec2f & vect, float radius)
+static void draw_circle(const Vector2f & vect, float radius)
 {
 	glBegin(GL_LINE_LOOP);
 	glColor3f(0.0,1.0,0.0); 
@@ -16,12 +16,12 @@ static void draw_circle(const Vec2f & vect, float radius)
 	glEnd();
 }
 
-FixedPointConstraint::FixedPointConstraint(Particle *p, const Vec2f & center) :
+FixedPointConstraint::FixedPointConstraint(Particle *p, const Vector2f & center) :
 	Constraint({p}), m_p(p), m_center(center) {}
 
 float FixedPointConstraint::C() {
-    Vec2f pVector = m_p->m_Position - m_center;
-    return pVector * pVector / 2;
+    Vector2f pVector = m_p->m_Position - m_center;
+    return pVector.dot(pVector) / 2;
 }
 
 /**
@@ -29,20 +29,20 @@ float FixedPointConstraint::C() {
  * @return x * xd
  */
 float FixedPointConstraint::legalVelocity() {//C'
-    Vec2f pVector = m_p->m_Position - m_center;
-    Vec2f vVector = m_p->m_Velocity;
-    return pVector * vVector;
+    Vector2f pVector = m_p->m_Position - m_center;
+    Vector2f vVector = m_p->m_Velocity;
+    return pVector.dot(vVector);
 }
 
-vector<Vec2f> FixedPointConstraint::jacobian() {
-    vector<Vec2f> j;
+vector<Vector2f> FixedPointConstraint::jacobian() {
+    vector<Vector2f> j;
 	//J=(x-xc,y-yc)
     j.push_back(m_p->m_Position - m_center);
     return j;
 }
 
-vector<Vec2f> FixedPointConstraint::jacobianDerivative() {
-    vector<Vec2f> jd;
+vector<Vector2f> FixedPointConstraint::jacobianDerivative() {
+    vector<Vector2f> jd;
     jd.push_back(m_p->m_Velocity);
     return jd;
 }

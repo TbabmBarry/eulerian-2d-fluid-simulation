@@ -23,14 +23,14 @@
 
 void Mode::CircularGravityRod(System *sys) {
     const double dist = 0.2;
-	const Vec2f center(0.0, 0.0);
-	const Vec2f offset(dist, 0.0);
+	const Vector2f center(0.0, 0.0);
+	const Vector2f offset(dist, 0.0);
 
     sys->addParticle(new Particle(center + offset, 10.0f, 0, Particle::NORMAL));
 	// printf("1st");
 	sys->addParticle(new Particle(center + 2 * offset, 1.0f, 1, Particle::NORMAL));
     sys->addParticle(new Particle(center + 3 * offset, 1.0f, 2, Particle::NORMAL));
-	sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+	sys->addForce(new GravityForce(sys->particles, Vector2f(0.0f, -9.8f)));
     sys->addForce(new SpringForce(sys->particles[0], sys->particles[1], dist/2, 120.f, 1.0f));
     sys->addConstraint(new RodConstraint(sys->particles[1], sys->particles[2], dist));
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, dist));
@@ -43,7 +43,7 @@ void Mode::CircularCloth(System *sys) {
 
     for (int j = 0; j < ySize; j++) {
         for (int i = 0; i < xSize; i++) {
-            sys->addParticle(new Particle(Vec2f(-0.6f + i * dist, 0.4f - j * dist), 0.1f, index, Particle::NORMAL));
+            sys->addParticle(new Particle(Vector2f(-0.6f + i * dist, 0.4f - j * dist), 0.1f, index, Particle::NORMAL));
             index++;
         }
     }
@@ -51,10 +51,10 @@ void Mode::CircularCloth(System *sys) {
     float ks = 250.0f;
     float kd = 1.5f;
     sys->wall=true;
-    const Vec2f center(-0.8f, 0.6f);
+    const Vector2f center(-0.8f, 0.6f);
 
     sys->addConstraint(new CircularWireConstraint(sys->particles[0], center, sqrt(2)*0.2));
-    sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+    sys->addForce(new GravityForce(sys->particles, Vector2f(0.0f, -9.8f)));
     sys->addForce(new DragForce(sys->particles, 0.3f));
     sys->wall=true;
     for (int j = 0; j < ySize; j++) {//right,left
@@ -94,12 +94,12 @@ void Mode::CircularCloth(System *sys) {
 
 
 void Mode::hair(System *sys){
-	vector<Vec2f> center;
+	vector<Vector2f> center;
 
     const int numHairs = 20;
     const int num_particles = 12;\
     for(int i=0;i<numHairs;++i){
-        center.push_back(Vec2f(0.0+0.03*i, 0.5f));
+        center.push_back(Vector2f(0.0+0.03*i, 0.5f));
     }
     // Vec2f step = (end-start)/(num_particles+1);
 	float ks = 180.0f;
@@ -111,10 +111,10 @@ void Mode::hair(System *sys){
         // Initialize particles
         for (int j = 0; j < num_particles; j++) {
             if(j==0){
-                sys->addParticle(new Particle(Vec2f(0.0f + 0.03f * i, 0.5f - j * 0.05), 0.1f, i * num_particles + j, Particle::NORMAL));
+                sys->addParticle(new Particle(Vector2f(0.0f + 0.03f * i, 0.5f - j * 0.05), 0.1f, i * num_particles + j, Particle::NORMAL));
             }
             else{
-                sys->addParticle(new Particle(Vec2f(0.0f + 0.03f * i + pow(-1,j) * 0.02, 0.5f - j * 0.05), 0.1f, i * num_particles + j, Particle::NORMAL));
+                sys->addParticle(new Particle(Vector2f(0.0f + 0.03f * i + pow(-1,j) * 0.02, 0.5f - j * 0.05), 0.1f, i * num_particles + j, Particle::NORMAL));
             }
         }
         for (int j = 0; j < num_particles - 1; j++) {
@@ -135,6 +135,6 @@ void Mode::hair(System *sys){
         
     }
     // Add gravity and drag to all particles
-    sys->addForce(new GravityForce(sys->particles, Vec2f(0.0f, -9.8f)));
+    sys->addForce(new GravityForce(sys->particles, Vector2f(0.0f, -9.8f)));
     sys->addForce(new DragForce(sys->particles, 0.3f));
 }

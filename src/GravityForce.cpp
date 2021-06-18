@@ -4,7 +4,7 @@
 #include <gfx/vec2.h>
 #include <math.h>
 
-GravityForce::GravityForce(vector<Particle*> particles, Vec2f g) :
+GravityForce::GravityForce(vector<Particle*> particles, Vector2f g) :
   g(g) {
     this->setTarget(particles);
   }

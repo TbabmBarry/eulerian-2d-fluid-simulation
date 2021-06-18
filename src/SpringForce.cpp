@@ -24,13 +24,13 @@ void SpringForce::setTarget(vector<Particle*> particles)
 
 void SpringForce::apply(bool springsCanBreak)
 {
-    Vec2f length = particles[0]->m_Position - particles[1]->m_Position; //l=particle p1-particle p2
-    Vec2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
+    Vector2f length = particles[0]->m_Position - particles[1]->m_Position; //l=particle p1-particle p2
+    Vector2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
 
-    if(springsCanBreak && norm(length) > 2 * m_dist){//think of break(or not) length
+    if(springsCanBreak && length.norm() > 2 * m_dist){//think of break(or not) length
         this->toggle();
     } else if(this->active){
-        Vec2f force = (m_ks*(norm(length)-m_dist)+m_kd*((length*length_derivate)/norm(length)))*(length/norm(length));
+        Vector2f force = (m_ks*(length.norm()-m_dist)+m_kd*(length.dot(length_derivate)/length.norm()))*(length/length.norm());
         particles[0]->m_Force -= force;
         particles[1]->m_Force += force;
     }
@@ -41,8 +41,8 @@ map<int, map<int, float>> SpringForce::dx()
     map<int, map<int, float>> res = map<int, map<int, float>>();
     MatrixXf I = MatrixXf::Identity(2, 2);
 
-    Vec2f length = particles[0]->m_Position - particles[1]->m_Position;
-    Vec2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
+    Vector2f length = particles[0]->m_Position - particles[1]->m_Position;
+    Vector2f length_derivate = particles[0]->m_Velocity - particles[1]->m_Velocity; //l'=velocity p1-velocity p2
     Vector2f xij = Vector2f(length[0], length[1]);
     Vector2f vij = Vector2f(length_derivate[0], length_derivate[1]);
     float xij_magnitude = xij.norm();
@@ -62,7 +62,7 @@ map<int, map<int, float>> SpringForce::dx()
 
 MatrixXf SpringForce::dv()
 {
-    Vec2f length = particles[0]->m_Position - particles[1]->m_Position;
+    Vector2f length = particles[0]->m_Position - particles[1]->m_Position;
     Vector2f xij = Vector2f(length[0], length[1]);
     float xij_magnitude = xij.norm();
     Vector2f xij_norm = Vector2f(length[0] / xij_magnitude, length[1] / xij_magnitude);

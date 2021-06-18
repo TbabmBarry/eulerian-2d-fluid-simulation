@@ -8,8 +8,8 @@ class RodConstraint : public Constraint {
   RodConstraint(Particle *p1, Particle * p2, float dist);
   float C() override;
   float legalVelocity() override;
-  vector<Vec2f> jacobian() override;
-  vector<Vec2f> jacobianDerivative() override;
+  vector<Vector2f> jacobian() override;
+  vector<Vector2f> jacobianDerivative() override;
   void draw() override;
 
  private:
