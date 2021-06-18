@@ -32,7 +32,6 @@ void Particle::reset()
 	m_Force = Vec2f(0.0, 0.0);
 
 	//rigid specific
-	corners.empty();
 	I = 0.0;
 	x = MassCenter;
     R = Matrix2f::Identity();
@@ -65,11 +64,12 @@ void Particle::draw()//draw a square
 }
 
 void Particle::setBoundingBox(){
+	//local positions wrt masscenter, in order to deal with rotation
 	//to be changed
-	corners.push_back(MassCenter + Vec2f(dimension/2 , dimension/2));//topright
-	corners.push_back(MassCenter + Vec2f(-dimension/2 , dimension/2));//topleft
-	corners.push_back(MassCenter + Vec2f(dimension/2 , -dimension/2));//bottomright
-	corners.push_back(MassCenter + Vec2f(-dimension/2 , -dimension/2));//bottomleft
+	corners.push_back(Vec2f(dimension/2 , dimension/2));//local topright
+	corners.push_back(Vec2f(-dimension/2 , dimension/2));//local topleft
+	corners.push_back(Vec2f(dimension/2 , -dimension/2));//local bottomright
+	corners.push_back(Vec2f(-dimension/2 , -dimension/2));//local bottomleft
 }
 
 vector<Vec2f> Particle::getBoundingBox(){

@@ -18,6 +18,8 @@ class System {
 
         // Store all the particles in the system
         vector<Particle*> particles;
+        // Store all the rigid bodies in the system
+        vector<Particle*> rigidbodies;
         // Store all the forces to be applied on particles
         vector<Force*> forces;
         // Store all the constraints to be maintained
@@ -31,6 +33,7 @@ class System {
         float dt;
 
         void addParticle(Particle* p);
+        void addRigid(Particle* p);
         void addForce(Force* f);
         void addConstraint(Constraint* constraint);
         // ODE Interface
@@ -38,8 +41,13 @@ class System {
         VectorXf particleAcceleration();
         // Calculate the derivative: Divide force by mass to get acceleration, and gather the derivatives into a global vector for the solver
         VectorXf particleDerivative();
-        // Gather state from the particles into dst
+        // Gather state from the particles/rigids into dst
+        // VectorXf rigidDerivative();
+        // void updateForce();
+        // void updateTorque();
+        
         VectorXf particleGetState();
+        VectorXf rigidGetState();
 
         // Check the wall collision and update state
         VectorXf collisionValidation(VectorXf newState);
@@ -48,8 +56,11 @@ class System {
         // Scatter state from src into the particles
         void particleSetState(VectorXf src);
         void particleSetState(VectorXf newState, float time);
+        // void rigidSetState(VectorXf src);
+        // void rigidSetState(VectorXf newState, float time);
         // Get length of state derivative, and force vectors
         int particleDims();
+        int rigidDims();
 
         void free();
         void reset();

@@ -33,7 +33,7 @@ public:
 
 
 	//rigid body specific
-	vector<Vec2f> corners;
+	vector<Vec2f> corners;//local positions wrt masscenter, in order to deal with rotation
 	void setBoundingBox();
 	vector<Vec2f> getBoundingBox();//minX, minY, maxX, maxY
     // Vec2f getBodyCoordinates(Vec2f world);
@@ -54,7 +54,7 @@ public:
     //Derived quantities
     Vec2f v; //velocity v(t)
     float omega; //angular velocity omega(t)=L/I in 2D
-    Matrix2f R; //rotation R(t)
+    MatrixXf R; //rotation R(t)
     Vec2f force;
     float torque; //I*w'
 };
