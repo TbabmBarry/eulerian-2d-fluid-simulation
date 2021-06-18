@@ -489,7 +489,7 @@ static void mouse_func ( int button, int state, int x, int y )
 		Particle *closestParticle;
 		double closestDist = 100000;
 		for (int i = 0; i < sys->particles.size(); i++) {
-			Vec2f position = sys->particles[i]->m_Position;
+			Vector2f position = sys->particles[i]->m_Position;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
 			if (distance < closestDist) {
                 closestDist = distance;
@@ -497,7 +497,7 @@ static void mouse_func ( int button, int state, int x, int y )
             }
 		}
 
-		mouseForce = new ExternalForce({closestParticle}, external_force, Vec2f(0.0f,0.0f));
+		mouseForce = new ExternalForce({closestParticle}, external_force, Vector2f(0.0f,0.0f));
 		sys->addForce(mouseForce);
 		
 	}
@@ -515,8 +515,8 @@ static void motion_func ( int x, int y )
 	mx = x - int(win_x/2);
 	my = int(win_y/2) - y;
 
-	Vec2f position = mouseForce->particles[0]->m_Position;
-	mouseForce->direction = 3.0f * Vec2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
+	Vector2f position = mouseForce->particles[0]->m_Position;
+	mouseForce->direction = 3.0f * Vector2f(mx-position[0]*(win_x/2), my-position[1]*(win_y/2));
 
 
 	gmx = x;

@@ -60,9 +60,9 @@ void ConstraintMaintainer::maintainConstraint(System *system, float m_ks, float 
         CDot[i] = c->legalVelocity();
 
         // Retrieve and store the jacobian vector
-        vector<Vec2f> jacobian = c->jacobian();
+        vector<Vector2f> jacobian = c->jacobian();
         // Retrieve the first time derivative of the jacobian vector
-        vector<Vec2f> jacobianDerivative = c->jacobianDerivative();
+        vector<Vector2f> jacobianDerivative = c->jacobianDerivative();
 
         vector<Particle*> constraintsParticleVector = c->store();
 

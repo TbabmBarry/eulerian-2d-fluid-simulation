@@ -69,23 +69,23 @@ VectorXf System::particleGetState()
     }
     return s;
 }
-// VectorXf System::rigidGetState()
-// {
-//     VectorXf s(this->rigidDims());
-//     for (int i = 0; i < rigidbodies.size(); i++)
-//     {
-//         s[i * 9 + 0] = rigidbodies[i]->x[0];
-//         s[i * 9 + 1] = rigidbodies[i]->x[1];
-//         s[i * 9 + 2] = rigidbodies[i]->R[0];
-//         s[i * 9 + 3] = rigidbodies[i]->R[1];
-//         s[i * 9 + 4] = rigidbodies[i]->R[2];
-//         s[i * 9 + 5] = rigidbodies[i]->R[3];
-//         s[i * 9 + 6] = rigidbodies[i]->P[0];
-//         s[i * 9 + 7] = rigidbodies[i]->P[1];
-//         s[i * 9 + 8] = rigidbodies[i]->L;
-//     }
-//     return s;
-// }
+VectorXf System::rigidGetState()
+{
+    VectorXf s(this->rigidDims());
+    for (int i = 0; i < rigidbodies.size(); i++)
+    {
+        s[i * 9 + 0] = rigidbodies[i]->x[0];
+        s[i * 9 + 1] = rigidbodies[i]->x[1];
+        s[i * 9 + 2] = rigidbodies[i]->R(0,0);
+        s[i * 9 + 3] = rigidbodies[i]->R(0,1);
+        s[i * 9 + 4] = rigidbodies[i]->R(1,0);
+        s[i * 9 + 5] = rigidbodies[i]->R(1,1);
+        s[i * 9 + 6] = rigidbodies[i]->P[0];
+        s[i * 9 + 7] = rigidbodies[i]->P[1];
+        s[i * 9 + 8] = rigidbodies[i]->L;
+    }
+    return s;
+}
 
 float System::particleGetTime()
 {
@@ -96,10 +96,10 @@ void System::particleSetState(VectorXf src)
 {
     this->particleSetState(src, this->particleGetTime());
 }
-// void System::rigidSetState(VectorXf src)
-// {
-//     this->rigidSetState(src, this->particleGetTime());
-// }
+void System::rigidSetState(VectorXf src)
+{
+    this->rigidSetState(src, this->particleGetTime());
+}
 
 void System::particleSetState(VectorXf newState, float time)
 {
@@ -112,31 +112,31 @@ void System::particleSetState(VectorXf newState, float time)
     }
     this->time = time;
 }
-// void System::rigidSetState(VectorXf newState, float time)
-// {
-//     for (int i = 0; i < rigidbodies.size(); i++)
-//     {
-//         rigidbodies[i]->x[0] = newState[i * 9 + 0];
-//         rigidbodies[i]->x[1] = newState[i * 9 + 1];
-//         rigidbodies[i]->R[0] = newState[i * 9 + 2];
-//         rigidbodies[i]->R[1] = newState[i * 9 + 3];
-//         rigidbodies[i]->R[2] = newState[i * 9 + 4];
-//         rigidbodies[i]->R[3] = newState[i * 9 + 5];
-//         rigidbodies[i]->P[0] = newState[i * 9 + 6];
-//         rigidbodies[i]->P[1] = newState[i * 9 + 7];
-//         rigidbodies[i]->L = newState[i * 9 + 8];
-//         //Compute derived variables
-//         rigidbodies[i]->v = rigidbodies[i]->P / rigidbodies[i]->M;
-//         rigidbodies[i]->I = rigidbodies[i]->M* (pow(rigidbodies[i]->dimension,2)+pow(rigidbodies[i]->dimension,2));
-//         rigidbodies[i]->omega = rigidbodies[i]->L/rigidbodies[i]->I;
-//         //update positions
-//         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
-//             //corners rotated pos = corner pos*R + masscenter pos
-//             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
-//         }
-//     }
-//     this->time = time;
-// }
+void System::rigidSetState(VectorXf newState, float time)
+{
+    for (int i = 0; i < rigidbodies.size(); i++)
+    {
+        rigidbodies[i]->x[0] = newState[i * 9 + 0];
+        rigidbodies[i]->x[1] = newState[i * 9 + 1];
+        rigidbodies[i]->R(0,0) = newState[i * 9 + 2];
+        rigidbodies[i]->R(0,1) = newState[i * 9 + 3];
+        rigidbodies[i]->R(1,0) = newState[i * 9 + 4];
+        rigidbodies[i]->R(1,1) = newState[i * 9 + 5];
+        rigidbodies[i]->P[0] = newState[i * 9 + 6];
+        rigidbodies[i]->P[1] = newState[i * 9 + 7];
+        rigidbodies[i]->L = newState[i * 9 + 8];
+        //Compute derived variables
+        rigidbodies[i]->v = rigidbodies[i]->P / rigidbodies[i]->M;
+        rigidbodies[i]->I = rigidbodies[i]->M* (pow(rigidbodies[i]->dimension,2)+pow(rigidbodies[i]->dimension,2));
+        rigidbodies[i]->omega = rigidbodies[i]->L/rigidbodies[i]->I;
+        //update positions
+        for (int k=0; k<rigidbodies[i]->corners.size();++k) {
+            //corners rotated pos = corner pos*R + masscenter pos
+            rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
+        }
+    }
+    this->time = time;
+}
 
 VectorXf System::collisionValidation(VectorXf newState)
 {
@@ -200,32 +200,27 @@ VectorXf System::particleDerivative()
     }
     return dst;
 }
-// VectorXf System::rigidDerivative()
-// {
-//     VectorXf y(this->rigidDims());
-//     for (int i = 0; i < rigidbodies.size(); i++)
-//     {
-//         Particle *r = rigidbodies[i];
-//         updateForce();
-//         updateTorque();
-//         //xdot, i.e velocity
-//         y[i * 9 + 0] = r->v[0];
-//         y[i * 9 + 1] = r->v[1];
-//         //calculate product, convert to resulting matrix to quaternion
-//         y[i * 9 + 2] = r->omega * r->R[0];
-//         y[i * 9 + 3] = r->omega * r->R[1];
-//         y[i * 9 + 4] = r->omega * r->R[2];
-//         y[i * 9 + 5] = r->omega * r->R[3];
+VectorXf System::rigidDerivative()
+{
+    VectorXf y(this->rigidDims());
+    for (int i = 0; i < rigidbodies.size(); i++)
+    {
+        Particle *rb = rigidbodies[i];
+        // updateForce();
+        // updateTorque();
+        y[i * 9 + 0] = rb->v[0];
+        y[i * 9 + 1] = rb->v[1];
+        y[i * 9 + 2] = rb->omega * rb->R(0,0);
+        y[i * 9 + 3] = rb->omega * rb->R(0,1);
+        y[i * 9 + 4] = rb->omega * rb->R(1,0);
+        y[i * 9 + 5] = rb->omega * rb->R(1,1);
+        y[i * 9 + 6] = rb->m_Force[0];
+        y[i * 9 + 7] = rb->m_Force[1];
+        y[i * 9 + 8] = rb->torque;
 
-//         //Pdot = F
-//         y[i * 9 + 6] = rigidbodies[i]->force[0];
-//         y[i * 9 + 7] = rigidbodies[i]->force[1];
-
-//         //Ldot = torque
-//         y[i * 9 + 8] = rigidbodies[i]->torque;
-//     }
-//     return y;
-// }
+    }
+    return y;
+}
 
 void System::simulationStep()
 {
@@ -236,7 +231,7 @@ void System::clearForces()
 {
     for (Particle *p : particles) 
     {
-        p->m_Force = Vec2f(0.0f, 0.0f);
+        p->m_Force = Vector2f(0.0f, 0.0f);
     }
     // for (Particle *r : rigidbodies) 
     // {

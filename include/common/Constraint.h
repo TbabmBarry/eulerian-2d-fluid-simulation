@@ -14,8 +14,8 @@ class Constraint {
         virtual void draw() = 0;
         virtual float C() = 0;
         virtual float legalVelocity() = 0;
-        virtual vector<Vec2f> jacobian() = 0;
-        virtual vector<Vec2f> jacobianDerivative() = 0;
+        virtual vector<Vector2f> jacobian() = 0;
+        virtual vector<Vector2f> jacobianDerivative() = 0;
 
         vector<Particle*> store()
         {

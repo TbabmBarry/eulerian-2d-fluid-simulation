@@ -11,7 +11,7 @@ void simulation_step( std::vector<Particle*> pVector, float dt )
 	for(ii=0; ii<size; ii++)
 	{
 		pVector[ii]->m_Position += dt*pVector[ii]->m_Velocity;
-		pVector[ii]->m_Velocity = DAMP*pVector[ii]->m_Velocity + Vec2f(RAND,RAND) * 0.005;
+		pVector[ii]->m_Velocity = DAMP*pVector[ii]->m_Velocity + Vector2f(RAND,RAND) * 0.005;
 	}
 
 }

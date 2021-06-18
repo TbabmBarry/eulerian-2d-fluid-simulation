@@ -4,7 +4,7 @@
 
 #define PI 3.1415926535897932384626433832795
 
-static void draw_circle(const Vec2f & vect, float radius)
+static void draw_circle(const Vector2f & vect, float radius)
 {
 	glBegin(GL_LINE_LOOP);
 	glColor3f(0.0,1.0,0.0); 
@@ -16,12 +16,12 @@ static void draw_circle(const Vec2f & vect, float radius)
 	glEnd();
 }
 
-CircularWireConstraint::CircularWireConstraint(Particle *p, const Vec2f & center, const float radius) :
+CircularWireConstraint::CircularWireConstraint(Particle *p, const Vector2f & center, const float radius) :
 	Constraint({p}), m_p(p), m_center(center), m_radius(radius) {}
 
 float CircularWireConstraint::C() {
-    Vec2f pVector = m_p->m_Position - m_center;
-    return pVector * pVector - m_radius * m_radius;
+    Vector2f pVector = m_p->m_Position - m_center;
+    return pVector.dot(pVector) - m_radius * m_radius;
 }
 
 /**
@@ -29,20 +29,20 @@ float CircularWireConstraint::C() {
  * @return x * xd
  */
 float CircularWireConstraint::legalVelocity() {//C'
-    Vec2f pVector = m_p->m_Position - m_center;
-    Vec2f vVector = m_p->m_Velocity;
-    return 2 * pVector * vVector;
+    Vector2f pVector = m_p->m_Position - m_center;
+    Vector2f vVector = m_p->m_Velocity;
+    return 2 * pVector.dot(vVector);
 }
 
-vector<Vec2f> CircularWireConstraint::jacobian() {
-    vector<Vec2f> j;
+vector<Vector2f> CircularWireConstraint::jacobian() {
+    vector<Vector2f> j;
 	//J=(x-xc,y-yc)
     j.push_back((m_p->m_Position - m_center) * 2);
     return j;
 }
 
-vector<Vec2f> CircularWireConstraint::jacobianDerivative() {
-    vector<Vec2f> jd;
+vector<Vector2f> CircularWireConstraint::jacobianDerivative() {
+    vector<Vector2f> jd;
     jd.push_back(m_p->m_Velocity * 2);
     return jd;
 }
