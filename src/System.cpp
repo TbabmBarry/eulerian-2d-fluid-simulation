@@ -205,33 +205,26 @@ VectorXf System::particleDerivative()
 //     VectorXf y(this->rigidDims());
 //     for (int i = 0; i < rigidbodies.size(); i++)
 //     {
+//         Particle *r = rigidbodies[i];
 //         updateForce();
 //         updateTorque();
-//         VectorXf y(6);
 //         //xdot, i.e velocity
-//         y[0] = rigidbodies[i]->v[0];
-//         y[1] = rigidbodies[i]->v[1];
+//         y[i * 9 + 0] = r->v[0];
+//         y[i * 9 + 1] = r->v[1];
 //         //calculate product, convert to resulting matrix to quaternion
-//         y[2] = rigidbodies[i]->omega * rigidbodies[i]->R[0];
-//         y[3] = rigidbodies[i]->omega * rigidbodies[i]->R[1];
-//         y[4] = rigidbodies[i]->omega * rigidbodies[i]->R[2];
-//         y[5] = rigidbodies[i]->omega * rigidbodies[i]->R[3];
+//         y[i * 9 + 2] = r->omega * r->R[0];
+//         y[i * 9 + 3] = r->omega * r->R[1];
+//         y[i * 9 + 4] = r->omega * r->R[2];
+//         y[i * 9 + 5] = r->omega * r->R[3];
 
 //         //Pdot = F
-//         y[6] = rigidbodies[i]->force[0];
-//         y[7] = rigidbodies[i]->force[1];
+//         y[i * 9 + 6] = rigidbodies[i]->force[0];
+//         y[i * 9 + 7] = rigidbodies[i]->force[1];
 
 //         //Ldot = torque
-//         y[8] = rigidbodies[i]->torque;
-//         return y;
-
-//         Particle *p = rigidbodies[i];
-//         dst[i * 4 + 0] = p->m_Velocity[0];
-//         dst[i * 4 + 1] = p->m_Velocity[1];
-//         dst[i * 4 + 2] = p->m_Force[0] / p->mass;
-//         dst[i * 4 + 3] = p->m_Force[1] / p->mass;
+//         y[i * 9 + 8] = rigidbodies[i]->torque;
 //     }
-//     return dst;
+//     return y;
 // }
 
 void System::simulationStep()
