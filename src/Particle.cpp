@@ -39,7 +39,7 @@ void Particle::reset()
     P = Vector2f(0, 0);//M*v(t)
     L = 0.0f;//I*w(t)
     v = Vector2f(0, 0);
-    omega = L/I;
+    omega = L/(I+0.00000000001);
     torque = 0.0f;
     angle = 0.0f * M_PI / 180;
 }
@@ -101,7 +101,7 @@ vector<Vector2f> Particle::getClosestEdge(Vector2f point)
 			minDist = currDist;
 		}
 	}
-	return vector<Vector2f>({corners[idx], corners[(idx+1)%n]});
+	return vector<Vector2f>({corners[idx],corners[(idx+1)%n]});
 }
 
 float Particle::minDistance(Vector2f p1, Vector2f p2, Vector2f p3)
