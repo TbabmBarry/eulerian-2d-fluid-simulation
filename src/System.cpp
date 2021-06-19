@@ -35,7 +35,7 @@ int System::particleDims()
 }
 int System::rigidDims()
 {
-    return rigidbodies.size() * 9;
+    return rigidbodies.size() * 6;
 }
 
 void System::free() 
@@ -74,15 +74,12 @@ VectorXf System::rigidGetState()
     VectorXf s(this->rigidDims());
     for (int i = 0; i < rigidbodies.size(); i++)
     {
-        s[i * 9 + 0] = rigidbodies[i]->x[0];
-        s[i * 9 + 1] = rigidbodies[i]->x[1];
-        s[i * 9 + 2] = rigidbodies[i]->R(0,0);
-        s[i * 9 + 3] = rigidbodies[i]->R(0,1);
-        s[i * 9 + 4] = rigidbodies[i]->R(1,0);
-        s[i * 9 + 5] = rigidbodies[i]->R(1,1);
-        s[i * 9 + 6] = rigidbodies[i]->P[0];
-        s[i * 9 + 7] = rigidbodies[i]->P[1];
-        s[i * 9 + 8] = rigidbodies[i]->L;
+        s[i * 6 + 0] = rigidbodies[i]->x[0];
+        s[i * 6 + 1] = rigidbodies[i]->x[1];
+        s[i * 6 + 2] = rigidbodies[i]->angle;
+        s[i * 6 + 3] = rigidbodies[i]->P[0];
+        s[i * 6 + 4] = rigidbodies[i]->P[1];
+        s[i * 6 + 5] = rigidbodies[i]->L;
     }
     return s;
 }
@@ -116,19 +113,20 @@ void System::rigidSetState(VectorXf newState, float time)
 {
     for (int i = 0; i < rigidbodies.size(); i++)
     {
-        rigidbodies[i]->x[0] = newState[i * 9 + 0];
-        rigidbodies[i]->x[1] = newState[i * 9 + 1];
-        rigidbodies[i]->R(0,0) = newState[i * 9 + 2];
-        rigidbodies[i]->R(0,1) = newState[i * 9 + 3];
-        rigidbodies[i]->R(1,0) = newState[i * 9 + 4];
-        rigidbodies[i]->R(1,1) = newState[i * 9 + 5];
-        rigidbodies[i]->P[0] = newState[i * 9 + 6];
-        rigidbodies[i]->P[1] = newState[i * 9 + 7];
-        rigidbodies[i]->L = newState[i * 9 + 8];
+        rigidbodies[i]->x[0]    = newState[i * 6 + 0];
+        rigidbodies[i]->x[1]    = newState[i * 6 + 1];
+        rigidbodies[i]->angle   = newState[i * 6 + 2];
+        rigidbodies[i]->P[0]    = newState[i * 6 + 3];
+        rigidbodies[i]->P[1]    = newState[i * 6 + 4];
+        rigidbodies[i]->L       = newState[i * 6 + 5];
         //Compute derived variables
-        rigidbodies[i]->v = rigidbodies[i]->P / rigidbodies[i]->M;
-        rigidbodies[i]->I = rigidbodies[i]->M* (pow(rigidbodies[i]->dimension,2)+pow(rigidbodies[i]->dimension,2));
-        rigidbodies[i]->omega = rigidbodies[i]->L/rigidbodies[i]->I;
+        rigidbodies[i]->R(0,0)  = cos(rigidbodies[i]->angle);
+        rigidbodies[i]->R(0,1)  = -sin(rigidbodies[i]->angle);
+        rigidbodies[i]->R(1,0)  = cos(rigidbodies[i]->angle);
+        rigidbodies[i]->R(1,1)  = sin(rigidbodies[i]->angle);
+        rigidbodies[i]->v       = rigidbodies[i]->P / rigidbodies[i]->M;
+        rigidbodies[i]->I       = rigidbodies[i]->M * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
+        rigidbodies[i]->omega   = rigidbodies[i]->L / rigidbodies[i]->I;
         //update positions
         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
             //corners rotated pos = corner pos*R + masscenter pos
@@ -208,15 +206,12 @@ VectorXf System::rigidDerivative()
         Particle *rb = rigidbodies[i];
         // updateForce();
         // updateTorque();
-        y[i * 9 + 0] = rb->v[0];
-        y[i * 9 + 1] = rb->v[1];
-        y[i * 9 + 2] = rb->omega * rb->R(0,0);
-        y[i * 9 + 3] = rb->omega * rb->R(0,1);
-        y[i * 9 + 4] = rb->omega * rb->R(1,0);
-        y[i * 9 + 5] = rb->omega * rb->R(1,1);
-        y[i * 9 + 6] = rb->m_Force[0];
-        y[i * 9 + 7] = rb->m_Force[1];
-        y[i * 9 + 8] = rb->torque;
+        y[i * 6 + 0] = rb->v[0];
+        y[i * 6 + 1] = rb->v[1];
+        y[i * 6 + 2] = rb->omega;
+        y[i * 6 + 3] = rb->m_Force[0];
+        y[i * 6 + 4] = rb->m_Force[1];
+        y[i * 6 + 5] = rb->torque;
 
     }
     return y;
