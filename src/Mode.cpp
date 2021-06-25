@@ -3,6 +3,7 @@
 #include "GravityForce.h"
 #include "SpringForce.h"
 #include "AngularSpring.h"
+#include "CollisionForce.h"
 #include "RodConstraint.h"
 #include "CircularWireConstraint.h"
 #include "FixedPointConstraint.h"
@@ -137,4 +138,10 @@ void Mode::hair(System *sys){
     // Add gravity and drag to all particles
     sys->addForce(new GravityForce(sys->particles, Vector2f(0.0f, -9.8f)));
     sys->addForce(new DragForce(sys->particles, 0.3f));
+}
+
+void Mode::RigidBodyCollision(System *sys)
+{
+    sys->addRigid(new Particle(Vector2f(0.0f, 0.0f), 5.0f,0, Particle::RIGID));
+    // sys->addForce(new CollisionForce()))
 }

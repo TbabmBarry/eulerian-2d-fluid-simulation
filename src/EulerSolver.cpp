@@ -24,17 +24,21 @@ void EulerSolver::simulateStep(System *system, float h) {
 void EulerSolver::explicitS(System *system, float h) {
 
     // Get the old state
-    VectorXf oldState = system->particleGetState();
+    VectorXf oldStateParticle = system->particleGetState();
+    VectorXf oldStateRigid = system->rigidGetState();
 
     // Evaluate derivative
-    VectorXf stateDeriv = system->particleAcceleration();
+    VectorXf stateDerivParticle = system->particleAcceleration();
+    VectorXf stateDerivRigid = system->rigidDerivative();
     // Calculate the new state
-    VectorXf newState = oldState + h * stateDeriv;
+    VectorXf newStateParticle = oldStateParticle + h * stateDerivParticle;
+    VectorXf newStateRigid = oldStateRigid + h * stateDerivRigid;
 
     if (system->wall)
-        newState = system->collisionValidation(newState);
+        newStateParticle = system->collisionValidation(newStateParticle);
     //set the new state
-    system->particleSetState(newState, system->particleGetTime() + h);
+    system->particleSetState(newStateParticle, system->particleGetTime() + h);
+    system->rigidSetState(newStateRigid, system->particleGetTime() + h);
 }
 
 void EulerSolver::semiS(System *system, float h) {

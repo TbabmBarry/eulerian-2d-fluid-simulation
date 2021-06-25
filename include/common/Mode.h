@@ -5,4 +5,5 @@ class Mode {
         void CircularGravityRod(System* system);
         void hair(System* system);
         void CircularCloth(System* system);
+        void RigidBodyCollision(System* system);
 };

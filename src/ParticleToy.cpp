@@ -369,7 +369,16 @@ static void key_func ( unsigned char key, int x, int y )
 	case '4':
 		sys_type = true;
 		init_system();
-
+	case '5':
+		sys_type = false;
+		if (dsim)
+			dsim = !dsim;
+		sys->dt=0.001;
+		external_force = 0.1f;
+		init_system();
+		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
+		mode->RigidBodyCollision(sys);
+		break;
 
 	case 'w':
 	case 'W':
