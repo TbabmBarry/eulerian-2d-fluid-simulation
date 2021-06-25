@@ -131,6 +131,7 @@ void System::rigidSetState(VectorXf newState, float time)
         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
+            std::cout << rigidbodies[i]->corners[k][0] << std::endl;
         }
     }
     this->time = time;
@@ -280,6 +281,7 @@ void System::drawConstraints()
 void System::drawSystem()
 {
     drawParticles();
+    drawRigids();
     drawForces();
     drawConstraints();
 }

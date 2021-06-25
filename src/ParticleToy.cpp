@@ -171,20 +171,25 @@ static void post_display ( void )
 	glutSwapBuffers ();
 }
 
-static void draw_particles ( void )
-{
-	sys->drawParticles();
-}
+// static void draw_particles ( void )
+// {
+// 	sys->drawParticles();
+// }
 
-static void draw_forces ( void )
-{
-	sys->drawForces();
-}
+// static void draw_rigid ( void )
+// {
+// 	sys->drawRigids();
+// }
 
-static void draw_constraints ( void )
-{
-	sys->drawConstraints();
-}
+// static void draw_forces ( void )
+// {
+// 	sys->drawForces();
+// }
+
+// static void draw_constraints ( void )
+// {
+// 	sys->drawConstraints();
+// }
 
 static void draw_velocity ( void )
 {
@@ -498,11 +503,13 @@ static void mouse_func ( int button, int state, int x, int y )
 		Particle *closestParticle;
 		double closestDist = 100000;
 		for (int i = 0; i < sys->particles.size(); i++) {
-			Vector2f position = sys->particles[i]->m_Position;
+			// Vector2f position = sys->particles[i]->m_Position;
+			Vector2f position = sys->rigidbodies[i]->m_Position;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
 			if (distance < closestDist) {
                 closestDist = distance;
-                closestParticle = sys->particles[i];
+                // closestParticle = sys->particles[i];
+                closestParticle = sys->rigidbodies[i];
             }
 		}
 
@@ -562,9 +569,11 @@ static void display_func ( void )
 {
 	if (sys_type == false) {
 		pre_display ();
-		draw_particles();
-		draw_forces();
-		draw_constraints();
+		// draw_particles();
+		// draw_rigid();
+		// draw_forces();
+		// draw_constraints();
+		sys->drawSystem();
 		post_display ();//frame,img
 	} 
 	else if (sys_type == true)

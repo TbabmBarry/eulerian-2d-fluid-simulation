@@ -17,6 +17,7 @@ Particle::Particle(const Vector2f & ConstructPos, float mass, int index, TYPE ty
 		break;
     case RIGID:
 		{rigid=1;
+		reset();
 		setBoundingBox();
         break;}
     }
