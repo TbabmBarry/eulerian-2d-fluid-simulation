@@ -26,7 +26,7 @@ public:
 	Vector2f m_Position;
 	Vector2f m_Velocity;
 	Vector2f m_Force;
-	double mass;
+	float mass;
 	int index;
     bool rigid;
 
@@ -38,6 +38,9 @@ public:
 	vector<Vector2f> getBoundingBox();//minX, minY, maxX, maxY
     // Vec2f getBodyCoordinates(Vec2f world);
 
+    // get the closest edge for a target point
+    vector<Vector2f> getClosestEdge(Vector2f point);
+    float minDistance(Vector2f p1, Vector2f p2, Vector2f p3);
     Vector2f MassCenter;
     float dimension;  //lengths of the edges
 
