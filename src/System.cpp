@@ -249,6 +249,13 @@ void System::drawParticles()
         p->draw();
     }
 }
+void System::drawRigids()
+{
+    for (auto *r : rigidbodies)
+    {
+        r->draw();
+    }
+}
 
 void System::drawForces()
 {

@@ -66,6 +66,7 @@ class System {
         void reset();
         void simulationStep();
         void drawParticles();
+        void drawRigids();
         void drawForces();
         void drawConstraints();
         void drawSystem();

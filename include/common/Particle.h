@@ -46,7 +46,7 @@ public:
 
     //Constants
     double M; //totalMass
-    float I;
+    float I;//inertia
 
     //State variables
     Vector2f x; //position x(t) global mass center
