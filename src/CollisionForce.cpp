@@ -44,7 +44,7 @@ void CollisionForce::draw()
 bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
 {
     // get the vector of points constructing the closest edge
-    vector<Vector2f> edgeVec = rb1->getClosestEdge(point);
+    vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // check if the distance from point to line close enough
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
     if (minDist > 2)
@@ -67,7 +67,7 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
 void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
 {
     // get the vector of points constructing the closest edge
-    vector<Vector2f> edgeVec = rb1->getClosestEdge(point);
+    vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
     // get the normalized normal vector of the closest edge
