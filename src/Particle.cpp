@@ -58,6 +58,14 @@ void Particle::draw()//draw a square
 		glEnd();
         break;}
     case RIGID:
+		glClear(GL_COLOR_BUFFER_BIT);
+		glColor3f(0.0,1.0,0.0);
+		glBegin(GL_POLYGON);
+		glVertex2f(corners[0][0],corners[0][1]);
+		glVertex2f(corners[1][0],corners[1][1]);
+		glVertex2f(corners[2][0],corners[2][1]);
+		glVertex2f(corners[3][0],corners[3][1]);
+		glEnd();
         break;
     }
 	
