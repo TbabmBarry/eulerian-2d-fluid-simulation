@@ -188,7 +188,7 @@ void FluidSolver::dens_step ( int N, float* x, float* x0, float* u, float* v, fl
 
 void FluidSolver::vel_step ( int N, float * u, float * v, float * u0, float * v0, float visc, float dt )
 {
-    SetVelocity(u,v,u0,v0);
+    setVelocity(u, v, u0, v0);
 	add_source ( N, u, u0, dt );
     add_source ( N, v, v0, dt );
 	SWAP ( u0, u );

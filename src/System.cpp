@@ -143,8 +143,8 @@ void System::rigidSetState(VectorXf newState, float time)
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
             cout << "corner " << k << ": " << rigidbodies[i]->corners[k] << "x: " << rigidbodies[i]->x << endl;
         }
-        vector<Vector2i> temp = rigidbodies[i]->BoundingGrid(2);
-        cout << "bound_grid " << temp[0] << endl;
+        // vector<Vector2i> temp = rigidbodies[i]->BoundingGrid(2);
+        // cout << "bound_grid " << temp[0] << endl;
     }
     this->time = time;
 }
