@@ -171,20 +171,25 @@ static void post_display ( void )
 	glutSwapBuffers ();
 }
 
-static void draw_particles ( void )
-{
-	sys->drawParticles();
-}
+// static void draw_particles ( void )
+// {
+// 	sys->drawParticles();
+// }
 
-static void draw_forces ( void )
-{
-	sys->drawForces();
-}
+// static void draw_rigid ( void )
+// {
+// 	sys->drawRigids();
+// }
 
-static void draw_constraints ( void )
-{
-	sys->drawConstraints();
-}
+// static void draw_forces ( void )
+// {
+// 	sys->drawForces();
+// }
+
+// static void draw_constraints ( void )
+// {
+// 	sys->drawConstraints();
+// }
 
 static void draw_velocity ( void )
 {
@@ -373,8 +378,8 @@ static void key_func ( unsigned char key, int x, int y )
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt=0.001;
-		external_force = 0.1f;
+		sys->dt=0.1;
+		external_force = 1.1f;
 		init_system();
 		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
 		mode->RigidBodyCollision(sys);
@@ -482,6 +487,8 @@ static void key_func ( unsigned char key, int x, int y )
 
 static void mouse_func ( int button, int state, int x, int y )
 {
+	// cout << "x:" << x <<endl;
+	// cout << "y:" << y <<endl;
 	omx = mx = x;
 	omx = my = y;
 	if(!mouse_down[0]){hmx=x; hmy=y;}
@@ -497,17 +504,19 @@ static void mouse_func ( int button, int state, int x, int y )
 		int mouse_y = int(win_y/2) - y;
 		Particle *closestParticle;
 		double closestDist = 100000;
-		for (int i = 0; i < sys->particles.size(); i++) {
-			Vector2f position = sys->particles[i]->m_Position;
+		for (int i = 0; i < sys->rigidbodies.size(); i++) {
+			// Vector2f position = sys->particles[i]->m_Position;
+			Vector2f position = sys->rigidbodies[i]->m_Position;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
 			if (distance < closestDist) {
                 closestDist = distance;
-                closestParticle = sys->particles[i];
+                // closestParticle = sys->particles[i];
+                closestParticle = sys->rigidbodies[i];
             }
 		}
 
 		mouseForce = new ExternalForce({closestParticle}, external_force, Vector2f(0.0f,0.0f));
-		sys->addForce(mouseForce);
+		sys->addRigidForce(mouseForce);
 		
 	}
 
@@ -562,9 +571,11 @@ static void display_func ( void )
 {
 	if (sys_type == false) {
 		pre_display ();
-		draw_particles();
-		draw_forces();
-		draw_constraints();
+		// draw_particles();
+		// draw_rigid();
+		// draw_forces();
+		// draw_constraints();
+		sys->drawSystem();
 		post_display ();//frame,img
 	} 
 	else if (sys_type == true)

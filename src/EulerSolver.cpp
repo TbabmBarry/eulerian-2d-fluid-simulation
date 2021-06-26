@@ -26,13 +26,15 @@ void EulerSolver::explicitS(System *system, float h) {
     // Get the old state
     VectorXf oldStateParticle = system->particleGetState();
     VectorXf oldStateRigid = system->rigidGetState();
-
+    // cout << "oldStateRigid: " << oldStateRigid << endl;
     // Evaluate derivative
     VectorXf stateDerivParticle = system->particleAcceleration();
-    VectorXf stateDerivRigid = system->rigidDerivative();
+    VectorXf stateDerivRigid = system->rigidAcceleration();
+    // cout << "stateDerivRigid: " << stateDerivRigid << endl;
     // Calculate the new state
     VectorXf newStateParticle = oldStateParticle + h * stateDerivParticle;
     VectorXf newStateRigid = oldStateRigid + h * stateDerivRigid;
+    // cout << "newStateRigid: " << newStateRigid << endl;
 
     if (system->wall)
         newStateParticle = system->collisionValidation(newStateParticle);
