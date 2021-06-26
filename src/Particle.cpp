@@ -32,9 +32,9 @@ void Particle::reset()
 	m_Position = m_ConstructPos;
 	m_Velocity = Vector2f(0.0, 0.0);
 	m_Force = Vector2f(0.0, 0.0);
-
+	x = m_ConstructPos;
 	//rigid specific
-	I = 0.0;
+	I = 0.0f;
 	x = MassCenter;
     R = Matrix2f::Identity();
     P = Vector2f(0, 0);//M*v(t)

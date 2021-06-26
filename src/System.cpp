@@ -24,6 +24,11 @@ void System::addForce(Force* f)
     forces.push_back(f);
 }
 
+void System::addRigidForce(Force* f)
+{
+    rigidForces.push_back(f);
+}
+
 void System::addConstraint(Constraint* constraint)
 {
     constraints.push_back(constraint);
@@ -119,19 +124,24 @@ void System::rigidSetState(VectorXf newState, float time)
         rigidbodies[i]->P[0]    = newState[i * 6 + 3];
         rigidbodies[i]->P[1]    = newState[i * 6 + 4];
         rigidbodies[i]->L       = newState[i * 6 + 5];
+        cout << "linear momentum: " << rigidbodies[i]->P << endl;
         //Compute derived variables
         rigidbodies[i]->R(0,0)  = cos(rigidbodies[i]->angle);
         rigidbodies[i]->R(0,1)  = -sin(rigidbodies[i]->angle);
-        rigidbodies[i]->R(1,0)  = cos(rigidbodies[i]->angle);
-        rigidbodies[i]->R(1,1)  = sin(rigidbodies[i]->angle);
-        rigidbodies[i]->v       = rigidbodies[i]->P / rigidbodies[i]->M;
-        rigidbodies[i]->I       = rigidbodies[i]->M * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
-        rigidbodies[i]->omega   = rigidbodies[i]->L / rigidbodies[i]->I;
+        rigidbodies[i]->R(1,0)  = sin(rigidbodies[i]->angle);
+        rigidbodies[i]->R(1,1)  = cos(rigidbodies[i]->angle);
+        rigidbodies[i]->v       = rigidbodies[i]->P / rigidbodies[i]->mass;
+        rigidbodies[i]->I       = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
+        rigidbodies[i]->omega   = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
+        cout << "velocity: " << rigidbodies[i]->v << endl;
+        cout << "angle: " << rigidbodies[i]->angle << endl;
+        cout << "angular momentum: " << rigidbodies[i]->L << endl;
+        cout << "angular velocity: " << rigidbodies[i]->omega << endl;
         //update positions
         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
-            std::cout << rigidbodies[i]->corners[k][0] << std::endl;
+            cout << "corner " << k << ": " << rigidbodies[i]->corners[k] << "x: " << rigidbodies[i]->x << endl;
         }
     }
     this->time = time;
@@ -199,6 +209,16 @@ VectorXf System::particleDerivative()
     }
     return dst;
 }
+
+VectorXf System::rigidAcceleration()
+{
+    clearRigidForces();
+    // cout << "force num: " << rigidForces.size() << endl;
+    applyRigidForces();
+    cout << "force: " << rigidbodies[0]->m_Force[0] << " " << rigidbodies[0]->m_Force[1] << endl;
+    return rigidDerivative();
+}
+
 VectorXf System::rigidDerivative()
 {
     VectorXf y(this->rigidDims());
@@ -229,10 +249,14 @@ void System::clearForces()
     {
         p->m_Force = Vector2f(0.0f, 0.0f);
     }
-    // for (Particle *r : rigidbodies) 
-    // {
-    //     r->force = Vec2f(0.0f, 0.0f);
-    // }
+}
+
+void System::clearRigidForces()
+{
+    for (Particle *rb : rigidbodies)
+    {
+        rb->m_Force = Vector2f(0.0f, 0.0f);
+    }
 }
 
 void System::applyForces() 
@@ -240,6 +264,14 @@ void System::applyForces()
     for (int i = 0; i < forces.size(); i++) 
     {
         forces[i]->apply(springsCanBreak);
+    }
+}
+
+void System::applyRigidForces()
+{
+    for (int i = 0; i < rigidForces.size(); i++)
+    {
+        rigidForces[i]->apply(springsCanBreak);
     }
 }
 

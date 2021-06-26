@@ -378,8 +378,8 @@ static void key_func ( unsigned char key, int x, int y )
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt=0.001;
-		external_force = 0.1f;
+		sys->dt=0.1;
+		external_force = 1.1f;
 		init_system();
 		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
 		mode->RigidBodyCollision(sys);
@@ -502,7 +502,7 @@ static void mouse_func ( int button, int state, int x, int y )
 		int mouse_y = int(win_y/2) - y;
 		Particle *closestParticle;
 		double closestDist = 100000;
-		for (int i = 0; i < sys->particles.size(); i++) {
+		for (int i = 0; i < sys->rigidbodies.size(); i++) {
 			// Vector2f position = sys->particles[i]->m_Position;
 			Vector2f position = sys->rigidbodies[i]->m_Position;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
@@ -514,7 +514,7 @@ static void mouse_func ( int button, int state, int x, int y )
 		}
 
 		mouseForce = new ExternalForce({closestParticle}, external_force, Vector2f(0.0f,0.0f));
-		sys->addForce(mouseForce);
+		sys->addRigidForce(mouseForce);
 		
 	}
 

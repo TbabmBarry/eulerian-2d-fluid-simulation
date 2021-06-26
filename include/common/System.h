@@ -22,6 +22,7 @@ class System {
         vector<Particle*> rigidbodies;
         // Store all the forces to be applied on particles
         vector<Force*> forces;
+        vector<Force*> rigidForces;
         // Store all the constraints to be maintained
         vector<Constraint*> constraints;
 
@@ -35,12 +36,14 @@ class System {
         void addParticle(Particle* p);
         void addRigid(Particle* p);
         void addForce(Force* f);
+        void addRigidForce(Force* f);
         void addConstraint(Constraint* constraint);
         // ODE Interface
 
         VectorXf particleAcceleration();
         // Calculate the derivative: Divide force by mass to get acceleration, and gather the derivatives into a global vector for the solver
         VectorXf particleDerivative();
+        VectorXf rigidAcceleration();
         // Gather state from the particles/rigids into dst
         VectorXf rigidDerivative();
         // void updateForce();
@@ -73,8 +76,10 @@ class System {
     private:
         // Clear forces: zero each particle's force accumulator
         void clearForces();
+        void clearRigidForces();
         // Loop over all force objects, allowing each to add forces to the particles it influences
         void applyForces();
+        void applyRigidForces();
         float time;
 
 };
