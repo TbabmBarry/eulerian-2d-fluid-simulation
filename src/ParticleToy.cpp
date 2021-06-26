@@ -487,6 +487,8 @@ static void key_func ( unsigned char key, int x, int y )
 
 static void mouse_func ( int button, int state, int x, int y )
 {
+	// cout << "x:" << x <<endl;
+	// cout << "y:" << y <<endl;
 	omx = mx = x;
 	omx = my = y;
 	if(!mouse_down[0]){hmx=x; hmy=y;}

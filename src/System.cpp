@@ -124,7 +124,7 @@ void System::rigidSetState(VectorXf newState, float time)
         rigidbodies[i]->P[0]    = newState[i * 6 + 3];
         rigidbodies[i]->P[1]    = newState[i * 6 + 4];
         rigidbodies[i]->L       = newState[i * 6 + 5];
-        cout << "linear momentum: " << rigidbodies[i]->P << endl;
+        // cout << "linear momentum: " << rigidbodies[i]->P << endl;
         //Compute derived variables
         rigidbodies[i]->R(0,0)  = cos(rigidbodies[i]->angle);
         rigidbodies[i]->R(0,1)  = -sin(rigidbodies[i]->angle);
@@ -133,16 +133,18 @@ void System::rigidSetState(VectorXf newState, float time)
         rigidbodies[i]->v       = rigidbodies[i]->P / rigidbodies[i]->mass;
         rigidbodies[i]->I       = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
         rigidbodies[i]->omega   = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
-        cout << "velocity: " << rigidbodies[i]->v << endl;
-        cout << "angle: " << rigidbodies[i]->angle << endl;
-        cout << "angular momentum: " << rigidbodies[i]->L << endl;
-        cout << "angular velocity: " << rigidbodies[i]->omega << endl;
+        // cout << "velocity: " << rigidbodies[i]->v << endl;
+        // cout << "angle: " << rigidbodies[i]->angle << endl;
+        // cout << "angular momentum: " << rigidbodies[i]->L << endl;
+        // cout << "angular velocity: " << rigidbodies[i]->omega << endl;
         //update positions
         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
             cout << "corner " << k << ": " << rigidbodies[i]->corners[k] << "x: " << rigidbodies[i]->x << endl;
         }
+        vector<Vector2i> temp = rigidbodies[i]->BoundingGrid(2);
+        cout << "bound_grid " << temp[0] << endl;
     }
     this->time = time;
 }
