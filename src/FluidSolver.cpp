@@ -32,6 +32,54 @@ void FluidSolver::set_bnd ( int N, int b, float* x )
 	x[IX(0  ,N+1)] = 0.5f*(x[IX(1,N+1)]+x[IX(0,N)]);//set density of topright corner cell
 	x[IX(N+1,0  )] = 0.5f*(x[IX(N,0)]+x[IX(N+1,1)]);//set density of bottomleft corner cell
 	x[IX(N+1,N+1)] = 0.5f*(x[IX(N,N+1)]+x[IX(N+1,N)]);//set density of bottomright corner cell
+    for(Particle* rigidBody : rigidbodies){
+                vector<Vector4f> grids;// = rigidBody.BoundingGrid();
+                for(int i = 0; i < grids.size(); i++){
+                    //Value in x field around current cell
+                    float x_before = x[IX((int)grids[i][0]-1,(int)grids[i][1])];
+                    float x_after =  x[IX((int)grids[i][0]+1,(int)grids[i][1])];
+                    float x_above =  x[IX((int)grids[i][0],(int)grids[i][1]+1)];
+                    float x_below =  x[IX((int)grids[i][0],(int)grids[i][1]-1)];
+
+                    if(before+after+above+below > 0){
+                        //Assign average value of neigboring non-object cells
+                        
+                        if(b==1 || b==2) {
+                            x[i] *= -1; //flip velocity other way
+
+                            //Find rigid body
+                            if(particleFluid){
+                                var sx = 180 / 900;
+                                var sy = 100 / 500;
+                                var real_x = (i % rowSize) / sx;
+                                var real_y = Math.floor(i / rowSize) / sy;
+
+                                var rigidBodies = particleSystem.getRigidBodies();
+                                var rigidBody = rigidBodies.find(function(rb) {
+                                    return rb.containsPoint(real_x, real_y);
+                                });
+            
+                                if(typeof rigidBody !== "undefined") {
+                                    var vel = rigidBody.velocityAtPoint(real_x, real_y);
+                                    var factor = dt*1.1;
+                                    if(b == 1){
+                                        x[i] += vel[0]*factor;
+                                    } else if (b == 2){
+                                        x[i] += vel[1]*factor;
+                                    }
+                                }
+                            }
+                            
+                        } else {
+                            x[i] = (x_before+x_after+x_above+x_below) / (before+after+above+below);
+                        }
+                    } else {
+                        //Be 0 inside the object
+                        //x[i] = (x_before+x_after+x_above+x_below);
+                        x[i] *= 0.98;
+                    }
+                }
+            }
 }
 
 void FluidSolver::lin_solve ( int N, int b, float * x, float * x0, float a, float c )
@@ -122,6 +170,8 @@ void FluidSolver::vorticity_confinement(int N, float dt, float* d0, float* u, fl
     float* curl = d0;
     //compute vorticity
     //totalDens = 0;
+    setDensity(density,d0);
+    setVelocity(u,v,u0,v0);
     float x,y,z;
     for (int i = 1; i <= N; i++) {
         for (int j = 1; j <= N; j++) {

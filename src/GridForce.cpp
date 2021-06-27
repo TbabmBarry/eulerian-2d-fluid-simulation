@@ -23,9 +23,9 @@ void GridForce::apply(FluidSolver fluid)
 
 			for(int i = 0; i < grids.size(); i++) {
                 // use v,F of the grids that edges pass through to update
-                float u = fluid.getXVelocity(grids[i][0],grids[i][1]);
-                float v = fluid.getYVelocity(grids[i][0],grids[i][1]);
-                float density = fluid.getDensity(grids[i][0],grids[i][1]);
+                float u = fluid.getXVelocity((int)grids[i][0],(int)grids[i][1]);
+                float v = fluid.getYVelocity((int)grids[i][0],(int)grids[i][1]);
+                float density = fluid.getDensity((int)grids[i][0],(int)grids[i][1]);
                 Vector2f distanceToCenter = Vector2f(grids[i][2],grids[i][3]);
 
                 //Find closest edges

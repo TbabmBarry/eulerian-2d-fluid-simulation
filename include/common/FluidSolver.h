@@ -1,5 +1,6 @@
 #pragma once
 #include "Solver.h"
+#include "Particle.h"
 
 class FluidSolver : public Solver {
 public:
@@ -11,6 +12,7 @@ public:
     void advect ( int N, int b, float * d, float * d0, float * u, float * v, float dt );
     void project ( int N, float * u, float * v, float * p, float * div );
     void vorticity_confinement(int N, float dt, float * d0, float* u, float* v, float * u0, float * v0);
+    vector<Particle*> rigidbodies;
     void setDensity(float* d, float* dprev);
     float getDensity(int i, int j);
     void setVelocity(float* xu, float* xv, float* xuprev, float* xvprev);
