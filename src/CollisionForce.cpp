@@ -47,7 +47,8 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
     vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // check if the distance from point to line close enough
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
-    if (minDist > 0.05)
+    cout << "minDist: " << minDist << endl;
+    if (minDist > 0.3)
         return false;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
