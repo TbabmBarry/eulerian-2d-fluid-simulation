@@ -8,7 +8,7 @@
 
 Particle::Particle(const Vector2f & ConstructPos, float mass, int index, TYPE type) :
 	m_ConstructPos(ConstructPos), m_Position(ConstructPos), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index), 
-	type(type), MassCenter(ConstructPos), dimension(0.1)
+	type(type), MassCenter(ConstructPos), dimension(0.8)
 {
 	switch (type)
     {
@@ -79,11 +79,17 @@ void Particle::draw()//draw a square
 void Particle::setBoundingBox(){
 	// local positions wrt masscenter, in order to deal with rotation
 	// to be changed
-	corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
+	// corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
+	// corners.push_back(Vector2f(dimension/2 , dimension/2));//local topright
+	// corners.push_back(Vector2f(dimension/2 , -dimension/2));//local bottomright
+	// corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
+
+	
 	corners.push_back(Vector2f(dimension/2 , dimension/2));//local topright
 	corners.push_back(Vector2f(dimension/2 , -dimension/2));//local bottomright
 	corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
-
+	corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
+	
 	// cout << "m_ConstructPos" <<m_ConstructPos << endl;              // 0.75
 	// corners.push_back(Vector2f(0, dimension));//local top
 	// corners.push_back(Vector2f(dimension , 0));//local right
@@ -162,7 +168,22 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 		temp2i[1] = int((1 - corners[i][1]) / grid_length);
 		corner_absolute.push_back(temp2i);
 	}
-		
+
+	left = corner_absolute[0];
+	right = corner_absolute[0];
+	top = corner_absolute[0];
+	bottom = corner_absolute[0];
+	for (int i=1; i<4; i++) {
+		if (corner_absolute[i][0] > right[0]) { right = corner_absolute[i];}
+		if (corner_absolute[i][0] < left[0]) {left = corner_absolute[i];}
+		if (corner_absolute[i][1] < top[1]) {top = corner_absolute[i];}
+		if (corner_absolute[i][1] > bottom[1]) {bottom = corner_absolute[i];}
+	}		
+
+	// cout<<"left" << left[0] << " " << left[1] << endl;
+	// cout<<"right" << right[0] << " " << right[1] << endl;
+	// cout<<"bottom" << bottom[0] << " " << bottom[1] <<endl;
+	// cout<<"top" << top[0] << " " << top[1] << endl;
 	
 	// cout<<"corner_absolute "<<corner_absolute[0][0]<<" "<<corner_absolute[0][1]<<endl;
 	// cout<<"corner_absolute "<<corner_absolute[1][0]<<" "<<corner_absolute[1][1]<<endl;
@@ -173,41 +194,41 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 	if (corner_absolute[0][1] == corner_absolute[1][1] || corner_absolute[0][0] == corner_absolute[1][0]) {
 		// cout<<"running "<<endl;
 
-		for (int i = corner_absolute[0][0]; i < corner_absolute[1][0]; i++) {
+		for (int i = left[0]; i < right[0]; i++) {
 			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
-			grid_center[1] = (1 - corner_absolute[0][1] * grid_length) - (grid_length / 2);
+			grid_center[1] = (1 - top[1] * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;			
 			temp4f[0] = float(i+1);									//i
-			temp4f[1] = float(corner_absolute[0][1]+1);				//j
+			temp4f[1] = float(top[1]+1);				//j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
 		}
-		for (int j = corner_absolute[1][1]; j < corner_absolute[2][1]; j++) {
-			grid_center[0] = corner_absolute[1][0] * grid_length + (grid_length / 2) - 1;
+		for (int j = top[1]; j < bottom[1]; j++) {
+			grid_center[0] = right[0] * grid_length + (grid_length / 2) - 1;
 			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;			
-			temp4f[0] = float(corner_absolute[1][0]+1);									//i
+			temp4f[0] = float(right[0]+1);									//i
 			temp4f[1] = float(j+1);				//j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
 		}
-		for (int i = corner_absolute[2][0]; i > corner_absolute[3][0]; i--) {
+		for (int i = right[0]; i > left[0]; i--) {
 			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
-			grid_center[1] = (1 - corner_absolute[0][1] * grid_length) - (grid_length / 2);
+			grid_center[1] = (1 - bottom[1] * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;			
 			temp4f[0] = float(i+1);									//i
-			temp4f[1] = float(corner_absolute[2][1]+1);				//j			
+			temp4f[1] = float(bottom[1]+1);				//j			
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
 		}
-		for (int j = corner_absolute[3][1]; j > corner_absolute[0][1]; j--) {
-			grid_center[0] = corner_absolute[3][0] * grid_length + (grid_length / 2) - 1;
+		for (int j = bottom[1]; j > top[1]; j--) {
+			grid_center[0] = left[0] * grid_length + (grid_length / 2) - 1;
 			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;			
-			temp4f[0] = float(corner_absolute[3][0]+1);									//i
+			temp4f[0] = float(left[0]+1);									//i
 			temp4f[1] = float(j+1);				//j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
@@ -215,16 +236,6 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 		}
 
 	} else {
-		left = corner_absolute[0];
-		right = corner_absolute[0];
-		top = corner_absolute[0];
-		bottom = corner_absolute[0];
-		for (int i=1; i<4; i++) {
-			if (corner_absolute[i][0] > right[0]) { right = corner_absolute[i];}
-			if (corner_absolute[i][0] < left[0]) {left = corner_absolute[i];}
-			if (corner_absolute[i][1] < top[1]) {top = corner_absolute[i];}
-			if (corner_absolute[i][1] > bottom[1]) {bottom = corner_absolute[i];}
-		}
 		// bound_grids.push_back(left);bound_grids.push_back();
 		// bound_grids.push_back(temp4f);bound_grids.push_back(temp4f);
 
@@ -233,10 +244,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 		// cout<<"corner "<<corners[2][0]<<" "<<corners[2][1]<<endl;
 		// cout<<"corner "<<corners[3][0]<<" "<<corners[3][1]<<endl;
 
-		// cout<<"left" << left[0] << " " << left[1] << endl;
-		// cout<<"right" << right[0] << " " << right[1] << endl;
-		// cout<<"bottom" << bottom[0] << " " << bottom[1] <<endl;
-		// cout<<"top" << top[0] << " " << top[1] << endl;
+		
 
 		float grid_diagonal = grid_length * sqrt(2); 
 
@@ -324,6 +332,48 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 	return bound_grids;
 }
 
-// vector<Vector2f> InnerGrid(int grid_N){
-// 	vector<Vector2f> 
+// vector<Vector2f> Particle::InnerGrid(int grid_N){
+// 	vector<Vector2f> inner_grids;
+
+// 	vector<Vector2i> corner_absolute;
+
+// 	Vector2f temp2f,result;
+// 	Vector2i temp2i;
+// 	Vector2i top,bottom,left,right;
+// 	Vector2f grid_center,vector_length;
+
+// 	float grid_length = 2.0 / grid_N;
+
+// 	for (int i=0;i<4;i++) {
+// 		temp2i[0] = int((corners[i][0]- (-1)) / grid_length);  
+// 		temp2i[1] = int((1 - corners[i][1]) / grid_length);
+// 		corner_absolute.push_back(temp2i);
+// 	}
+
+// 	left = corner_absolute[0];
+// 	right = corner_absolute[0];
+// 	top = corner_absolute[0];
+// 	bottom = corner_absolute[0];
+// 	for (int i=1; i<4; i++) {
+// 		if (corner_absolute[i][0] > right[0]) { right = corner_absolute[i];}
+// 		if (corner_absolute[i][0] < left[0]) {left = corner_absolute[i];}
+// 		if (corner_absolute[i][1] < top[1]) {top = corner_absolute[i];}
+// 		if (corner_absolute[i][1] > bottom[1]) {bottom = corner_absolute[i];}
+// 	}	
+
+// 	if (corner_absolute[0][1] == corner_absolute[1][1] || corner_absolute[0][0] == corner_absolute[1][0]) {
+// 		for (int i = left[0]+1; i<right[0] ; i++) {
+// 			for (int j = top[1]+1 ; j < bottom[1]; j++){
+// 				temp2f[0] = float(i+1);
+// 				temp2f[1] = float(j+1);
+// 				inner_grids.push_back(temp2f);
+// 			}
+// 		}
+// 	} else {
+		
+
+
+// 	}
+
+// 	return inner_grids;
 // }
