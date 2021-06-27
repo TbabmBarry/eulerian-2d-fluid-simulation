@@ -36,8 +36,8 @@ void FluidSolver::set_bnd ( int N, int b, float* x )
 
     //internal boundary to deal with rigidbodies->fluid
     for(Particle* rigidBody : rigidbodies){
-        vector<Vector4f> boundgrids;// = rigidBody.BoundingGrid();
-        vector<Vector4f> innergrids;// = rigidBody.BoundingGrid();
+        vector<Vector4f> boundgrids = rigidBody->BoundingGrid(N);
+        vector<Vector4f> innergrids;// = rigidBody.InnerGrid();
         //here we discuss 3 fluid cases wrt a rigidbody: 
         //1. grid is boundary of rigidbody && the grid is on canvas boundary
         //2. grid is boundary of rigidbody && the grid is not on canvas boundary
