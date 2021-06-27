@@ -145,6 +145,8 @@ void System::rigidSetState(VectorXf newState, float time)
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
         }
+
+        
     }
     this->time = time;
 }

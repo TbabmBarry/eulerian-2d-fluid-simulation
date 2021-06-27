@@ -242,6 +242,7 @@ static void draw_density ( void )
 				glColor3f ( d10, d10, d10 ); glVertex2f ( x+h, y );
 				glColor3f ( d11, d11, d11 ); glVertex2f ( x+h, y+h );
 				glColor3f ( d01, d01, d01 ); glVertex2f ( x, y+h );
+				// cout << "draw" << x << y << endl;
 			}
 		}
 
@@ -374,12 +375,13 @@ static void key_func ( unsigned char key, int x, int y )
 	case '4':
 		sys_type = true;
 		init_system();
+		break;
 	case '5':
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt=0.001;
-		external_force = 1.1f;
+		sys->dt=0.00001;
+		external_force = 0.1f;
 		init_system();
 		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
 		mode->RigidBodyCollision(sys);
