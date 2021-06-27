@@ -8,7 +8,7 @@
 
 Particle::Particle(const Vector2f & ConstructPos, float mass, int index, TYPE type) :
 	m_ConstructPos(ConstructPos), m_Position(Vector2f(0.0, 0.0)), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index), 
-	type(type), MassCenter(ConstructPos), dimension(1)
+	type(type), MassCenter(ConstructPos), dimension(0.1)
 {
 	switch (type)
     {
@@ -39,7 +39,6 @@ void Particle::reset()
     R = Matrix2f::Identity();
     P = Vector2f(0, 0);//M*v(t)
     L = 0.0f;//I*w(t)
-    v = Vector2f(0, 0);
     omega = L/(I+0.00000000001);
     torque = 0.0f;
     angle = 0.0f * M_PI / 180;
@@ -63,7 +62,7 @@ void Particle::draw()//draw a square
 		// cout << "corners1: " << corners[1][0]*(1024/2) << corners[1][1]*(1024/2) << endl;
 		// cout << "corners2: " << corners[2][0]*(1024/2) << corners[2][1]*(1024/2) << endl;
 		// cout << "corners3: " << corners[3][0]*(1024/2) << corners[3][1]*(1024/2) << endl;
-		glClear(GL_COLOR_BUFFER_BIT);
+		// glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1.0,1.0,1.0);
 		glBegin(GL_POLYGON);
 		glVertex2f(corners[0][0],corners[0][1]);

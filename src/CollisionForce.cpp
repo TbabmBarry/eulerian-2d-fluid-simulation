@@ -47,7 +47,8 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
     vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // check if the distance from point to line close enough
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
-    if (minDist > 2)
+    cout << "minDist: " << minDist << endl;
+    if (minDist > 0.3)
         return false;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
@@ -57,8 +58,6 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
     float vrel = normal.dot(rv);
     if (vrel > threshold)
-        return false;
-    if (vrel > -threshold)
         return false;
     else
         return true;
@@ -73,10 +72,8 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     // get the normalized normal vector of the closest edge
     Vector2f normal = Vector2f(-closestEdge[1], closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
-
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
     float vrel = normal.dot(rv), numerator = -(1 + epsilon) * vrel;
-
     float term1 = 1 / rb1->mass;
     float term2 = 1 / rb2->mass;
     MatrixXf raN(2,2), rbN(2,2),raF(2,2), rbF(2,2);
@@ -94,4 +91,14 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     rbF(0,0) = rb[0],rbF(0,1) = rb[1],rbF(1,0) = force[0],rbF(1,1) = force[1];
     rb1->torque += (1/(rb1->I+0.00000000001))/2 * raF.determinant();
     rb2->torque -= (1/(rb2->I+0.00000000001))/2 * rbF.determinant();
+}
+
+map<int, map<int, float>> CollisionForce::dx()
+{
+    return map<int, map<int, float>>();
+}
+
+MatrixXf CollisionForce::dv()
+{
+    return MatrixXf();
 }

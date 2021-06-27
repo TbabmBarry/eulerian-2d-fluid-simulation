@@ -118,6 +118,9 @@ void System::rigidSetState(VectorXf newState, float time)
 {
     for (int i = 0; i < rigidbodies.size(); i++)
     {
+        for (int k=0; k<rigidbodies[i]->corners.size();++k) {
+            rigidbodies[i]->corners[k] -= rigidbodies[i]->x;
+        }
         rigidbodies[i]->x[0]    = newState[i * 6 + 0];
         rigidbodies[i]->x[1]    = newState[i * 6 + 1];
         rigidbodies[i]->angle   = newState[i * 6 + 2];
@@ -130,7 +133,7 @@ void System::rigidSetState(VectorXf newState, float time)
         rigidbodies[i]->R(0,1)  = -sin(rigidbodies[i]->angle);
         rigidbodies[i]->R(1,0)  = sin(rigidbodies[i]->angle);
         rigidbodies[i]->R(1,1)  = cos(rigidbodies[i]->angle);
-        rigidbodies[i]->v       = rigidbodies[i]->P / rigidbodies[i]->mass;
+        rigidbodies[i]->m_Velocity       = rigidbodies[i]->P / rigidbodies[i]->mass;
         rigidbodies[i]->I       = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
         rigidbodies[i]->omega   = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
         // cout << "velocity: " << rigidbodies[i]->v << endl;
@@ -141,10 +144,7 @@ void System::rigidSetState(VectorXf newState, float time)
         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
-            cout << "corner " << k << ": " << rigidbodies[i]->corners[k] << "x: " << rigidbodies[i]->x << endl;
         }
-        // vector<Vector2i> temp = rigidbodies[i]->BoundingGrid(2);
-        // cout << "bound_grid " << temp[0] << endl;
     }
     this->time = time;
 }
@@ -215,9 +215,7 @@ VectorXf System::particleDerivative()
 VectorXf System::rigidAcceleration()
 {
     clearRigidForces();
-    // cout << "force num: " << rigidForces.size() << endl;
     applyRigidForces();
-    cout << "force: " << rigidbodies[0]->m_Force[0] << " " << rigidbodies[0]->m_Force[1] << endl;
     return rigidDerivative();
 }
 
@@ -229,8 +227,8 @@ VectorXf System::rigidDerivative()
         Particle *rb = rigidbodies[i];
         // updateForce();
         // updateTorque();
-        y[i * 6 + 0] = rb->v[0];
-        y[i * 6 + 1] = rb->v[1];
+        y[i * 6 + 0] = rb->m_Velocity[0];
+        y[i * 6 + 1] = rb->m_Velocity[1];
         y[i * 6 + 2] = rb->omega;
         y[i * 6 + 3] = rb->m_Force[0];
         y[i * 6 + 4] = rb->m_Force[1];
