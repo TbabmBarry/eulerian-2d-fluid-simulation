@@ -13,6 +13,8 @@ class CollisionForce : public Force {
   void setTarget(vector<Particle*> rigidbodies) override;
   void draw() override;
   void apply(bool springsCanBreak) override;
+  map<int, map<int, float>> dx() override;
+  MatrixXf dv() override;
   bool colliding(Vector2f point, Particle* rb1, Particle* rb2);
   void collision(Vector2f point, Particle* rb1, Particle* rb2);
  private:
