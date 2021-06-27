@@ -41,7 +41,7 @@ void FluidSolver::set_bnd ( int N, int b, float* x )
                     float x_above =  x[IX((int)grids[i][0],(int)grids[i][1]+1)];
                     float x_below =  x[IX((int)grids[i][0],(int)grids[i][1]-1)];
 
-                    if(before+after+above+below > 0){
+                    if(x_before+x_after+x_above+x_below > 0){
                         //Assign average value of neigboring non-object cells
                         
                         if(b==1 || b==2) {
