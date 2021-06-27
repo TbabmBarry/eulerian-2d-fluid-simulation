@@ -8,7 +8,7 @@
 
 Particle::Particle(const Vector2f & ConstructPos, float mass, int index, TYPE type) :
 	m_ConstructPos(ConstructPos), m_Position(Vector2f(0.0, 0.0)), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index), 
-	type(type), MassCenter(ConstructPos), dimension(1)
+	type(type), MassCenter(ConstructPos), dimension(1.4)
 {
 	switch (type)
     {
@@ -139,32 +139,82 @@ float Particle::minDistance(Vector2f p1, Vector2f p2, Vector2f p3)
 	return minDist;
 }
 
-// vector<Vector4f> Particle::BoundingGrid(int grid_N){
-// 	vector<Vector2i> bound_grids;
+vector<Vector4f> Particle::BoundingGrid(int grid_N){
+	vector<Vector4f> bound_grids;
 	
-// 	vector<Vector2i> corner_absolute;
-// 	Vector2i temp;
+	vector<Vector2i> corner_absolute;
+	Vector4f result;
+	Vector2i temp2i;
+	Vector4f temp4f;
+	Vector2f grid_center;
+	Vector2f vector_length;
+
+	float grid_length = 2.0 / grid_N;
+
+	for (int i=0;i<4;i++) {
+		temp2i[0] = int((corners[i][0]- (-1)) / grid_length);  //结尾记得再+1
+		temp2i[1] = int((1 - corners[i][1]) / grid_length);
+		corner_absolute.push_back(temp2i);
+	}
+		
 	
-// 	for (int i=0;i<4;i++) {
-// 		temp[0] = int(corners[i][0]*(1024/2));
-// 		temp[1] = int(corners[i][1]*(1024/2));
-// 		corner_absolute.push_back(temp);
-// 	}
+	//case 1
+	if (corner_absolute[0][1] == corner_absolute[1][1]) {
+		for (int i = corner_absolute[0][0]; i < corner_absolute[1][0]; i++) {
+			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
+			grid_center[1] = (1 - corner_absolute[0][1] * grid_length) - (grid_length / 2);
+			vector_length = grid_center - m_Position;			
+			temp4f[0] = float(i+1);									//i
+			temp4f[1] = float(corner_absolute[0][1]+1);				//j
+			temp4f[2] = vector_length[0];
+			temp4f[3] = vector_length[1];
+			bound_grids.push_back(temp4f);
+		}
+		for (int j = corner_absolute[1][1]; j < corner_absolute[2][1]; j++) {
+			grid_center[0] = corner_absolute[1][0] * grid_length + (grid_length / 2) - 1;
+			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
+			vector_length = grid_center - m_Position;			
+			temp4f[0] = float(corner_absolute[1][0]+1);									//i
+			temp4f[1] = float(j+1);				//j
+			temp4f[2] = vector_length[0];
+			temp4f[3] = vector_length[1];
+			bound_grids.push_back(temp4f);
+		}
+		for (int i = corner_absolute[2][0]; i > corner_absolute[3][0]; i--) {
+			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
+			grid_center[1] = (1 - corner_absolute[0][1] * grid_length) - (grid_length / 2);
+			vector_length = grid_center - m_Position;			
+			temp4f[0] = float(i+1);									//i
+			temp4f[1] = float(corner_absolute[2][1]+1);				//j			
+			temp4f[2] = vector_length[0];
+			temp4f[3] = vector_length[1];
+			bound_grids.push_back(temp4f);
+		}
+		for (int j = corner_absolute[3][1]; j > corner_absolute[0][1]; j--) {
+			grid_center[0] = corner_absolute[3][0] * grid_length + (grid_length / 2) - 1;
+			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
+			vector_length = grid_center - m_Position;			
+			temp4f[0] = float(corner_absolute[3][0]+1);									//i
+			temp4f[1] = float(j+1);				//j
+			temp4f[2] = vector_length[0];
+			temp4f[3] = vector_length[1];
+			bound_grids.push_back(temp4f);
+		}
+
+	}
+
+
+
+
+
+	// for (int i=0;i<4;i++)	{
+	// 	std::cout<< "running"<< corner_absolute[i][0] << "  "<< corner_absolute[i][1]<< std::endl;
+	// }
 	
-// 	glColor3f(1.f, 0.f, 0.f); //rgb
-// 	glPointSize(20);
-// 	glBegin(GL_POINTS);
-// 	for (int i=0;i<4;i++)	{
-// 		glVertex2f(corner_absolute[i][0],corner_absolute[i][1]);
-// 		std::cout<< "running"<< corner_absolute[i][0] << corner_absolute[i][1]<< std::endl;
-// 	}
-	
-// 	glEnd();
-	
-	
-	
-// 	temp[0] = 1.0;
-// 	temp[1] = 2.0;
-// 	bound_grids.push_back(temp);
-// 	return bound_grids;
-// }
+	// result[0] = 1.0;
+	// result[1] = 2.0;
+	// result[2] = 1.0;
+	// result[3] = 2.0;
+	// bound_grids.push_back(result);
+	return bound_grids;
+}

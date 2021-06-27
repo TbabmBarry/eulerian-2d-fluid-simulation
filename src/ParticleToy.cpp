@@ -242,6 +242,7 @@ static void draw_density ( void )
 				glColor3f ( d10, d10, d10 ); glVertex2f ( x+h, y );
 				glColor3f ( d11, d11, d11 ); glVertex2f ( x+h, y+h );
 				glColor3f ( d01, d01, d01 ); glVertex2f ( x, y+h );
+				// cout << "draw" << x << y << endl;
 			}
 		}
 
@@ -374,6 +375,7 @@ static void key_func ( unsigned char key, int x, int y )
 	case '4':
 		sys_type = true;
 		init_system();
+		break;
 	case '5':
 		sys_type = false;
 		if (dsim)
@@ -645,7 +647,7 @@ int main ( int argc, char ** argv )
 			N, dt, d );
 
 		// for grid based system
-		grid_N = 128;               //number of grid
+		grid_N = 2;               //number of grid
 		diff = 0.0f;
 		visc = 0.0f;
 		force = 5.0f;
