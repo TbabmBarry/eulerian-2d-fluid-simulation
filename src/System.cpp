@@ -145,7 +145,8 @@ void System::rigidSetState(VectorXf newState, float time)
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
         }
-        vector<Vector4f> temp = rigidbodies[i]->BoundingGrid(4);
+        vector<Vector4f> temp = rigidbodies[i]->BoundingGrid(8);
+        cout << "new " << endl;
         for (int i=0;i<temp.size();i++) {
             cout << "bound_grid " << temp[i][0] << " " <<temp[i][1]<< " "<<temp[i][2]<< " " <<temp[i][3]<< endl;
         }
