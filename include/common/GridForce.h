@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include "Force.h"
 #include "Particle.h"
+#include "FluidSolver.h"
 #include <map>
+#include "Eigen/Dense"
+
+using namespace Eigen;
 
 class GridForce : public Force {
 
@@ -11,7 +15,7 @@ class GridForce : public Force {
 
   void draw() override;
   void setTarget(vector<Particle*> particles) override;
-//   void apply(bool springsCanBreak) override;
+  void apply(FluidSolver fluid);
 
  private:
 };

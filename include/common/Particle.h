@@ -56,7 +56,6 @@ public:
     float L; //angular momentum L(t)
 
     //Derived quantities
-    Vector2f v; //velocity v(t)
     float omega; //angular velocity omega(t)=L/I in 2D
     MatrixXf R; //rotation R(t)
     Vector2f force;

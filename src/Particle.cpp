@@ -39,7 +39,6 @@ void Particle::reset()
     R = Matrix2f::Identity();
     P = Vector2f(0, 0);//M*v(t)
     L = 0.0f;//I*w(t)
-    v = Vector2f(0, 0);
     omega = L/(I+0.00000000001);
     torque = 0.0f;
     angle = 0.0f * M_PI / 180;
@@ -152,13 +151,13 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 	float grid_length = 2.0 / grid_N;
 
 	for (int i=0;i<4;i++) {
-		temp2i[0] = int((corners[i][0]- (-1)) / grid_length);  //结尾记得再+1
+		temp2i[0] = int((corners[i][0]- (-1)) / grid_length);  
 		temp2i[1] = int((1 - corners[i][1]) / grid_length);
 		corner_absolute.push_back(temp2i);
 	}
 		
 	
-	//case 1
+	//case 1 平行
 	if (corner_absolute[0][1] == corner_absolute[1][1]) {
 		for (int i = corner_absolute[0][0]; i < corner_absolute[1][0]; i++) {
 			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
@@ -200,6 +199,9 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
 		}
+
+	} else {
+		
 
 	}
 

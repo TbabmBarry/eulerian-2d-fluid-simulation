@@ -380,7 +380,7 @@ static void key_func ( unsigned char key, int x, int y )
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt=0.1;
+		sys->dt=0.001;
 		external_force = 1.1f;
 		init_system();
 		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
