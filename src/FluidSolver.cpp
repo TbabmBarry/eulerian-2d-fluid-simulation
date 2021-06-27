@@ -14,6 +14,7 @@ void FluidSolver::simulateStep(System *system, float h){
 
 void FluidSolver::add_source ( int N, float* x, float* s, float dt )
 {
+    h=dt;
 	int i, size=(N+2)*(N+2);
 	for ( i=0 ; i<size ; i++ ) {
         x[i] += dt*s[i];
@@ -32,54 +33,44 @@ void FluidSolver::set_bnd ( int N, int b, float* x )
 	x[IX(0  ,N+1)] = 0.5f*(x[IX(1,N+1)]+x[IX(0,N)]);//set density of topright corner cell
 	x[IX(N+1,0  )] = 0.5f*(x[IX(N,0)]+x[IX(N+1,1)]);//set density of bottomleft corner cell
 	x[IX(N+1,N+1)] = 0.5f*(x[IX(N,N+1)]+x[IX(N+1,N)]);//set density of bottomright corner cell
-    // for(Particle* rigidBody : rigidbodies){
-    //             vector<Vector4f> grids;// = rigidBody.BoundingGrid();
-    //             for(int i = 0; i < grids.size(); i++){
-    //                 //Value in x field around current cell
-    //                 float x_before = x[IX((int)grids[i][0]-1,(int)grids[i][1])];
-    //                 float x_after =  x[IX((int)grids[i][0]+1,(int)grids[i][1])];
-    //                 float x_above =  x[IX((int)grids[i][0],(int)grids[i][1]+1)];
-    //                 float x_below =  x[IX((int)grids[i][0],(int)grids[i][1]-1)];
 
-    //                 if(before+after+above+below > 0){
-    //                     //Assign average value of neigboring non-object cells
-                        
-    //                     if(b==1 || b==2) {
-    //                         x[i] *= -1; //flip velocity other way
-
-    //                         //Find rigid body
-    //                         if(particleFluid){
-    //                             var sx = 180 / 900;
-    //                             var sy = 100 / 500;
-    //                             var real_x = (i % rowSize) / sx;
-    //                             var real_y = Math.floor(i / rowSize) / sy;
-
-    //                             var rigidBodies = particleSystem.getRigidBodies();
-    //                             var rigidBody = rigidBodies.find(function(rb) {
-    //                                 return rb.containsPoint(real_x, real_y);
-    //                             });
-            
-    //                             if(typeof rigidBody !== "undefined") {
-    //                                 var vel = rigidBody.velocityAtPoint(real_x, real_y);
-    //                                 var factor = dt*1.1;
-    //                                 if(b == 1){
-    //                                     x[i] += vel[0]*factor;
-    //                                 } else if (b == 2){
-    //                                     x[i] += vel[1]*factor;
-    //                                 }
-    //                             }
-    //                         }
-                            
-    //                     } else {
-    //                         x[i] = (x_before+x_after+x_above+x_below) / (before+after+above+below);
-    //                     }
-    //                 } else {
-    //                     //Be 0 inside the object
-    //                     //x[i] = (x_before+x_after+x_above+x_below);
-    //                     x[i] *= 0.98;
-    //                 }
-    //             }
-    //         }
+    //internal boundary to deal with rigidbodies->fluid
+    for(Particle* rigidBody : rigidbodies){
+        vector<Vector4f> boundgrids;// = rigidBody.BoundingGrid();
+        vector<Vector4f> innergrids;// = rigidBody.BoundingGrid();
+        //here we discuss 3 fluid cases wrt a rigidbody: 
+        //1. grid is boundary of rigidbody && the grid is on canvas boundary
+        //2. grid is boundary of rigidbody && the grid is not on canvas boundary
+        //3. grid inside boundary of rigidbody
+        for(int i = 0; i < boundgrids.size(); i++){
+            //if case1: first flip fluid value(Gauss-Seidel relaxiation),
+            //then if rigid grid is on upper/lower canvas boundary, fluid value is changed based on x velocity field
+            //if rigid grid is on lhs/rhs canvas boundary, fluid value is changed based on y velocity field
+            if(b==1 || b==2) {
+                x[IX((int)boundgrids[i][0],(int)boundgrids[i][1])] *= -1; //flip value according to above(Gauss-Seidel relaxiation)
+                //Find rigid body
+                Vector2f vel = Vector2f(getXVelocity(rigidBody->x[0],rigidBody->x[1]),getYVelocity(rigidBody->x[0],rigidBody->x[1]));
+                float factor = h*1.1;
+                if(b == 1){
+                    x[IX((int)boundgrids[i][0],(int)boundgrids[i][1])] += vel[0]*factor;
+                } else if (b == 2){
+                    x[IX((int)boundgrids[i][0],(int)boundgrids[i][1])] += vel[1]*factor;
+                }
+            } else {
+                //if case2: Assign average value of fluid neigboring cells(grids) to current cell
+                //Value in x field around current cell
+                float x_before = x[IX((int)boundgrids[i][0]-1,(int)boundgrids[i][1])];
+                float x_after =  x[IX((int)boundgrids[i][0]+1,(int)boundgrids[i][1])];
+                float x_above =  x[IX((int)boundgrids[i][0],(int)boundgrids[i][1]+1)];
+                float x_below =  x[IX((int)boundgrids[i][0],(int)boundgrids[i][1]-1)];
+                x[IX((int)boundgrids[i][0],(int)boundgrids[i][1])] = (x_before+x_after+x_above+x_below) / x[IX((int)boundgrids[i][0],(int)boundgrids[i][1])];
+            }
+        }
+        //if case3: for all fluid grids inside rigid body(i.e not boundary grids), assigne them=0
+        for (int i = 0; i < innergrids.size(); i++){
+            x[IX((int)innergrids[i][0],(int)innergrids[i][1])] = 0;
+        }
+    }
 }
 
 void FluidSolver::lin_solve ( int N, int b, float * x, float * x0, float a, float c )
