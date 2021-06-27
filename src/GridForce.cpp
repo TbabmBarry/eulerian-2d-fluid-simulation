@@ -21,6 +21,12 @@ void GridForce::apply(FluidSolver fluid)
 			Particle* rigidBody = p;
 			vector<Vector4f> grids;// = rigidBody.BoundingGrid();
 
+            // vector<Vector4f> temp = rigidbodies[i]->BoundingGrid(8);
+            // cout << "new " << endl;
+            // for (int i=0;i<temp.size();i++) {
+            // cout << "bound_grid " << temp[i][0] << " " <<temp[i][1]<< " "<<temp[i][2]<< " " <<temp[i][3]<< endl;
+            // }
+
 			for(int i = 0; i < grids.size(); i++) {
                 // use v,F of the grids that edges pass through to update
                 float u = fluid.getXVelocity((int)grids[i][0],(int)grids[i][1]);

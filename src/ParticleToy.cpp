@@ -647,7 +647,7 @@ int main ( int argc, char ** argv )
 			N, dt, d );
 
 		// for grid based system
-		grid_N = 2;               //number of grid
+		grid_N = 128;               //number of grid
 		diff = 0.0f;
 		visc = 0.0f;
 		force = 5.0f;
