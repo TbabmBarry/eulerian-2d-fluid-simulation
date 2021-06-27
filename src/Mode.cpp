@@ -142,6 +142,7 @@ void Mode::hair(System *sys){
 
 void Mode::RigidBodyCollision(System *sys)
 {
-    sys->addRigid(new Particle(Vector2f(0.0f, 0.0f), 5.0f,0, Particle::RIGID));
+    // sys->addRigid(new Particle(Vector2f(0.0f, 0.0f), 5.0f, 0, Particle::RIGID));
+    sys->addRigid(new Particle(Vector2f(-0.3f, 0.4f), 5.0f, 0, Particle::RIGID));
     // sys->addForce(new CollisionForce()))
 }

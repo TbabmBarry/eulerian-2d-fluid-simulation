@@ -118,6 +118,9 @@ void System::rigidSetState(VectorXf newState, float time)
 {
     for (int i = 0; i < rigidbodies.size(); i++)
     {
+        for (int k=0; k<rigidbodies[i]->corners.size();++k) {
+            rigidbodies[i]->corners[k] -= rigidbodies[i]->x;
+        }
         rigidbodies[i]->x[0]    = newState[i * 6 + 0];
         rigidbodies[i]->x[1]    = newState[i * 6 + 1];
         rigidbodies[i]->angle   = newState[i * 6 + 2];
@@ -141,10 +144,7 @@ void System::rigidSetState(VectorXf newState, float time)
         for (int k=0; k<rigidbodies[i]->corners.size();++k) {
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
-            cout << "corner " << k << ": " << rigidbodies[i]->corners[k] << "x: " << rigidbodies[i]->x << endl;
         }
-        // vector<Vector2i> temp = rigidbodies[i]->BoundingGrid(2);
-        // cout << "bound_grid " << temp[0] << endl;
     }
     this->time = time;
 }
