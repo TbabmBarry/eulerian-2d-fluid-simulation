@@ -8,7 +8,7 @@
 
 Particle::Particle(const Vector2f & ConstructPos, float mass, int index, TYPE type) :
 	m_ConstructPos(ConstructPos), m_Position(ConstructPos), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index), 
-	type(type), MassCenter(ConstructPos), dimension(0.8)
+	type(type), MassCenter(ConstructPos), dimension(0.1)
 {
 	switch (type)
     {
@@ -62,7 +62,7 @@ void Particle::draw()//draw a square
 		// cout << "corners1: " << corners[1][0]*(1024/2) << corners[1][1]*(1024/2) << endl;
 		// cout << "corners2: " << corners[2][0]*(1024/2) << corners[2][1]*(1024/2) << endl;
 		// cout << "corners3: " << corners[3][0]*(1024/2) << corners[3][1]*(1024/2) << endl;
-		glClear(GL_COLOR_BUFFER_BIT);
+		// glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1.0,1.0,1.0);
 		glBegin(GL_POLYGON);
 		glVertex2f(corners[0][0],corners[0][1]);
@@ -319,22 +319,11 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 				}
 			}
 		}
-
-
 	}
 
-
-
-
-
-	// for (int i=0;i<4;i++)	{
-	// 	std::cout<< "running"<< corner_absolute[i][0] << "  "<< corner_absolute[i][1]<< std::endl;
-	// }
-	
-	// result[0] = 1.0;
-	// result[1] = 2.0;
-	// result[2] = 1.0;
-	// result[3] = 2.0;
-	// bound_grids.push_back(result);
 	return bound_grids;
 }
+
+// vector<Vector2f> InnerGrid(int grid_N){
+// 	vector<Vector2f> 
+// }
