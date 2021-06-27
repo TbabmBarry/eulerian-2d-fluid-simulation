@@ -62,7 +62,7 @@ void Particle::draw()//draw a square
 		// cout << "corners1: " << corners[1][0]*(1024/2) << corners[1][1]*(1024/2) << endl;
 		// cout << "corners2: " << corners[2][0]*(1024/2) << corners[2][1]*(1024/2) << endl;
 		// cout << "corners3: " << corners[3][0]*(1024/2) << corners[3][1]*(1024/2) << endl;
-		// glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		glColor3f(1.0,1.0,1.0);
 		glBegin(GL_POLYGON);
 		glVertex2f(corners[0][0],corners[0][1]);

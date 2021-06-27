@@ -19,7 +19,7 @@ void GridForce::apply(FluidSolver fluid)
         for (Particle* p : particles) {
 
 			Particle* rigidBody = p;
-			vector<Vector4f> grids;// = rigidBody.BoundingGrid();
+			vector<Vector4f> grids = rigidBody->BoundingGrid(128);
 
 			for(int i = 0; i < grids.size(); i++) {
                 // use v,F of the grids that edges pass through to update
