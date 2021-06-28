@@ -122,13 +122,16 @@ vector<Vector2f> Particle::getClosestEdge(Vector2f point)
 	float minDist = numeric_limits<float>::max(), currDist;
 	for (int i = 0; i < n; i++)
 	{
-		currDist = minDistance(corners[i], corners[(i+1)%n], point);
+		currDist = minDistance(corners[i%n], corners[(i+1)%n], point);
 		if (minDist >= currDist)
 		{
 			idx = i;
 			minDist = currDist;
+			// cout << "idx: " << idx << endl;
+			// cout << "mindist: " << minDist << endl;
 		}
 	}
+	// cout << "idx: " << idx << endl;
 	return vector<Vector2f>({corners[idx],corners[(idx+1)%n]});
 }
 

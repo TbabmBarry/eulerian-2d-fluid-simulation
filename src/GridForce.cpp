@@ -35,10 +35,10 @@ void GridForce::apply(FluidSolver fluid)
                 Vector2f distanceToCenter = Vector2f(grids[i][2],grids[i][3]);
 
                 //Find closest edges
-                vector<Vector2f> close_edge = rigidBody->getClosestEdge(Vector2f(grids[1][2],grids[i][3]));//bottomright->topright
+                vector<Vector2f> close_edge = rigidBody->getClosestEdge(Vector2f(grids[i][2],grids[i][3]));//bottomright->topright
                 Vector2f edge=close_edge[1]-close_edge[0];
                 //Find normal of closest edge
-                Vector2f normal = Vector2f(edge[1]/rigidBody->dimension, -edge[0]/rigidBody->dimension);
+                Vector2f normal = Vector2f(edge[1], -edge[0]).normalized();
 
                 //project velocities along the normal and sum up
                 //because we want to simply assume force as a vector proportional to velocity

@@ -43,20 +43,32 @@ void CollisionForce::draw()
 
 bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
 {
+    // cout << " " <<endl;
+    // cout << "corner: " << point << endl;
     // get the vector of points constructing the closest edge
     vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // check if the distance from point to line close enough
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
+    // cout << "mindist: " << minDist << endl;
+    // cout << "edge0: " << edgeVec[0] << endl;
+    // cout << "edge1: " << edgeVec[1] << endl;
     if (minDist > 0.3)
         return false;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
+    cout << " " <<endl;
+    cout << "mindist" << minDist <<endl;
+    cout << "corner: " << point << endl;
+    cout << "edge0: " << edgeVec[0] <<endl;
+    cout << "edge1: " << edgeVec[1] <<endl;
     // get the normal vector of the closest edge
-    Vector2f normal = Vector2f(-closestEdge[1], closestEdge[0]).normalized();
+    Vector2f normal = Vector2f(closestEdge[1], -closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
     // Vector2f rv = (rb2->x + rb2->omega * rb) - (rb1->x - rb1->omega * rb);
     float vrel = normal.dot(rv);
+    // cout << "velocity: " << rv << endl;
+    // cout << "vrel: " << vrel << endl;
     if (vrel > threshold)
         return false;
     else
@@ -68,16 +80,16 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     // get the vector of points constructing the closest edge
     vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
-    cout << "minDist: " << minDist << endl;
+    // cout << "minDist: " << minDist << endl;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
     // get the normalized normal vector of the closest edge
-    Vector2f normal = Vector2f(-closestEdge[1], closestEdge[0]).normalized();
+    Vector2f normal = Vector2f(closestEdge[1], -closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
     // Vector2f rv = (rb2->x + rb2->omega * rb) - (rb1->x - rb1->omega * rb);
     float vrel = normal.dot(rv), numerator = -(1 + epsilon) * vrel;
-    cout << "vrel: " << vrel << endl;
+    // cout << "vrel: " << vrel << endl;
     float term1 = 1 / rb1->mass;
     float term2 = 1 / rb2->mass;
     MatrixXf raN(2,2), rbN(2,2),raF(2,2), rbF(2,2);
@@ -99,7 +111,7 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     if (abs(force[1]) < 20)
         force[1] *= 10;
     else force[1] *= 5; 
-    cout << "force: " << force << endl;
+    // cout << "force: " << force << endl;
     rb1->m_Force -= force;
     rb2->m_Force += force;
     rb1->torque -= (1/(rb1->I+0.001)) / 8 * raF.determinant();
