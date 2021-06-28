@@ -308,6 +308,7 @@ void System::clearRigidForces()
     for (Particle *rb : rigidbodies)
     {
         rb->m_Force = Vector2f(0.0f, 0.0f);
+        rb->torque = 0.0f;
     }
 }
 

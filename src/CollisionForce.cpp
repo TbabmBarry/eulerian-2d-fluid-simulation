@@ -51,7 +51,7 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
     vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // check if the distance from point to line close enough
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
-    if (minDist > 0.03)
+    if (minDist > 0.02)
         return false;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
@@ -101,22 +101,21 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     float term3 = (raCrossN*raCrossN)*(1/(rb1->I+0.001));
     float term4 = (rbCrossN*rbCrossN)*(1/(rb2->I+0.001));
     float j = numerator / (term1 + term2 + term3 + term4);
-    float scale = 2;
-    // cout << "J: " << j << endl;
+    float scale = 3;
     Vector2f force = scale * j * normal;
     raF(0,0) = ra[0],raF(0,1) = ra[1],raF(1,0) = force[0],raF(1,1) = force[1];
     rbF(0,0) = rb[0],rbF(0,1) = rb[1],rbF(1,0) = force[0],rbF(1,1) = force[1];
     cout << "force: " << force << endl;
-    if (abs(force[0]) < 100)
-        force[0] *= 90;
-    else force[0] *= 30;
-    if (abs(force[1]) < 100)
-        force[1] *= 90;
-    else force[1] *= 30;
+    if (abs(force[0]) < 20)
+        force[0] *= 45;
+    else force[0] *= 15;
+    if (abs(force[1]) < 20)
+        force[1] *= 45;
+    else force[1] *= 15;
     rb1->m_Force += force;
     rb2->m_Force -= force;
-    rb1->torque += (1/(rb1->I+0.001)) / 10 * raF.determinant();
-    rb2->torque -= (1/(rb2->I+0.001)) / 10 * rbF.determinant();
+    rb1->torque += (1/(rb1->I+0.001)) / 8 * raF.determinant();
+    rb2->torque -= (1/(rb2->I+0.001)) / 8 * rbF.determinant();
 }
 
 map<int, map<int, float>> CollisionForce::dx()
