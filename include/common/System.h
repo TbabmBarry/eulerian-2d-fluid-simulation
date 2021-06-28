@@ -54,6 +54,7 @@ class System {
 
         // Check the wall collision and update state
         VectorXf collisionValidation(VectorXf newState);
+        VectorXf collisionValidationRigid(VectorXf newState);
 
         float particleGetTime();
         // Scatter state from src into the particles

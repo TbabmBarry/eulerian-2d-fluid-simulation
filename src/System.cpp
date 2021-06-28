@@ -200,6 +200,43 @@ VectorXf System::collisionValidation(VectorXf newState)
     return newState;
 }
 
+VectorXf System::collisionValidationRigid(VectorXf newState)
+{
+    for (int i = 0; i < rigidbodies.size(); i++)
+    {
+        if (newState[i * 6] < -(0.9f - rigidbodies[i]->dimension/2))
+        {
+            // particles[i]->m_Force+= Vec2f(10,0);
+            newState[i * 6] = -(0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 3] *= -1;
+            
+        }
+
+        if (newState[i * 6] > (0.9f - rigidbodies[i]->dimension/2))
+        {
+            // particles[i]->m_Force+= Vec2f(-10,0);
+            newState[i * 6] = (0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 3] *= -1;
+            
+        }
+
+        if (newState[i * 6 + 1] < -(0.9f - rigidbodies[i]->dimension/2))
+        {
+            // particles[i]->m_Force+= Vec2f(0,100);
+            newState[i * 6 + 1] = -(0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 4] *= -1;
+        }
+
+
+        if (newState[i * 6 + 1] > (0.9f - rigidbodies[i]->dimension/2))
+        {
+            newState[i * 6 + 1] = (0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 4] *= -1;
+        }
+    }
+    return newState;
+}
+
 
 VectorXf System::particleAcceleration()
 {
