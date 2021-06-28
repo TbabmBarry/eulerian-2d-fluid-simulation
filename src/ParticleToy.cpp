@@ -380,7 +380,7 @@ static void key_func ( unsigned char key, int x, int y )
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt=0.00001;
+		sys->dt=0.0001;
 		external_force = 0.1f;
 		init_system();
 		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
@@ -489,8 +489,6 @@ static void key_func ( unsigned char key, int x, int y )
 
 static void mouse_func ( int button, int state, int x, int y )
 {
-	// cout << "x:" << x <<endl;
-	// cout << "y:" << y <<endl;
 	omx = mx = x;
 	omx = my = y;
 	if(!mouse_down[0]){hmx=x; hmy=y;}
@@ -501,18 +499,17 @@ static void mouse_func ( int button, int state, int x, int y )
 	if (state == GLUT_UP){
 		mouseForce->setActive(false);
 	} else {
-
+		cout << "mouse_func" << endl;
 		int mouse_x = x - int(win_x/2);
 		int mouse_y = int(win_y/2) - y;
 		Particle *closestParticle;
-		double closestDist = 100000;
+		double closestDist = 300;
 		for (int i = 0; i < sys->rigidbodies.size(); i++) {
-			// Vector2f position = sys->particles[i]->m_Position;
-			Vector2f position = sys->rigidbodies[i]->m_Position;
+			Vector2f position = sys->rigidbodies[i]->x;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
+			cout << "distance: " << distance << endl;
 			if (distance < closestDist) {
                 closestDist = distance;
-                // closestParticle = sys->particles[i];
                 closestParticle = sys->rigidbodies[i];
             }
 		}
@@ -521,13 +518,8 @@ static void mouse_func ( int button, int state, int x, int y )
 		sys->addRigidForce(mouseForce);
 		
 	}
-
-	
 	gomx = x;
 	gomy = y;
-
-	
-
 }
 
 static void motion_func ( int x, int y )
@@ -556,7 +548,14 @@ static void idle_func ( void )
 {
 	if (sys_type == false) {
 		if ( dsim ) sys->simulationStep();
-		else        {get_from_UI_particle();remap_GUI();}
+		else
+		{
+			get_from_UI_particle();remap_GUI();
+		}
+		get_from_UI_grid ( dens_prev, u_prev, v_prev );
+		fsolver->vel_step ( grid_N, u, v, u_prev, v_prev, visc, dt );
+		fsolver->dens_step ( grid_N, dens, dens_prev, u, v, diff, dt );
+		fsolver->vorticity_confinement( grid_N, dt, dens_prev, u, v, u_prev, v_prev );
 	} 
 	else if (sys_type == true) {
 		get_from_UI_grid ( dens_prev, u_prev, v_prev );
@@ -573,10 +572,8 @@ static void display_func ( void )
 {
 	if (sys_type == false) {
 		pre_display ();
-		// draw_particles();
-		// draw_rigid();
-		// draw_forces();
-		// draw_constraints();
+		if ( dvel ) draw_velocity ();
+		else		draw_density ();
 		sys->drawSystem();
 		post_display ();//frame,img
 	} 
