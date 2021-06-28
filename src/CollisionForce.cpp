@@ -57,11 +57,11 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
         return false;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
-    cout << " " <<endl;
-    cout << "mindist" << minDist <<endl;
-    cout << "corner: " << point << endl;
-    cout << "edge0: " << edgeVec[0] <<endl;
-    cout << "edge1: " << edgeVec[1] <<endl;
+    // cout << " " <<endl;
+    // cout << "mindist" << minDist <<endl;
+    // cout << "corner: " << point << endl;
+    // cout << "edge0: " << edgeVec[0] <<endl;
+    // cout << "edge1: " << edgeVec[1] <<endl;
     // get the normal vector of the closest edge
     Vector2f normal = Vector2f(closestEdge[1], -closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
@@ -114,7 +114,7 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     Vector2f force = scale * j * normal;
     raF(0,0) = ra[0],raF(0,1) = ra[1],raF(1,0) = force[0],raF(1,1) = force[1];
     rbF(0,0) = rb[0],rbF(0,1) = rb[1],rbF(1,0) = force[0],rbF(1,1) = force[1];
-    cout << "force: " << force << endl;
+    // cout << "force: " << force << endl;
     if (abs(force[0]) < 20)
         force[0] *= 45;
     else force[0] *= 15;

@@ -15,7 +15,6 @@ void GridForce::apply(FluidSolver fluid)
 {
     if (this->active)
     {
-        Vector2f totalVelocity=Vector2f(0,0);
         for (Particle* p : particles) {
 
 			Particle* rigidBody = p;
@@ -32,23 +31,30 @@ void GridForce::apply(FluidSolver fluid)
                 float u = fluid.getXVelocity((int)grids[i][0],(int)grids[i][1]);
                 float v = fluid.getYVelocity((int)grids[i][0],(int)grids[i][1]);
                 float density = fluid.getDensity((int)grids[i][0],(int)grids[i][1]);
-                Vector2f distanceToCenter = Vector2f(grids[i][2],grids[i][3]);
+                Vector2f CenterToGrid = Vector2f(grids[i][2],grids[i][3]);
 
-                //Find closest edges
-                vector<Vector2f> close_edge = rigidBody->getClosestEdge(Vector2f(grids[i][2],grids[i][3]));//bottomright->topright
-                Vector2f edge=close_edge[1]-close_edge[0];
-                //Find normal of closest edge
-                Vector2f normal = Vector2f(edge[1], -edge[0]).normalized();
-
+                //Find which edge is current grid allocated on
+                vector<Vector2f> edges;
+                vector<Vector2f> normals;
+                for(int i=0;i<rigidBody->corners.size();++i){
+                    edges[i]=rigidBody->corners[(i+1)%(rigidBody->corners.size())]-rigidBody->corners[i%(rigidBody->corners.size())];
+                    normals[i]=Vector2f(edges[i][1],-edges[i][0]);//point to inner area of rigid body
+                }
+                Vector2f on_edge;
+                Vector2f normal;
+                for(int i=0;i<normals.size();++i){
+                    if(CenterToGrid.dot(normals[i])>0){
+                        on_edge=edges[i];
+                        normal=normals[i].normalized();//point to inner area of rigid body
+                    }
+                }
                 //project velocities along the normal and sum up
                 //because we want to simply assume force as a vector proportional to velocity
-                Vector2f localVelocity = Vector2f(u * normal[0], v * normal[1]);
-                totalVelocity += localVelocity;
-                float velocityabs = sqrt(totalVelocity[0]*totalVelocity[0] + totalVelocity[1]*totalVelocity[1]);
-                float localDensity = totalVelocity[2];
-
-                rigidBody->torque += distanceToCenter.dot(localVelocity);//torque = L*v
-                rigidBody->force += (totalVelocity * velocityabs)*7;//force = alpha*v
+                float projectedVelocity = u * on_edge[1] - on_edge[0] * v/on_edge.norm();
+                Vector2f localVelocity = projectedVelocity * normal;
+                
+                rigidBody->force += 7 * localVelocity;//force = alpha*v
+                rigidBody->torque += CenterToGrid.dot(7 * localVelocity);//torque = L*v
 			}
         }
     }
