@@ -85,16 +85,11 @@ void Particle::setBoundingBox(){
 	// corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
 
 	
-	corners.push_back(Vector2f(dimension/2 , dimension/2));//local topright
-	corners.push_back(Vector2f(dimension/2 , -dimension/2));//local bottomright
-	corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
-	corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
-	
 	// cout << "m_ConstructPos" <<m_ConstructPos << endl;              // 0.75
-	// corners.push_back(Vector2f(0, dimension));//local top
-	// corners.push_back(Vector2f(dimension , 0));//local right
-	// corners.push_back(Vector2f(0 , -dimension));//local bottom
-	// corners.push_back(Vector2f(-dimension , 0));//local left
+	corners.push_back(Vector2f(0, dimension));//local top
+	corners.push_back(Vector2f(dimension , 0));//local right
+	corners.push_back(Vector2f(0 , -dimension));//local bottom
+	corners.push_back(Vector2f(-dimension , 0));//local left
 		
 	//corners rotated pos = corner pos*R + masscenter pos
 	for (int k=0; k < corners.size();++k) {
@@ -332,48 +327,58 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 	return bound_grids;
 }
 
-// vector<Vector2f> Particle::InnerGrid(int grid_N){
-// 	vector<Vector2f> inner_grids;
 
-// 	vector<Vector2i> corner_absolute;
+vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f) {
+	vector<Vector2i> boundGrid;
+	vector<Vector2i> innerGrid;
+	vector<int> rowGrid;
+	Vector2i temp;
+	int dist;
 
-// 	Vector2f temp2f,result;
-// 	Vector2i temp2i;
-// 	Vector2i top,bottom,left,right;
-// 	Vector2f grid_center,vector_length;
+	for (int i=0; i<boundGrid4f.size(); i++){
+		temp[0] = int(boundGrid4f[i][0]);
+		temp[1] = int(boundGrid4f[i][1]);
+		boundGrid.push_back(temp);
+	}
 
-// 	float grid_length = 2.0 / grid_N;
+	sort(boundGrid.begin(),boundGrid.end(), compareVector);
+	cout<< "AFTER 1" << endl;
+    for (int i=0; i< boundGrid.size();i++){
+       cout<< "bound_grids"<< boundGrid[i][0] << " " << boundGrid[i][1] <<endl;
+    }
+	
+	for (int i=0; i<boundGrid.size()-1; i++){
+		rowGrid.push_back(boundGrid[i][0]);
 
-// 	for (int i=0;i<4;i++) {
-// 		temp2i[0] = int((corners[i][0]- (-1)) / grid_length);  
-// 		temp2i[1] = int((1 - corners[i][1]) / grid_length);
-// 		corner_absolute.push_back(temp2i);
-// 	}
+		if (boundGrid[i][1] != boundGrid[i+1][1]){
+			sort(rowGrid.begin(),rowGrid.end());
+			for (int j=0; j<rowGrid.size(); j++){
 
-// 	left = corner_absolute[0];
-// 	right = corner_absolute[0];
-// 	top = corner_absolute[0];
-// 	bottom = corner_absolute[0];
-// 	for (int i=1; i<4; i++) {
-// 		if (corner_absolute[i][0] > right[0]) { right = corner_absolute[i];}
-// 		if (corner_absolute[i][0] < left[0]) {left = corner_absolute[i];}
-// 		if (corner_absolute[i][1] < top[1]) {top = corner_absolute[i];}
-// 		if (corner_absolute[i][1] > bottom[1]) {bottom = corner_absolute[i];}
-// 	}	
+				dist = rowGrid[j+1]-rowGrid[j];
+				if (dist > 1){
+					for (int k=1; k<dist; k++){
+						temp[0] = rowGrid[j]+k;
+						temp[1] = boundGrid[i][1];
+						innerGrid.push_back(temp);
+					}
+			}
+			vector<int>().swap(rowGrid);
+		}
+		// if (boundGrid[i][0] = boundGrid[i+1][0]){
+			
+		// 	dist = boundGrid[i+1][1]-boundGrid[i][1];
+		// 	if (dist > 1){
+		// 		for (int j=1; j<dist; j++){
+		// 			temp[0] = boundGrid[i][1]+j;
+		// 			temp[1] = boundGrid[i][0];
+		// 			innerGrid.push_back(temp);
+		// 		}
+		// 	}		
+		// }
+	}
 
-// 	if (corner_absolute[0][1] == corner_absolute[1][1] || corner_absolute[0][0] == corner_absolute[1][0]) {
-// 		for (int i = left[0]+1; i<right[0] ; i++) {
-// 			for (int j = top[1]+1 ; j < bottom[1]; j++){
-// 				temp2f[0] = float(i+1);
-// 				temp2f[1] = float(j+1);
-// 				inner_grids.push_back(temp2f);
-// 			}
-// 		}
-// 	} else {
-		
+	return boundGrid;
+}
 
 
-// 	}
 
-// 	return inner_grids;
-// }
