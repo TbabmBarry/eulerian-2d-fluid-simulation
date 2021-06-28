@@ -3,36 +3,37 @@
 #include "ConstraintMaintainer.h"
 #include <cxxabi.h>
 
-
 System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.001f)
 {
 }
 
-void System::addParticle(Particle* p)
+void System::addParticle(Particle *p)
 {
-    if(p->rigid==0){
+    if (p->rigid == 0)
+    {
         particles.push_back(p);
     }
 }
-void System::addRigid(Particle* p)
+void System::addRigid(Particle *p)
 {
-    if(p->rigid==1){
+    if (p->rigid == 1)
+    {
         rigidbodies.push_back(p);
     }
 }
 
-void System::addForce(Force* f)
+void System::addForce(Force *f)
 {
     forces.push_back(f);
 }
 
-void System::addRigidForce(Force* f)
+void System::addRigidForce(Force *f)
 {
     // cout<<string(abi::__cxa_demangle(typeid(*f).name(),0,0,0)).compare("GridForce")<<endl;
     rigidForces.push_back(f);
 }
 
-void System::addConstraint(Constraint* constraint)
+void System::addConstraint(Constraint *constraint)
 {
     constraints.push_back(constraint);
 }
@@ -46,20 +47,20 @@ int System::rigidDims()
     return rigidbodies.size() * 6;
 }
 
-void System::free() 
+void System::free()
 {
     rigidbodies.clear();
     particles.clear();
     forces.clear();
 }
 
-void System::reset() 
+void System::reset()
 {
-    for (Particle *p : particles) 
+    for (Particle *p : particles)
     {
         p->reset();
     }
-    for (Particle *r : rigidbodies) 
+    for (Particle *r : rigidbodies)
     {
         r->reset();
     }
@@ -121,30 +122,32 @@ void System::rigidSetState(VectorXf newState, float time)
 {
     for (int i = 0; i < rigidbodies.size(); i++)
     {
-        for (int k=0; k<rigidbodies[i]->corners.size();++k) {
+        for (int k = 0; k < rigidbodies[i]->corners.size(); ++k)
+        {
             rigidbodies[i]->corners[k] -= rigidbodies[i]->x;
         }
-        rigidbodies[i]->x[0]    = newState[i * 6 + 0];
-        rigidbodies[i]->x[1]    = newState[i * 6 + 1];
-        rigidbodies[i]->angle   = newState[i * 6 + 2];
-        rigidbodies[i]->P[0]    = newState[i * 6 + 3];
-        rigidbodies[i]->P[1]    = newState[i * 6 + 4];
-        rigidbodies[i]->L       = newState[i * 6 + 5];
+        rigidbodies[i]->x[0] = newState[i * 6 + 0];
+        rigidbodies[i]->x[1] = newState[i * 6 + 1];
+        rigidbodies[i]->angle = newState[i * 6 + 2];
+        rigidbodies[i]->P[0] = newState[i * 6 + 3];
+        rigidbodies[i]->P[1] = newState[i * 6 + 4];
+        rigidbodies[i]->L = newState[i * 6 + 5];
         // cout << "linear momentum: " << rigidbodies[i]->P << endl;
         //Compute derived variables
-        rigidbodies[i]->R(0,0)  = cos(rigidbodies[i]->angle);
-        rigidbodies[i]->R(0,1)  = -sin(rigidbodies[i]->angle);
-        rigidbodies[i]->R(1,0)  = sin(rigidbodies[i]->angle);
-        rigidbodies[i]->R(1,1)  = cos(rigidbodies[i]->angle);
-        rigidbodies[i]->m_Velocity       = rigidbodies[i]->P / rigidbodies[i]->mass;
-        rigidbodies[i]->I       = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
-        rigidbodies[i]->omega   = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
+        rigidbodies[i]->R(0, 0) = cos(rigidbodies[i]->angle);
+        rigidbodies[i]->R(0, 1) = -sin(rigidbodies[i]->angle);
+        rigidbodies[i]->R(1, 0) = sin(rigidbodies[i]->angle);
+        rigidbodies[i]->R(1, 1) = cos(rigidbodies[i]->angle);
+        rigidbodies[i]->m_Velocity = rigidbodies[i]->P / rigidbodies[i]->mass;
+        rigidbodies[i]->I = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
+        rigidbodies[i]->omega = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
         // cout << "velocity: " << rigidbodies[i]->v << endl;
         // cout << "angle: " << rigidbodies[i]->angle << endl;
         // cout << "angular momentum: " << rigidbodies[i]->L << endl;
         // cout << "angular velocity: " << rigidbodies[i]->omega << endl;
         //update positions
-        for (int k=0; k<rigidbodies[i]->corners.size();++k) {
+        for (int k = 0; k < rigidbodies[i]->corners.size(); ++k)
+        {
             //corners rotated pos = corner pos*R + masscenter pos
             rigidbodies[i]->corners[k] = rigidbodies[i]->R * rigidbodies[i]->corners[k] + rigidbodies[i]->x;
         }
@@ -161,8 +164,6 @@ void System::rigidSetState(VectorXf newState, float time)
         //     cout<< "inner_grids"<< innergrids[i][0] << " " << innergrids[i][1]  <<endl;
         //     if (innergrids[i][0] > 10) break;
         // }
-        
-        
     }
     this->time = time;
 }
@@ -192,7 +193,6 @@ VectorXf System::collisionValidation(VectorXf newState)
             newState[i * 4 + 3] = -newState[i * 4 + 3];
         }
 
-
         if (newState[i * 4 + 1] > 0.9f)
         {
             // particles[i]->m_Force+= Vec2f(0,-100);
@@ -207,39 +207,35 @@ VectorXf System::collisionValidationRigid(VectorXf newState)
 {
     for (int i = 0; i < rigidbodies.size(); i++)
     {
-        if (newState[i * 6] < -(0.9f - rigidbodies[i]->dimension/2))
+        if (newState[i * 6] < -(0.9f - rigidbodies[i]->dimension / 2))
         {
             // particles[i]->m_Force+= Vec2f(10,0);
-            newState[i * 6] = -(0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6] = -(0.9f - rigidbodies[i]->dimension / 2);
             newState[i * 6 + 3] *= -1;
-            
         }
 
-        if (newState[i * 6] > (0.9f - rigidbodies[i]->dimension/2))
+        if (newState[i * 6] > (0.9f - rigidbodies[i]->dimension / 2))
         {
             // particles[i]->m_Force+= Vec2f(-10,0);
-            newState[i * 6] = (0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6] = (0.9f - rigidbodies[i]->dimension / 2);
             newState[i * 6 + 3] *= -1;
-            
         }
 
-        if (newState[i * 6 + 1] < -(0.9f - rigidbodies[i]->dimension/2))
+        if (newState[i * 6 + 1] < -(0.9f - rigidbodies[i]->dimension / 2))
         {
             // particles[i]->m_Force+= Vec2f(0,100);
-            newState[i * 6 + 1] = -(0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 1] = -(0.9f - rigidbodies[i]->dimension / 2);
             newState[i * 6 + 4] *= -1;
         }
 
-
-        if (newState[i * 6 + 1] > (0.9f - rigidbodies[i]->dimension/2))
+        if (newState[i * 6 + 1] > (0.9f - rigidbodies[i]->dimension / 2))
         {
-            newState[i * 6 + 1] = (0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 1] = (0.9f - rigidbodies[i]->dimension / 2);
             newState[i * 6 + 4] *= -1;
         }
     }
     return newState;
 }
-
 
 VectorXf System::particleAcceleration()
 {
@@ -249,7 +245,7 @@ VectorXf System::particleAcceleration()
 
     // TBD: Compute constraint force
     ConstraintMaintainer::maintainConstraint(this, 0.0f, 0.0f);
-    
+
     return particleDerivative();
 }
 
@@ -288,7 +284,6 @@ VectorXf System::rigidDerivative()
         y[i * 6 + 3] = rb->m_Force[0];
         y[i * 6 + 4] = rb->m_Force[1];
         y[i * 6 + 5] = rb->torque;
-
     }
     return y;
 }
@@ -298,9 +293,9 @@ void System::simulationStep()
     solver->simulateStep(this, dt);
 }
 
-void System::clearForces() 
+void System::clearForces()
 {
-    for (Particle *p : particles) 
+    for (Particle *p : particles)
     {
         p->m_Force = Vector2f(0.0f, 0.0f);
     }
@@ -315,9 +310,9 @@ void System::clearRigidForces()
     }
 }
 
-void System::applyForces() 
+void System::applyForces()
 {
-    for (int i = 0; i < forces.size(); i++) 
+    for (int i = 0; i < forces.size(); i++)
     {
         forces[i]->apply(springsCanBreak);
     }
@@ -364,7 +359,6 @@ void System::drawForces()
         {
             f->draw();
         }
-        
     }
 }
 

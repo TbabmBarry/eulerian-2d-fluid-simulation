@@ -4,21 +4,22 @@
 #include <gfx/vec2.h>
 #include <math.h>
 
-GravityForce::GravityForce(vector<Particle*> particles, Vector2f g) :
-  g(g) {
-    this->setTarget(particles);
-  }
-
-void GravityForce::setTarget(vector<Particle*> particles)
+GravityForce::GravityForce(vector<Particle *> particles, Vector2f g) : g(g)
 {
-    this->particles = particles;
+  this->setTarget(particles);
+}
+
+void GravityForce::setTarget(vector<Particle *> particles)
+{
+  this->particles = particles;
 }
 
 void GravityForce::apply(bool springsCanBreak)
-{   // force = mg
+{ // force = mg
   if (this->active)
   {
-    for (Particle *p : particles){
+    for (Particle *p : particles)
+    {
       p->m_Force += p->mass * g;
     }
   }
@@ -26,15 +27,14 @@ void GravityForce::apply(bool springsCanBreak)
 
 map<int, map<int, float>> GravityForce::dx()
 {
-    return map<int, map<int, float>>();
+  return map<int, map<int, float>>();
 }
 
 MatrixXf GravityForce::dv()
 {
-    return MatrixXf();
+  return MatrixXf();
 }
 
 void GravityForce::draw()
 {
-
 }

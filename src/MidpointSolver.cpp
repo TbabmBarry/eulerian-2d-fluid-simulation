@@ -1,8 +1,9 @@
 #include "MidpointSolver.h"
 
-MidpointSolver::MidpointSolver(){}
+MidpointSolver::MidpointSolver() {}
 
-void MidpointSolver::simulateStep(System *system, float h) {
+void MidpointSolver::simulateStep(System *system, float h)
+{
 
     // Get the initial state
     VectorXf oldState = system->particleGetState();

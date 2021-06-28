@@ -5,7 +5,8 @@
 
 EulerSolver::EulerSolver(EulerSolver::TYPE type) : type(type) {}
 
-void EulerSolver::simulateStep(System *system, float h) {
+void EulerSolver::simulateStep(System *system, float h)
+{
 
     switch (type)
     {
@@ -18,10 +19,10 @@ void EulerSolver::simulateStep(System *system, float h) {
     case SEMI:
         semiS(system, h);
     }
-
 }
 
-void EulerSolver::explicitS(System *system, float h) {
+void EulerSolver::explicitS(System *system, float h)
+{
 
     // Get the old state
     VectorXf oldStateParticle = system->particleGetState();
@@ -46,7 +47,8 @@ void EulerSolver::explicitS(System *system, float h) {
     system->rigidSetState(newStateRigid, system->particleGetTime() + h);
 }
 
-void EulerSolver::semiS(System *system, float h) {
+void EulerSolver::semiS(System *system, float h)
+{
     // Get the old state
     VectorXf oldState = system->particleGetState();
 
@@ -59,7 +61,8 @@ void EulerSolver::semiS(System *system, float h) {
     system->particleSetState(newState, system->particleGetTime() + h);
 
     //Use new vectory
-    for (int i = 0; i < newState.size(); i += 4) {
+    for (int i = 0; i < newState.size(); i += 4)
+    {
         newState[i + 0] = oldState[i + 0] + h * newState[i + 2];
         newState[i + 1] = oldState[i + 1] + h * newState[i + 3];
     }
@@ -67,11 +70,11 @@ void EulerSolver::semiS(System *system, float h) {
     if (system->wall)
         newState = system->collisionValidation(newState);
     //set the new state
-    system->particleSetState(newState, system->particleGetTime() + h);            
+    system->particleSetState(newState, system->particleGetTime() + h);
 }
 
-
-void EulerSolver::implicitS(System *system, float h) {
+void EulerSolver::implicitS(System *system, float h)
+{
     // Get the old state
     VectorXf oldState = system->particleGetState();
     system->particleAcceleration();
@@ -80,9 +83,10 @@ void EulerSolver::implicitS(System *system, float h) {
 
     vector<Triplet<float>> MtripletList;
     MtripletList.reserve(system->particleDims() / 2);
-    for (int i = 0; i < system->particles.size() * 2; i += 2) {
-        MtripletList.push_back(Triplet<float>(i+0, i+0, system->particles[i / 2]->mass));
-        MtripletList.push_back(Triplet<float>(i+1, i+1, system->particles[i / 2]->mass));
+    for (int i = 0; i < system->particles.size() * 2; i += 2)
+    {
+        MtripletList.push_back(Triplet<float>(i + 0, i + 0, system->particles[i / 2]->mass));
+        MtripletList.push_back(Triplet<float>(i + 1, i + 1, system->particles[i / 2]->mass));
     }
     M.setFromTriplets(MtripletList.begin(), MtripletList.end());
 
@@ -93,16 +97,22 @@ void EulerSolver::implicitS(System *system, float h) {
     // Initialize empty map to compute jx
     auto jxm = map<int, map<int, float>>();
     unsigned long entries = 0;
-    for (Force *f : system->forces) {
+    for (Force *f : system->forces)
+    {
         // Compute map for every force and update jxm appropriately
         auto fjx = f->dx();
-        for (const auto &i1 : fjx) {
-            for (const auto &i2 : i1.second) {
-                if (jxm.count(i1.first) && jxm[i1.first].count(i2.first)) {
+        for (const auto &i1 : fjx)
+        {
+            for (const auto &i2 : i1.second)
+            {
+                if (jxm.count(i1.first) && jxm[i1.first].count(i2.first))
+                {
                     // i1 and i2 exist
                     // Hence, we update the already existing value
                     jxm[i1.first][i2.first] += i2.second;
-                } else {
+                }
+                else
+                {
                     // No value yet exists, since i1 or i2 does not exist
                     // Hence we set a new value
                     jxm[i1.first][i2.first] = i2.second;
@@ -111,7 +121,8 @@ void EulerSolver::implicitS(System *system, float h) {
             }
         }
 
-        if (f->particles.size() == 2) {
+        if (f->particles.size() == 2)
+        {
             MatrixXf fjv = f->dv();
             jv.block(f->particles[0]->index * 2, f->particles[1]->index * 2, fjv.cols(), fjv.rows()) = fjv;
             jv.block(f->particles[1]->index * 2, f->particles[0]->index * 2, fjv.cols(), fjv.rows()) = fjv;
@@ -120,8 +131,10 @@ void EulerSolver::implicitS(System *system, float h) {
 
     vector<Triplet<float>> JxTripletList;
     JxTripletList.reserve(entries);
-    for (const auto &i1 : jxm) {
-        for (const auto &i2 : i1.second) {
+    for (const auto &i1 : jxm)
+    {
+        for (const auto &i2 : i1.second)
+        {
             JxTripletList.push_back(Triplet<float>(i1.first, i2.first, i2.second));
         }
     }
@@ -131,8 +144,8 @@ void EulerSolver::implicitS(System *system, float h) {
     SparseVector<float> fold(system->particleDims() / 2);
     SparseVector<float> vold(system->particleDims() / 2);
 
-
-    for (int i = 0; i < system->particles.size(); i++) {
+    for (int i = 0; i < system->particles.size(); i++)
+    {
         Particle *p = system->particles[i];
         vold.coeffRef(i * 2 + 0) = p->m_Velocity[0];
         vold.coeffRef(i * 2 + 1) = p->m_Velocity[1];
@@ -144,20 +157,21 @@ void EulerSolver::implicitS(System *system, float h) {
     SparseMatrix<float> A = M - h * h * jx; // - h * jv;
     SparseVector<float> b = h * (fold + h * jx * vold);
     // Solve for dy
-    ConjugateGradient<SparseMatrix<float>, Lower|Upper> cg;
+    ConjugateGradient<SparseMatrix<float>, Lower | Upper> cg;
     cg.compute(A);
     SparseVector<float> dy = cg.solve(b);
 
-//    std::cout << "dv:     " << dy << std::endl;
+    //    std::cout << "dv:     " << dy << std::endl;
 
     // Set new state
     VectorXf newState(system->particleDims());
-    for (int i = 0; i < dy.size(); i += 2) {
-        int si = i * 2; // State index
-        newState[si + 0] = oldState[si + 0] + (oldState[si + 2] + dy.coeff(i+0)) * h;    // dX = (V0 + dV) * h
-        newState[si + 1] = oldState[si + 1] + (oldState[si + 3] + dy.coeff(i+1)) * h;
-        newState[si + 2] = oldState[si + 2] + dy.coeff(i+0);// * h;        // Update velocity
-        newState[si + 3] = oldState[si + 3] + dy.coeff(i+1);// * h;
+    for (int i = 0; i < dy.size(); i += 2)
+    {
+        int si = i * 2;                                                                 // State index
+        newState[si + 0] = oldState[si + 0] + (oldState[si + 2] + dy.coeff(i + 0)) * h; // dX = (V0 + dV) * h
+        newState[si + 1] = oldState[si + 1] + (oldState[si + 3] + dy.coeff(i + 1)) * h;
+        newState[si + 2] = oldState[si + 2] + dy.coeff(i + 0); // * h;        // Update velocity
+        newState[si + 3] = oldState[si + 3] + dy.coeff(i + 1); // * h;
     }
 
     if (system->wall)
@@ -165,4 +179,3 @@ void EulerSolver::implicitS(System *system, float h) {
     //set the new state
     system->particleSetState(newState, system->particleGetTime() + h);
 }
-    
