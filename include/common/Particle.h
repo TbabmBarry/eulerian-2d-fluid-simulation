@@ -39,7 +39,7 @@ public:
     // Vec2f getBodyCoordinates(Vec2f world);
     vector<Vector4f> BoundingGrid(int grid_N);
     vector<Vector2i> InnerGrid(vector<Vector4f> BoundGrid);
-    static bool compareVector(Vector2i g1, Vector2i g2);
+    static bool compareVectors(Vector2i g1, Vector2i g2);
 
     // get the closest edge for a target point
     vector<Vector2f> getClosestEdge(Vector2f point);

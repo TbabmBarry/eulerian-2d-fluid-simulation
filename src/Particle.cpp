@@ -79,17 +79,17 @@ void Particle::draw()//draw a square
 void Particle::setBoundingBox(){
 	// local positions wrt masscenter, in order to deal with rotation
 	// to be changed
-	// corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
-	// corners.push_back(Vector2f(dimension/2 , dimension/2));//local topright
-	// corners.push_back(Vector2f(dimension/2 , -dimension/2));//local bottomright
-	// corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
+	corners.push_back(Vector2f(-dimension/2 , dimension/2));//local topleft
+	corners.push_back(Vector2f(dimension/2 , dimension/2));//local topright
+	corners.push_back(Vector2f(dimension/2 , -dimension/2));//local bottomright
+	corners.push_back(Vector2f(-dimension/2 , -dimension/2));//local bottomleft
 
 	
 	// cout << "m_ConstructPos" <<m_ConstructPos << endl;              // 0.75
-	corners.push_back(Vector2f(0, dimension));//local top
-	corners.push_back(Vector2f(dimension , 0));//local right
-	corners.push_back(Vector2f(0 , -dimension));//local bottom
-	corners.push_back(Vector2f(-dimension , 0));//local left
+	// corners.push_back(Vector2f(0, dimension));//local top
+	// corners.push_back(Vector2f(dimension , 0));//local right
+	// corners.push_back(Vector2f(0 , -dimension));//local bottom
+	// corners.push_back(Vector2f(-dimension , 0));//local left
 		
 	//corners rotated pos = corner pos*R + masscenter pos
 	for (int k=0; k < corners.size();++k) {
@@ -327,6 +327,10 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N){
 	return bound_grids;
 }
 
+bool Particle::compareVectors(Vector2i g1, Vector2i g2) {
+	return(g1[1] < g2[1]);
+}
+
 
 vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f) {
 	vector<Vector2i> boundGrid;
@@ -341,44 +345,41 @@ vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f) {
 		boundGrid.push_back(temp);
 	}
 
-	sort(boundGrid.begin(),boundGrid.end(), compareVector);
-	cout<< "AFTER 1" << endl;
-    for (int i=0; i< boundGrid.size();i++){
-       cout<< "bound_grids"<< boundGrid[i][0] << " " << boundGrid[i][1] <<endl;
-    }
+	sort(boundGrid.begin(),boundGrid.end(), compareVectors);
+	// cout<< "AFTER 1" << endl;
+    // for (int i=0; i< boundGrid.size();i++){
+    //    cout<< "bound_grids"<< boundGrid[i][0] << " " << boundGrid[i][1] <<endl;
+    // }
 	
 	for (int i=0; i<boundGrid.size()-1; i++){
 		rowGrid.push_back(boundGrid[i][0]);
+		
+		if (boundGrid[i][1] != boundGrid[i+1][1] || i == boundGrid.size()-1){
+			if (i == boundGrid.size()-1) {
+				rowGrid.push_back(boundGrid[i+1][0]);
+			}
 
-		if (boundGrid[i][1] != boundGrid[i+1][1]){
 			sort(rowGrid.begin(),rowGrid.end());
-			for (int j=0; j<rowGrid.size(); j++){
+			// cout<< "AFTER 2" << endl;
+   			// for (int a=0; a< rowGrid.size();a++){
+       		// 	cout<< "row_grids"<< rowGrid[a] <<endl;
+    		// }
 
-				dist = rowGrid[j+1]-rowGrid[j];
+			for (int j=1; j<rowGrid.size(); j++){
+
+				dist = rowGrid[j]-rowGrid[j-1];
 				if (dist > 1){
 					for (int k=1; k<dist; k++){
-						temp[0] = rowGrid[j]+k;
+						temp[0] = rowGrid[j-1]+k;
 						temp[1] = boundGrid[i][1];
 						innerGrid.push_back(temp);
 					}
+				}
 			}
 			vector<int>().swap(rowGrid);
 		}
-		// if (boundGrid[i][0] = boundGrid[i+1][0]){
-			
-		// 	dist = boundGrid[i+1][1]-boundGrid[i][1];
-		// 	if (dist > 1){
-		// 		for (int j=1; j<dist; j++){
-		// 			temp[0] = boundGrid[i][1]+j;
-		// 			temp[1] = boundGrid[i][0];
-		// 			innerGrid.push_back(temp);
-		// 		}
-		// 	}		
-		// }
 	}
 
-	return boundGrid;
+	return innerGrid;
 }
-
-
 
