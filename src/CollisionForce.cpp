@@ -56,7 +56,7 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
     // get the normal vector of the closest edge
-    Vector2f normal = Vector2f(-closestEdge[1], closestEdge[0]).normalized();
+    Vector2f normal = Vector2f(closestEdge[1], -closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
     // Vector2f rv = (rb2->x + rb2->omega * rb) - (rb1->x - rb1->omega * rb);
@@ -87,7 +87,7 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
     // get the normalized normal vector of the closest edge
-    Vector2f normal = Vector2f(-closestEdge[1], closestEdge[0]).normalized();
+    Vector2f normal = Vector2f(closestEdge[1], -closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
     float vrel = normal.dot(rv), numerator = -(1 + epsilon) * vrel;
@@ -106,16 +106,17 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     Vector2f force = scale * j * normal;
     raF(0,0) = ra[0],raF(0,1) = ra[1],raF(1,0) = force[0],raF(1,1) = force[1];
     rbF(0,0) = rb[0],rbF(0,1) = rb[1],rbF(1,0) = force[0],rbF(1,1) = force[1];
-    if (abs(force[0]) < 20)
-        force[0] *= 15;
-    else force[0] *= 5;
-    if (abs(force[1]) < 20)
-        force[1] *= 15;
-    else force[1] *= 5;
-    rb1->m_Force -= force;
-    rb2->m_Force += force;
-    rb1->torque -= (1/(rb1->I+0.001)) / 2 * raF.determinant();
-    rb2->torque += (1/(rb2->I+0.001)) / 2 * rbF.determinant();
+    cout << "force: " << force << endl;
+    if (abs(force[0]) < 100)
+        force[0] *= 90;
+    else force[0] *= 30;
+    if (abs(force[1]) < 100)
+        force[1] *= 90;
+    else force[1] *= 30;
+    rb1->m_Force += force;
+    rb2->m_Force -= force;
+    rb1->torque += (1/(rb1->I+0.001)) / 10 * raF.determinant();
+    rb2->torque -= (1/(rb2->I+0.001)) / 10 * rbF.determinant();
 }
 
 map<int, map<int, float>> CollisionForce::dx()
