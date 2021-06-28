@@ -1,5 +1,7 @@
 #include "System.h"
+#include "GridForce.h"
 #include "ConstraintMaintainer.h"
+#include <cxxabi.h>
 
 
 System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.001f)
@@ -26,6 +28,7 @@ void System::addForce(Force* f)
 
 void System::addRigidForce(Force* f)
 {
+    // cout<<string(abi::__cxa_demangle(typeid(*f).name(),0,0,0)).compare("GridForce")<<endl;
     rigidForces.push_back(f);
 }
 
@@ -324,7 +327,17 @@ void System::applyRigidForces()
 {
     for (int i = 0; i < rigidForces.size(); i++)
     {
-        rigidForces[i]->apply(springsCanBreak);
+        // cout<<string(abi::__cxa_demangle(typeid(*rigidForces[i]).name(),0,0,0)).compare("GridForce")<<endl;
+        if(string(abi::__cxa_demangle(typeid(*rigidForces[i]).name(),0,0,0)).compare("GridForce")==0){
+            // cout<<string(abi::__cxa_demangle(typeid(*rigidForces[i]).name(),0,0,0)).compare("GridForce")<<endl;
+            GridForce* rF=(GridForce*) rigidForces[i];
+            rF->applyFluidF((FluidSolver*)fluidsolver);
+        }
+        else{
+            // cout<<"ciao"<<endl;
+            rigidForces[i]->apply(springsCanBreak);
+        }
+        // rigidForces[i]->apply(springsCanBreak);
     }
 }
 

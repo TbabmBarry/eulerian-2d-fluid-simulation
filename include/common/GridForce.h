@@ -15,7 +15,10 @@ class GridForce : public Force {
 
   void draw() override;
   void setTarget(vector<Particle*> particles) override;
-  void apply(FluidSolver fluid);
+  void applyFluidF(FluidSolver* fluid);
+  void apply(bool springsCanBreak) override;
+  map<int, map<int, float>> dx() override;
+  MatrixXf dv() override;
 
  private:
 };

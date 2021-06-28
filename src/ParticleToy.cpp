@@ -383,6 +383,7 @@ static void key_func ( unsigned char key, int x, int y )
 		sys->dt=0.0001;
 		external_force = 0.1f;
 		init_system();
+		sys->fluidsolver=fsolver;
 		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
 		mode->RigidBodyCollision(sys);
 		break;
@@ -555,6 +556,7 @@ static void idle_func ( void )
 		fsolver->vel_step ( grid_N, u, v, u_prev, v_prev, visc, dt );
 		fsolver->dens_step ( grid_N, dens, dens_prev, u, v, diff, dt );
 		fsolver->vorticity_confinement( grid_N, dt, dens_prev, u, v, u_prev, v_prev );
+		// cout<<"hello "<<fsolver->getDensity(1,1)<<endl;
 	} 
 	else if (sys_type == true) {
 		get_from_UI_grid ( dens_prev, u_prev, v_prev );

@@ -11,6 +11,7 @@ using namespace std;
 class Force {
   public:
     vector<Particle*> particles;
+    virtual ~Force() = default;
     virtual void setTarget(vector<Particle*> particles) = 0;
     virtual void apply(bool springsCanBreak) = 0;
     virtual map<int, map<int, float>> dx() = 0;

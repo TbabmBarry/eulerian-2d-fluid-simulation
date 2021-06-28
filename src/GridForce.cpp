@@ -11,7 +11,7 @@ void GridForce::setTarget(vector<Particle*> particles)
     this->particles = particles;
 }
 
-void GridForce::apply(FluidSolver fluid)
+void GridForce::applyFluidF(FluidSolver* fluid)
 {
     if (this->active)
     {
@@ -25,12 +25,15 @@ void GridForce::apply(FluidSolver fluid)
             // for (int i=0;i<temp.size();i++) {
             // cout << "bound_grid " << temp[i][0] << " " <<temp[i][1]<< " "<<temp[i][2]<< " " <<temp[i][3]<< endl;
             // }
-
+            cout<<"ciao"<<endl;
 			for(int i = 0; i < grids.size(); i++) {
+                cout<<"ciao1"<<endl;
                 // use v,F of the grids that edges pass through to update
-                float u = fluid.getXVelocity((int)grids[i][0],(int)grids[i][1]);
-                float v = fluid.getYVelocity((int)grids[i][0],(int)grids[i][1]);
-                float density = fluid.getDensity((int)grids[i][0],(int)grids[i][1]);
+                cout<<typeid(fluid->rigidbodies[0]).name()<<endl;
+                cout<<(fluid->aaa)<<endl;
+                float u = fluid->getXVelocity((int)grids[i][0],(int)grids[i][1]);
+                float v = fluid->getYVelocity((int)grids[i][0],(int)grids[i][1]);
+                float density = fluid->getDensity((int)grids[i][0],(int)grids[i][1]);
                 Vector2f CenterToGrid = Vector2f(grids[i][2],grids[i][3]);
 
                 //Find which edge is current grid allocated on
@@ -59,6 +62,20 @@ void GridForce::apply(FluidSolver fluid)
         }
     }
     
+}
+
+void GridForce::apply(bool springsCanBreak)
+{
+}
+
+map<int, map<int, float>> GridForce::dx()
+{
+    return map<int, map<int, float>>();
+}
+
+MatrixXf GridForce::dv()
+{
+    return MatrixXf();
 }
 
 void GridForce::draw()

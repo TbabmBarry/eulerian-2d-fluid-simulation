@@ -2,6 +2,7 @@
 #include "DragForce.h"
 #include "GravityForce.h"
 #include "SpringForce.h"
+#include "GridForce.h"
 #include "AngularSpring.h"
 #include "CollisionForce.h"
 #include "RodConstraint.h"
@@ -149,4 +150,5 @@ void Mode::RigidBodyCollision(System *sys)
     sys->addRigid(new Particle(Vector2f(0.0f, 0.0f), 5.1f, 0, Particle::RIGID));
     sys->addRigid(new Particle(Vector2f(-0.5f, 0.5f), 5.1f, 1, Particle::RIGID));
     sys->addRigidForce(new CollisionForce(sys->rigidbodies, 0.0f, 0.8f));
+    sys->addRigidForce(new GridForce(sys->rigidbodies));
 }

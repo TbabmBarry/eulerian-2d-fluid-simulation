@@ -26,12 +26,13 @@ class System {
         // Store all the constraints to be maintained
         vector<Constraint*> constraints;
 
-
         bool springsCanBreak = false;
         bool wall;
         Solver* solver;
         // Unit step time
         float dt;
+        //fluidsolver grids
+        Solver* fluidsolver;
 
         void addParticle(Particle* p);
         void addRigid(Particle* p);
@@ -82,7 +83,6 @@ class System {
         void applyForces();
         void applyRigidForces();
         float time;
-
 };
 
 #endif //SPECIFIC_SYSTEM_H
