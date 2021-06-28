@@ -499,21 +499,20 @@ static void mouse_func ( int button, int state, int x, int y )
 	if (state == GLUT_UP){
 		mouseForce->setActive(false);
 	} else {
-		cout << "mouse_func" << endl;
 		int mouse_x = x - int(win_x/2);
 		int mouse_y = int(win_y/2) - y;
+		cout << "mouse_func: " << mouse_x << " " << mouse_y << endl;
 		Particle *closestParticle;
 		double closestDist = 300;
 		for (int i = 0; i < sys->rigidbodies.size(); i++) {
 			Vector2f position = sys->rigidbodies[i]->x;
+			cout << "position: " << position << endl;
             double distance = sqrt(pow(mouse_x - (position[0]*(win_x/2)),2) + pow(mouse_y - (position[1]*(win_y/2)),2));
-			cout << "distance: " << distance << endl;
 			if (distance < closestDist) {
                 closestDist = distance;
                 closestParticle = sys->rigidbodies[i];
             }
 		}
-
 		mouseForce = new ExternalForce({closestParticle}, external_force, Vector2f(0.0f,0.0f));
 		sys->addRigidForce(mouseForce);
 		

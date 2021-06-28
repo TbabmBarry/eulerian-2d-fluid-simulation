@@ -37,7 +37,10 @@ void EulerSolver::explicitS(System *system, float h) {
     // cout << "newStateRigid: " << newStateRigid << endl;
 
     if (system->wall)
+    {
         newStateParticle = system->collisionValidation(newStateParticle);
+        newStateRigid = system->collisionValidationRigid(newStateRigid);
+    }
     //set the new state
     system->particleSetState(newStateParticle, system->particleGetTime() + h);
     system->rigidSetState(newStateRigid, system->particleGetTime() + h);

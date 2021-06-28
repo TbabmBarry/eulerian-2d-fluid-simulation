@@ -75,9 +75,7 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     Vector2f normal = Vector2f(-closestEdge[1], closestEdge[0]).normalized();
     Vector2f ra = point - rb1->x, rb = point - rb2->x;
     Vector2f rv = (rb1->m_Velocity + rb1->omega * ra) - (rb2->m_Velocity + rb2->omega * rb);
-    // Vector2f rv = (rb2->x + rb2->omega * rb) - (rb1->x - rb1->omega * rb);
     float vrel = normal.dot(rv), numerator = -(1 + epsilon) * vrel;
-    cout << "vrel: " << vrel << endl;
     float term1 = 1 / rb1->mass;
     float term2 = 1 / rb2->mass;
     MatrixXf raN(2,2), rbN(2,2),raF(2,2), rbF(2,2);
@@ -85,8 +83,8 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     rbN(0,0) = rb[0],rbN(0,1) = rb[1],rbN(1,0) = normal[0],rbN(1,1) = normal[1];
     float raCrossN = raN.determinant();
     float rbCrossN = rbN.determinant();
-    float term3 = (raCrossN*raCrossN)*(1/(rb1->I+0.00000000001));
-    float term4 = (rbCrossN*rbCrossN)*(1/(rb2->I+0.00000000001));
+    float term3 = (raCrossN*raCrossN)*(1/(rb1->I+0.001));
+    float term4 = (rbCrossN*rbCrossN)*(1/(rb2->I+0.001));
     float j = numerator / (term1 + term2 + term3 + term4);
     float scale = 2;
     // cout << "J: " << j << endl;
@@ -98,8 +96,7 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     else force[0] *= 5;
     if (abs(force[1]) < 20)
         force[1] *= 10;
-    else force[1] *= 5; 
-    cout << "force: " << force << endl;
+    else force[1] *= 5;
     rb1->m_Force -= force;
     rb2->m_Force += force;
     rb1->torque -= (1/(rb1->I+0.001)) / 8 * raF.determinant();
