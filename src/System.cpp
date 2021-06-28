@@ -147,15 +147,16 @@ void System::rigidSetState(VectorXf newState, float time)
         }
 
         // vector<Vector4f> boundgrids = rigidbodies[i]->BoundingGrid(8);
-        // cout<< "new" << endl;
+        // cout<< "new_bound" << endl;
         // for (int i=0; i< boundgrids.size();i++){
         //     cout<< "bound_grids"<< boundgrids[i][0] << " " << boundgrids[i][1] << " "  << boundgrids[i][2] << " "  << boundgrids[i][3] <<endl;
         // }
 
-        // vector<Vector2f> innergrids = rigidbodies[i]->InnerGrid(8);
-        // cout<< "new" << endl;
+        // vector<Vector2i> innergrids = rigidbodies[i]->InnerGrid(boundgrids);
+        // cout<< "new_inner" << endl;
         // for (int i=0; i< innergrids.size();i++){
         //     cout<< "inner_grids"<< innergrids[i][0] << " " << innergrids[i][1]  <<endl;
+        //     if (innergrids[i][0] > 10) break;
         // }
         
         
@@ -194,6 +195,43 @@ VectorXf System::collisionValidation(VectorXf newState)
             // particles[i]->m_Force+= Vec2f(0,-100);
             newState[i * 4 + 1] = 0.9f;
             newState[i * 4 + 3] = -newState[i * 4 + 3];
+        }
+    }
+    return newState;
+}
+
+VectorXf System::collisionValidationRigid(VectorXf newState)
+{
+    for (int i = 0; i < rigidbodies.size(); i++)
+    {
+        if (newState[i * 6] < -(0.9f - rigidbodies[i]->dimension/2))
+        {
+            // particles[i]->m_Force+= Vec2f(10,0);
+            newState[i * 6] = -(0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 3] *= -1;
+            
+        }
+
+        if (newState[i * 6] > (0.9f - rigidbodies[i]->dimension/2))
+        {
+            // particles[i]->m_Force+= Vec2f(-10,0);
+            newState[i * 6] = (0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 3] *= -1;
+            
+        }
+
+        if (newState[i * 6 + 1] < -(0.9f - rigidbodies[i]->dimension/2))
+        {
+            // particles[i]->m_Force+= Vec2f(0,100);
+            newState[i * 6 + 1] = -(0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 4] *= -1;
+        }
+
+
+        if (newState[i * 6 + 1] > (0.9f - rigidbodies[i]->dimension/2))
+        {
+            newState[i * 6 + 1] = (0.9f - rigidbodies[i]->dimension/2);
+            newState[i * 6 + 4] *= -1;
         }
     }
     return newState;
@@ -270,6 +308,7 @@ void System::clearRigidForces()
     for (Particle *rb : rigidbodies)
     {
         rb->m_Force = Vector2f(0.0f, 0.0f);
+        rb->torque = 0.0f;
     }
 }
 
