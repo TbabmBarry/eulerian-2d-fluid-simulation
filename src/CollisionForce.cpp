@@ -24,6 +24,8 @@ void CollisionForce::apply(bool springsCanBreak)
         if (colliding(corner, particles[0], particles[1]))
         {
             collision(corner, particles[0], particles[1]);
+            if (containing(corner, particles[0], particles[1]))
+                collision(corner, particles[0], particles[1]);
         }
     }
     vector<Vector2f> rb2Corners = particles[1]->getBoundingBox();
@@ -32,6 +34,8 @@ void CollisionForce::apply(bool springsCanBreak)
         if (colliding(corner, particles[1], particles[0]))
         {
             collision(corner, particles[1], particles[0]);
+            if (containing(corner, particles[1], particles[0]))
+                collision(corner, particles[1], particles[0]);
         }
     }
 }
@@ -47,7 +51,7 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
     vector<Vector2f> edgeVec = rb2->getClosestEdge(point);
     // check if the distance from point to line close enough
     float minDist = rb1->minDistance(edgeVec[0], edgeVec[1], point);
-    if (minDist > 0.3)
+    if (minDist > 0.03)
         return false;
     // get the edge vector
     Vector2f closestEdge = edgeVec[0] - edgeVec[1];
@@ -61,6 +65,17 @@ bool CollisionForce::colliding(Vector2f point, Particle* rb1, Particle* rb2)
         return false;
     else
         return true;
+}
+
+bool CollisionForce::containing(Vector2f point, Particle* rb1, Particle* rb2)
+{
+    Vector2f e12 = rb2->corners[0] - rb2->corners[1];
+    Vector2f e14 = rb2->corners[0] - rb2->corners[3];
+    Vector2f e1i = rb2->corners[0] - point;
+    float a = e1i.dot(e12), b = e1i.dot(e14);
+    if (a > 0 && a < e12.dot(e12) && b > 0 && b < e14.dot(e14))
+        return true;
+    return false;
 }
 
 void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
@@ -92,15 +107,15 @@ void CollisionForce::collision(Vector2f point, Particle* rb1, Particle* rb2)
     raF(0,0) = ra[0],raF(0,1) = ra[1],raF(1,0) = force[0],raF(1,1) = force[1];
     rbF(0,0) = rb[0],rbF(0,1) = rb[1],rbF(1,0) = force[0],rbF(1,1) = force[1];
     if (abs(force[0]) < 20)
-        force[0] *= 10;
+        force[0] *= 15;
     else force[0] *= 5;
     if (abs(force[1]) < 20)
-        force[1] *= 10;
+        force[1] *= 15;
     else force[1] *= 5;
     rb1->m_Force -= force;
     rb2->m_Force += force;
-    rb1->torque -= (1/(rb1->I+0.001)) / 8 * raF.determinant();
-    rb2->torque += (1/(rb2->I+0.001)) / 8 * rbF.determinant();
+    rb1->torque -= (1/(rb1->I+0.001)) / 2 * raF.determinant();
+    rb2->torque += (1/(rb2->I+0.001)) / 2 * rbF.determinant();
 }
 
 map<int, map<int, float>> CollisionForce::dx()

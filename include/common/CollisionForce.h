@@ -16,6 +16,7 @@ class CollisionForce : public Force {
   map<int, map<int, float>> dx() override;
   MatrixXf dv() override;
   bool colliding(Vector2f point, Particle* rb1, Particle* rb2);
+  bool containing(Vector2f point, Particle* rb1, Particle* rb2);
   void collision(Vector2f point, Particle* rb1, Particle* rb2);
  private:
   float const epsilon;
