@@ -147,15 +147,16 @@ void System::rigidSetState(VectorXf newState, float time)
         }
 
         // vector<Vector4f> boundgrids = rigidbodies[i]->BoundingGrid(8);
-        // cout<< "new" << endl;
+        // cout<< "new_bound" << endl;
         // for (int i=0; i< boundgrids.size();i++){
         //     cout<< "bound_grids"<< boundgrids[i][0] << " " << boundgrids[i][1] << " "  << boundgrids[i][2] << " "  << boundgrids[i][3] <<endl;
         // }
 
-        // vector<Vector2f> innergrids = rigidbodies[i]->InnerGrid(8);
-        // cout<< "new" << endl;
+        // vector<Vector2i> innergrids = rigidbodies[i]->InnerGrid(boundgrids);
+        // cout<< "new_inner" << endl;
         // for (int i=0; i< innergrids.size();i++){
         //     cout<< "inner_grids"<< innergrids[i][0] << " " << innergrids[i][1]  <<endl;
+        //     if (innergrids[i][0] > 10) break;
         // }
         
         
