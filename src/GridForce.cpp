@@ -19,14 +19,6 @@ void GridForce::apply(bool springsCanBreak)
     for (Particle *rb : particles)
     {
       vector<Vector4f> grids = rb->BoundingGrid(128);
-
-      // vector<Vector4f> temp = rigidbodies[i]->BoundingGrid(8);
-      // cout << "new " << endl;
-      // for (int i=0;i<temp.size();i++) {
-      // cout << "bound_grid " << temp[i][0] << " " <<temp[i][1]<< "
-      // "<<temp[i][2]<< " " <<temp[i][3]<< endl;
-      // }
-
       for (int i = 0; i < grids.size(); i++)
       {
         // use v,F of the grids that edges pass through to update
@@ -40,10 +32,10 @@ void GridForce::apply(bool springsCanBreak)
         vector<Vector2f> normals;
         for (int i = 0; i < rb->corners.size(); ++i)
         {
-          edges[i] = rb->corners[(i + 1) % (rb->corners.size())] -
-                     rb->corners[i % (rb->corners.size())];
-          normals[i] = Vector2f(
-              edges[i][1], -edges[i][0]); // point to inner area of rigid body
+          edges.push_back( rb->corners[(i + 1) % (rb->corners.size())] -
+                     rb->corners[i % (rb->corners.size())]);
+          normals.push_back( Vector2f(
+              edges[i][1], -edges[i][0])); // point to inner area of rigid body
         }
         Vector2f on_edge;
         Vector2f normal;
@@ -57,8 +49,7 @@ void GridForce::apply(bool springsCanBreak)
           }
         }
         // project velocities along the normal and sum up
-        // because we want to simply assume force as a vector proportional to
-        // velocity
+        // because we want to simply assume force as a vector proportional to velocity
         float projectedVelocity =
             (u * on_edge[1] - on_edge[0] * v) / on_edge.norm();
         Vector2f localVelocity = projectedVelocity * normal;

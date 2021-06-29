@@ -236,7 +236,8 @@ void FluidSolver::setDensity(float *d, float *dprev)
 
 float FluidSolver::getDensity(int i, int j)
 {
-    return density[IX(i, j)];
+    int idx=i+(128+2)*j;
+    return *(density+idx);
 };
 
 void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev)
@@ -249,12 +250,14 @@ void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev
 
 float FluidSolver::getXVelocity(int i, int j)
 {
-    return u[IX(i, j)];
+    int idx=i+(128+2)*j;
+    return *(u+idx);
 };
 
 float FluidSolver::getYVelocity(int i, int j)
 {
-    return v[IX(i, j)];
+    int idx=i+(128+2)*j;
+    return *(v+idx);
 };
 
 void FluidSolver::dens_step(int N, float *x, float *x0, float *u, float *v, float diff, float dt)
