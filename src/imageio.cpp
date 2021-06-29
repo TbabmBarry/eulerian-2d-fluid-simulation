@@ -4,13 +4,15 @@
 // ***** generic internal functions ***** //
 
 // Call this function if there was an error.
-unsigned char *_loadImgError(int *width, int *height) {
+unsigned char *_loadImgError(int *width, int *height)
+{
     *width = *height = -1;
     return 0;
 }
 
 // Returns true iff the string s ends with postfix
-bool _endsWith(char *s, char *postfix) {
+bool _endsWith(char *s, char *postfix)
+{
     int sLen = strlen(s);
     int postfixLen = strlen(postfix);
     if (postfixLen > sLen)
@@ -21,7 +23,8 @@ bool _endsWith(char *s, char *postfix) {
 
 // ***** png related internal functions ***** //
 
-unsigned char *_loadImageRGBApng(char *fileName, int *width, int *height) {
+unsigned char *_loadImageRGBApng(char *fileName, int *width, int *height)
+{
     // open the file
     FILE *fp = fopen(fileName, "rb");
     if (!fp)
@@ -36,26 +39,30 @@ unsigned char *_loadImageRGBApng(char *fileName, int *width, int *height) {
 
     // try to create the loading structures
     png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-    if (!png_ptr) {
+    if (!png_ptr)
+    {
         fclose(fp);
         return _loadImgError(width, height);
     }
 
     png_infop info_ptr = png_create_info_struct(png_ptr);
-    if (!info_ptr) {
-        png_destroy_read_struct(&png_ptr, (png_infopp) 0, (png_infopp) 0);
+    if (!info_ptr)
+    {
+        png_destroy_read_struct(&png_ptr, (png_infopp)0, (png_infopp)0);
         fclose(fp);
         return _loadImgError(width, height);
     }
 
     png_infop end_info = png_create_info_struct(png_ptr);
-    if (!end_info) {
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) 0);
+    if (!end_info)
+    {
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)0);
         fclose(fp);
         return _loadImgError(width, height);
     }
 
-    if (setjmp(png_jmpbuf(png_ptr))) {
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
         png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
         fclose(fp);
         return _loadImgError(width, height);
@@ -88,18 +95,19 @@ unsigned char *_loadImageRGBApng(char *fileName, int *width, int *height) {
     png_read_update_info(png_ptr, info_ptr);
 
     // make sure we're actually in rgba mode
-    if (png_get_rowbytes(png_ptr, info_ptr) != ((*width) * 4)) {
+    if (png_get_rowbytes(png_ptr, info_ptr) != ((*width) * 4))
+    {
         png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
         fclose(fp);
         return _loadImgError(width, height);
     }
 
     // finally, read the file
-    unsigned char *buffer = (unsigned char *) malloc((*width) * (*height) * 4);
+    unsigned char *buffer = (unsigned char *)malloc((*width) * (*height) * 4);
     png_bytep row_pointers[*height];
     for (int y = 0; y < (*height); y++)
-        row_pointers[y] = (png_byte *) (buffer + ((*height) - 1 - y) * (*width) * 4);
-    png_read_rows(png_ptr, row_pointers, 0, (long unsigned int) (*height));
+        row_pointers[y] = (png_byte *)(buffer + ((*height) - 1 - y) * (*width) * 4);
+    png_read_rows(png_ptr, row_pointers, 0, (long unsigned int)(*height));
 
     // deallocate memory and return
     fclose(fp);
@@ -107,7 +115,8 @@ unsigned char *_loadImageRGBApng(char *fileName, int *width, int *height) {
     return buffer;
 }
 
-bool _saveImageRGBApng(char *fileName, unsigned char *buffer, int width, int height) {
+bool _saveImageRGBApng(char *fileName, unsigned char *buffer, int width, int height)
+{
     // open the file
     FILE *fp = fopen(fileName, "wb");
     if (!fp)
@@ -115,19 +124,22 @@ bool _saveImageRGBApng(char *fileName, unsigned char *buffer, int width, int hei
 
     // create the needed data structures
     png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
-    if (!png_ptr) {
+    if (!png_ptr)
+    {
         fclose(fp);
         return false;
     }
     png_infop info_ptr = png_create_info_struct(png_ptr);
-    if (!info_ptr) {
+    if (!info_ptr)
+    {
         fclose(fp);
-        png_destroy_write_struct(&png_ptr, (png_infopp) 0);
+        png_destroy_write_struct(&png_ptr, (png_infopp)0);
         return false;
     }
 
     // do the setjmp thingy
-    if (setjmp(png_jmpbuf(png_ptr))) {
+    if (setjmp(png_jmpbuf(png_ptr)))
+    {
         png_destroy_write_struct(&png_ptr, &info_ptr);
         fclose(fp);
         return false;
@@ -145,7 +157,7 @@ bool _saveImageRGBApng(char *fileName, unsigned char *buffer, int width, int hei
     // write the image
     png_bytep row_pointers[height];
     for (int y = 0; y < height; y++)
-        row_pointers[y] = (png_byte *) (buffer + (height - 1 - y) * width * 4);
+        row_pointers[y] = (png_byte *)(buffer + (height - 1 - y) * width * 4);
     png_write_image(png_ptr, row_pointers);
     png_write_end(png_ptr, info_ptr);
 
@@ -162,7 +174,8 @@ bool _saveImageRGBApng(char *fileName, unsigned char *buffer, int width, int hei
 // The memory associated with the buffer can be deallocated with free().
 // If there was an error reading file, then 0 is returned, and
 // width = height = -1.
-unsigned char *loadImageRGBA(char *fileName, int *width, int *height) {
+unsigned char *loadImageRGBA(char *fileName, int *width, int *height)
+{
     if (_endsWith(fileName, ".png"))
         return _loadImageRGBApng(fileName, width, height);
     else
@@ -172,7 +185,8 @@ unsigned char *loadImageRGBA(char *fileName, int *width, int *height) {
 // Saves image given by buffer with specicified width and height
 // to the given file name, returns true on success, false otherwise.
 // The image format is RGBA.
-bool saveImageRGBA(char *fileName, unsigned char *buffer, int width, int height) {
+bool saveImageRGBA(char *fileName, unsigned char *buffer, int width, int height)
+{
     if (_endsWith(fileName, ".png"))
         return _saveImageRGBApng(fileName, buffer, width, height);
     else

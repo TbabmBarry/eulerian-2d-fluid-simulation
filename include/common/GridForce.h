@@ -1,21 +1,22 @@
 #pragma once
-#include <stdio.h>
+#include "Eigen/Dense"
+#include "FluidSolver.h"
 #include "Force.h"
 #include "Particle.h"
-#include "FluidSolver.h"
 #include <map>
-#include "Eigen/Dense"
+#include <stdio.h>
 
 using namespace Eigen;
-
 class GridForce : public Force {
 
- public:
-  GridForce(vector<Particle*> particles);
-
+public:
+  GridForce(vector<Particle *> particles, FluidSolver *fluid);
+  FluidSolver *fluid;
   void draw() override;
-  void setTarget(vector<Particle*> particles) override;
-  void apply(FluidSolver fluid);
+  void setTarget(vector<Particle *> particles) override;
+  void apply(bool springsCanBreak) override;
+  map<int, map<int, float>> dx() override;
+  MatrixXf dv() override;
 
- private:
+private:
 };
