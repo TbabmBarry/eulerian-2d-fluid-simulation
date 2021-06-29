@@ -594,6 +594,7 @@ static void idle_func(void)
 {
 	if (sys_type == false)
 	{
+		fsolver->rigidbodies=sys->rigidbodies;
 		if (dsim)
 			sys->simulationStep();
 		else
