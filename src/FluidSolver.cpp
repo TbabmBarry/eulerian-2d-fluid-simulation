@@ -47,7 +47,6 @@ void FluidSolver::set_bnd(int N, int b, float *x)
     {
         vector<Vector4f> boundgrids = rigidBody->BoundingGrid(N);
         vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
-        cout << "innergrids: " << innergrids.size() << endl;
         //here we discuss 3 fluid cases wrt a rigidbody:
         //1. grid is boundary of rigidbody && the grid is on canvas boundary
         //2. grid is boundary of rigidbody && the grid is not on canvas boundary
@@ -233,13 +232,13 @@ void FluidSolver::setDensity(float *d, float *dprev, int inputN)
 {
     density = d;
     density_previous = dprev;
-    N = inputN;
+    N=inputN;
 };
 
 float FluidSolver::getDensity(int i, int j)
 {
-    int idx = i + (N + 2) * j;
-    return *(density + idx);
+    int idx=i+(N+2)*j;
+    return *(density+idx);
 };
 
 void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev, int inputN)
@@ -248,19 +247,19 @@ void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev
     v = xv;
     u_previous = xuprev;
     v_previous = xvprev;
-    N = inputN;
+    N=inputN;
 };
 
 float FluidSolver::getXVelocity(int i, int j)
 {
-    int idx = i + (N + 2) * j;
-    return *(u + idx);
+    int idx=i+(N+2)*j;
+    return *(u+idx);
 };
 
 float FluidSolver::getYVelocity(int i, int j)
 {
-    int idx = i + (N + 2) * j;
-    return *(v + idx);
+    int idx=i+(N+2)*j;
+    return *(v+idx);
 };
 
 void FluidSolver::dens_step(int N, float *x, float *x0, float *u, float *v, float diff, float dt)
