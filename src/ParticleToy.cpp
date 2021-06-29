@@ -513,6 +513,8 @@ static void key_func(unsigned char key, int x, int y)
 
 	case ' ':
 		dsim = !dsim;
+		fsolver->dsim=dsim;
+		cout<<fsolver->dsim<<endl;
 		if (dsim)
 			sys->reset();
 		break;

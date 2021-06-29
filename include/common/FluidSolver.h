@@ -13,6 +13,7 @@ public:
     void project ( int N, float * u, float * v, float * p, float * div );
     void vorticity_confinement(int N, float dt, float * d0, float* u, float* v, float * u0, float * v0);
     vector<Particle*> rigidbodies;
+    int dsim=0;
     void setDensity(float* d, float* dprev, int inputN);
     float getDensity(int i, int j);
     void setVelocity(float* xu, float* xv, float* xuprev, float* xvprev, int inputN);
