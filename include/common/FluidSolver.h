@@ -13,9 +13,9 @@ public:
     void project ( int N, float * u, float * v, float * p, float * div );
     void vorticity_confinement(int N, float dt, float * d0, float* u, float* v, float * u0, float * v0);
     vector<Particle*> rigidbodies;
-    void setDensity(float* d, float* dprev);
+    void setDensity(float* d, float* dprev, int inputN);
     float getDensity(int i, int j);
-    void setVelocity(float* xu, float* xv, float* xuprev, float* xvprev);
+    void setVelocity(float* xu, float* xv, float* xuprev, float* xvprev, int inputN);
     float getXVelocity(int i, int j);
     float getYVelocity(int i, int j);
     void dens_step ( int N, float * x, float * x0, float * u, float * v, float diff, float dt );

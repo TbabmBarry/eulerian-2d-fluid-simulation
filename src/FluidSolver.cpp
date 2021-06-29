@@ -192,8 +192,8 @@ void FluidSolver::vorticity_confinement(int N, float dt, float *d0, float *u, fl
     float *curl = d0;
     //compute vorticity
     //totalDens = 0;
-    setDensity(density, d0);
-    setVelocity(u, v, u0, v0);
+    setDensity(density, d0, N);
+    setVelocity(u, v, u0, v0, N);
     float x, y, z;
     for (int i = 1; i <= N; i++)
     {
@@ -228,41 +228,43 @@ void FluidSolver::vorticity_confinement(int N, float dt, float *d0, float *u, fl
     }
 }
 
-void FluidSolver::setDensity(float *d, float *dprev)
+void FluidSolver::setDensity(float *d, float *dprev, int inputN)
 {
     density = d;
     density_previous = dprev;
+    N=inputN;
 };
 
 float FluidSolver::getDensity(int i, int j)
 {
-    int idx=i+(128+2)*j;
+    int idx=i+(N+2)*j;
     return *(density+idx);
 };
 
-void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev)
+void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev, int inputN)
 {
     u = xu;
     v = xv;
     u_previous = xuprev;
     v_previous = xvprev;
+    N=inputN;
 };
 
 float FluidSolver::getXVelocity(int i, int j)
 {
-    int idx=i+(128+2)*j;
+    int idx=i+(N+2)*j;
     return *(u+idx);
 };
 
 float FluidSolver::getYVelocity(int i, int j)
 {
-    int idx=i+(128+2)*j;
+    int idx=i+(N+2)*j;
     return *(v+idx);
 };
 
 void FluidSolver::dens_step(int N, float *x, float *x0, float *u, float *v, float diff, float dt)
 {
-    setDensity(x, x0);
+    setDensity(x, x0, N);
     add_source(N, x, x0, dt);
     SWAP(x0, x);
     diffuse(N, 0, x, x0, diff, dt);
@@ -272,7 +274,7 @@ void FluidSolver::dens_step(int N, float *x, float *x0, float *u, float *v, floa
 
 void FluidSolver::vel_step(int N, float *u, float *v, float *u0, float *v0, float visc, float dt)
 {
-    setVelocity(u, v, u0, v0);
+    setVelocity(u, v, u0, v0, N);
     add_source(N, u, u0, dt);
     add_source(N, v, v0, dt);
     SWAP(u0, u);
