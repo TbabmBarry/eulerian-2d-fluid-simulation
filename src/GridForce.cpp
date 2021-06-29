@@ -1,8 +1,16 @@
 #include "GridForce.h"
 #include <math.h>
 
-GridForce::GridForce(vector<Particle *> particles, FluidSolver *fluid)
-    : fluid(fluid)
+#define IX(i, j) ((i) + (N + 2) * (j))
+#define SWAP(x0, x)  \
+  {                  \
+    float *tmp = x0; \
+    x0 = x;          \
+    x = tmp;         \
+  }
+
+GridForce::GridForce(vector<Particle *> particles, FluidField *fluid)
+    : fluid(fluid), N(fluid->N)
 {
   this->setTarget(particles);
 }
@@ -21,10 +29,13 @@ void GridForce::apply(bool springsCanBreak)
       vector<Vector4f> grids = rb->BoundingGrid(128);
       for (int i = 0; i < grids.size(); i++)
       {
-        // use v,F of the grids that edges pass through to update
-        float u = fluid->getXVelocity((int)grids[i][0], (int)grids[i][1]);
-        float v = fluid->getYVelocity((int)grids[i][0], (int)grids[i][1]);
-        float density = fluid->getDensity((int)grids[i][0], (int)grids[i][1]);
+        // // use v,F of the grids that edges pass through to update
+        // float u = fluid->getXVelocity((int)grids[i][0], (int)grids[i][1]);
+        // float v = fluid->getYVelocity((int)grids[i][0], (int)grids[i][1]);
+        // float density = fluid->getDensity((int)grids[i][0], (int)grids[i][1]);
+        float u = fluid->u[IX((int)grids[i][0], (int)grids[i][1])];
+        float v = fluid->v[IX((int)grids[i][0], (int)grids[i][1])];
+        float density = fluid->density[IX((int)grids[i][0], (int)grids[i][1])];
         Vector2f CenterToGrid = Vector2f(grids[i][2], grids[i][3]);
 
         // Find which edge is current grid allocated on
@@ -32,9 +43,9 @@ void GridForce::apply(bool springsCanBreak)
         vector<Vector2f> normals;
         for (int i = 0; i < rb->corners.size(); ++i)
         {
-          edges.push_back( rb->corners[(i + 1) % (rb->corners.size())] -
-                     rb->corners[i % (rb->corners.size())]);
-          normals.push_back( Vector2f(
+          edges.push_back(rb->corners[(i + 1) % (rb->corners.size())] -
+                          rb->corners[i % (rb->corners.size())]);
+          normals.push_back(Vector2f(
               edges[i][1], -edges[i][0])); // point to inner area of rigid body
         }
         Vector2f on_edge;
