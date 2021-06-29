@@ -13,7 +13,7 @@
         x = tmp;         \
     }
 
-FluidField::FluidField(System *sys, int grid_N) : sys(sys), N(grid_N), dt(0.001f), diff(0.0f), visc(0.0f)
+FluidField::FluidField(System *sys, int grid_N) : sys(sys), N(grid_N), dt(0.1f), diff(0.0f), visc(0.0f)
 {
     allocate();
     int i, j, size = (grid_N + 2) * (grid_N + 2);

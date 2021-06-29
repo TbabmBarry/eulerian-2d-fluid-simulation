@@ -443,7 +443,7 @@ static void key_func(unsigned char key, int x, int y)
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt = 0.0001;
+		sys->dt = 0.01;
 		external_force = 0.1f;
 		init_system();
 		// sys->fluidsolver = fsolver;
