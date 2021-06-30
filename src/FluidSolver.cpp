@@ -54,50 +54,48 @@ void FluidSolver::set_bnd(int N, int b, float *x)
         //     cout<< "innergrids:" << boundgrids[a][0] << " "<< boundgrids[a][1] <<endl;
         // }
         //here we discuss 3 fluid cases wrt a rigidbody:
-        //1. Velocity case && grid is boundary of rigidbody / the grid is both canvas and rigid boundary
-        //2. grid is boundary of rigidbody && the grid is not on canvas boundary
-        //3. grid inside boundary of rigidbody
+        //1. velocity case
+        //2. density case
+        //3. anything inside rigid body
 
         for (int i = 0; i < boundgrids.size(); i++)
         {
             //if case1: first flip fluid value(Gauss-Seidel relaxiation),
             //then if rigid grid is on upper/lower canvas boundary, fluid value is changed based on x velocity field
             //if rigid grid is on lhs/rhs canvas boundary, fluid value is changed based on y velocity field
-            // if(x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]>0){
-                if (b == 1 || b == 2)
+            if (b == 1 || b == 2)
+            {
+                x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= -1; //flip velocity
+                Vector2f vel = rigidBody->m_Velocity;
+                float factor = h * 1.1;
+                //if the grid is also on canvas boundary
+                if (b == 1)
                 {
-                    x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= -1; //flip velocity
-                    Vector2f vel = rigidBody->m_Velocity;
-                    float factor = h * 1.1;
-                    //if the grid is also on canvas boundary
-                    if (b == 1)
-                    {
-                        x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] += vel[0] * factor;
-                    }
-                    else if (b == 2)
-                    {
-                        x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] += vel[1] * factor;
-                    }
+                    x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] += vel[0] * factor;
                 }
-                else
+                else if (b == 2)
                 {
-                    //if case2: Assign average value of fluid neigboring cells(grids) to current cell
-                    //Value in x field around current cell
-                    // cout<<"before: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
-                    float before = (checkinner((int)boundgrids[i][0] - 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
-                    float after = (checkinner((int)boundgrids[i][0] + 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
-                    float above = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] + 1, innergrids)==1)? 0 : 1;
-                    float below = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] - 1, innergrids)==1)? 0 : 1;
-                    float x_before = (before==1) ? x[IX((int)boundgrids[i][0] - 1, (int)boundgrids[i][1])] : 0;
-                    float x_after = (after==1) ? x[IX((int)boundgrids[i][0] + 1, (int)boundgrids[i][1])] : 0;
-                    float x_above = (above==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] + 1)] : 0;
-                    float x_below = (below==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] - 1)] : 0;
-                    // cout<<(x_before + x_after + x_above + x_below) / x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
-                    // x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= 1;
-                    x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] = (x_before + x_after + x_above + x_below) / (before + after + above + below);
-                    // cout<<"after: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
+                    x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] += vel[1] * factor;
                 }
-            // }
+            }
+            else
+            {
+                //if case2: Assign average value of fluid neigboring cells(grids) to current cell
+                //Value in x field around current cell
+                // cout<<"before: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
+                float before = (checkinner((int)boundgrids[i][0] - 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
+                float after = (checkinner((int)boundgrids[i][0] + 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
+                float above = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] + 1, innergrids)==1)? 0 : 1;
+                float below = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] - 1, innergrids)==1)? 0 : 1;
+                float x_before = (before==1) ? x[IX((int)boundgrids[i][0] - 1, (int)boundgrids[i][1])] : 0;
+                float x_after = (after==1) ? x[IX((int)boundgrids[i][0] + 1, (int)boundgrids[i][1])] : 0;
+                float x_above = (above==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] + 1)] : 0;
+                float x_below = (below==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] - 1)] : 0;
+                // cout<<(x_before + x_after + x_above + x_below) / x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
+                // x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= 1;
+                x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] = (x_before + x_after + x_above + x_below) / (before + after + above + below);
+                // cout<<"after: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
+            }
         }
         //if case3: for all fluid grids inside rigid body(i.e not boundary grids), assign them=0
         for (int i = 0; i < innergrids.size(); i++)

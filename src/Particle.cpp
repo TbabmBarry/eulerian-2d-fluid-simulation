@@ -7,7 +7,7 @@
 #endif
 
 Particle::Particle(const Vector2f &ConstructPos, float mass, int index, TYPE type) : m_ConstructPos(ConstructPos), m_Position(ConstructPos), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index),
-																					 type(type), MassCenter(ConstructPos), dimension(0.8)
+																					 type(type), MassCenter(ConstructPos), dimension(0.3)
 {
 	switch (type)
 	{
