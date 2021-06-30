@@ -335,9 +335,7 @@ void System::drawRigids()
     for (auto *r : rigidbodies)
     {
         r->draw();
-drawForces()
-{
-    for (auto *f : forces)
+(auto *f : forces)
     {
         if (f->active)
         {
@@ -359,5 +357,7 @@ void System::drawSystem()
     drawParticles();
     drawRigids();
     drawForces();
-    drawConstraints();
+    draw        r->drawBound()        r->drawBound();
+;
+Constraints();
 }
