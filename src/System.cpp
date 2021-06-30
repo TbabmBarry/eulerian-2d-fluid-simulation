@@ -14,7 +14,7 @@ void System::addParticle(Particle *p)
 }
 void System::addRigid(Particle *p)
 {
-    if (p->rigid == 1)
+    if (p->rigid != 0)
     {
         rigidbodies.push_back(p);
     }
@@ -126,9 +126,9 @@ void System::rigidSetState(VectorXf newState, float time)
         rigidbodies[i]->x[0] = newState[i * 6 + 0];
         rigidbodies[i]->x[1] = newState[i * 6 + 1];
         rigidbodies[i]->angle = newState[i * 6 + 2];
-        rigidbodies[i]->P[0] = newState[i * 6 + 3];
-        rigidbodies[i]->P[1] = newState[i * 6 + 4];
-        rigidbodies[i]->L = newState[i * 6 + 5];
+        rigidbodies[i]->P[0] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 6 + 3];
+        rigidbodies[i]->P[1] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 6 + 4];
+        rigidbodies[i]->L = rigidbodies[i]->rigid != 1 ? 0.0f : newState[i * 6 + 5];
         // cout << "linear momentum: " << rigidbodies[i]->P << endl;
         //Compute derived variables
         rigidbodies[i]->R(0, 0) = cos(rigidbodies[i]->angle);

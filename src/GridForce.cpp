@@ -19,6 +19,7 @@ void GridForce::apply(bool springsCanBreak)
     for (Particle *rb : particles)
     {
       vector<Vector4f> grids = rb->BoundingGrid(128);
+      // cout<<rb->torque<<endl;
       for (int i = 0; i < grids.size(); i++)
       {
         // use v,F of the grids that edges pass through to update
@@ -41,7 +42,7 @@ void GridForce::apply(bool springsCanBreak)
         Vector2f normal;
         for (int i = 0; i < normals.size(); ++i)
         {
-          if (CenterToGrid.dot(normals[i]) > 0)
+          if (CenterToGrid.dot(normals[i])/(CenterToGrid.norm()*normals[i].norm()) <= -sqrt(2)/2 )
           {
             on_edge = edges[i];
             normal =
@@ -54,8 +55,8 @@ void GridForce::apply(bool springsCanBreak)
             (u * on_edge[1] - on_edge[0] * v) / on_edge.norm();
         Vector2f localVelocity = projectedVelocity * normal;
 
-        rb->force += 7 * localVelocity;                    // force = alpha*v
-        rb->torque += CenterToGrid.dot(7 * localVelocity); // torque = L*v
+        rb->force += localVelocity;                    // force = alpha*v
+        rb->torque += CenterToGrid.dot(localVelocity); // torque = L*v
       }
     }
   }

@@ -21,6 +21,20 @@ Particle::Particle(const Vector2f &ConstructPos, float mass, int index, TYPE typ
 		setBoundingBox();
 		break;
 	}
+	case FIX:
+	{
+		rigid = 2;
+		reset();
+		setBoundingBox();
+		break;
+	}
+	case MOVING:
+	{
+		rigid = 3;
+		reset();
+		setBoundingBox();
+		break;
+	}
 	}
 }
 
@@ -58,7 +72,7 @@ void Particle::draw() //draw a square
 		glVertex2f(m_Position[0], m_Position[1]);
 		glEnd();
 		break;
-	case RIGID:
+	default:
 		// cout << "corners0: " << corners[0][0]*(1024/2) << corners[0][1]*(1024/2) << endl;
 		// cout << "corners1: " << corners[1][0]*(1024/2) << corners[1][1]*(1024/2) << endl;
 		// cout << "corners2: " << corners[2][0]*(1024/2) << corners[2][1]*(1024/2) << endl;
@@ -106,6 +120,12 @@ vector<Vector2f> Particle::getBoundingBox()
 	case NORMAL:
 		break;
 	case RIGID:
+		return corners;
+		break;
+	case FIX:
+		return corners;
+		break;
+	case MOVING:
 		return corners;
 		break;
 	}

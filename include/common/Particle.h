@@ -13,6 +13,8 @@ public:
     enum TYPE
     {
         RIGID,
+        FIX,
+        MOVING,
         NORMAL
     };
     TYPE type;
@@ -30,7 +32,7 @@ public:
     Vector2f m_Force;
     float mass;
     int index;
-    bool rigid;
+    int rigid;
 
     //rigid body specific
     vector<Vector2f> corners; //local positions wrt masscenter, in order to deal with rotation
