@@ -336,6 +336,7 @@ void System::drawRigids()
     {
         r->draw();
         r->drawBound();
+        // r->drawInner();
     }
 }
 

@@ -7,7 +7,7 @@
 #endif
 
 Particle::Particle(const Vector2f &ConstructPos, float mass, int index, TYPE type) : m_ConstructPos(ConstructPos), m_Position(ConstructPos), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index),
-																					 type(type), MassCenter(ConstructPos), dimension(0.5)
+																					 type(type), MassCenter(ConstructPos), dimension(0.1)
 {
 	switch (type)
 	{
@@ -509,6 +509,35 @@ void Particle::drawBound()
 		glVertex2f(x + h, y + h);
 		glColor3f(139, 0, 0);
 		glVertex2f(x, y + h);
+	}
+
+	glEnd();
+}
+
+void Particle::drawInner()
+{
+	vector<Vector4f> boundgrids = BoundingGrid(128);
+	vector<Vector2i> innergrids = InnerGrid(boundgrids);
+	cout<<innergrids[0]<<endl;
+	float x, y, h;
+	int i, j;
+	h = 2.0f / 128;
+
+	glBegin(GL_QUADS);
+
+	for (int u = 0; u < innergrids.size(); u++)
+	{
+		i = innergrids[u][0], j = innergrids[u][1];
+		x = (i - 0.5f) * h;
+		x = -1 + x;
+		y = (j - 0.5f) * h;
+		y = -1 + y;
+
+		glColor3f(139.f, 1.f, 1.f); //rgb
+		glPointSize(h);
+		glBegin(GL_POINTS);
+		glVertex2f(x,y);
+		glEnd();
 	}
 
 	glEnd();

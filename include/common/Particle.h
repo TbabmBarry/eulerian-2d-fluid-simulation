@@ -25,6 +25,7 @@ public:
     virtual void reset();
     virtual void draw();
     virtual void drawBound();
+    virtual void drawInner();
 
     Vector2f m_ConstructPos;
     Vector2f m_Position;
