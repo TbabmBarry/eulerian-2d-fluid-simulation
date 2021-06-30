@@ -7,7 +7,7 @@
 #endif
 
 Particle::Particle(const Vector2f &ConstructPos, float mass, int index, TYPE type) : m_ConstructPos(ConstructPos), m_Position(ConstructPos), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index),
-																					 type(type), MassCenter(ConstructPos), dimension(0.3)
+																					 type(type), MassCenter(ConstructPos), dimension(0.5)
 {
 	switch (type)
 	{
@@ -179,6 +179,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 	Vector2i temp2i;
 	Vector2i top, bottom, left, right;
 	Vector2f grid_center, vector_length;
+	int l_i, r_i, t_i, b_i;
 
 	float grid_length = 2.0 / grid_N;
 
@@ -193,35 +194,47 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 	right = corner_absolute[0];
 	top = corner_absolute[0];
 	bottom = corner_absolute[0];
+	l_i = r_i = t_i = b_i = 0;
 	for (int i = 1; i < 4; i++)
 	{
 		if (corner_absolute[i][0] > right[0])
 		{
 			right = corner_absolute[i];
+			r_i = i;
 		}
 		if (corner_absolute[i][0] < left[0])
 		{
-			left = corner_absolute[i];
+			left = corner_absolute[i]; 
+			l_i = i;
 		}
 		if (corner_absolute[i][1] < top[1])
 		{
 			top = corner_absolute[i];
+			t_i = i;
 		}
 		if (corner_absolute[i][1] > bottom[1])
 		{
 			bottom = corner_absolute[i];
+			b_i = i;
 		}
 	}
+
+	// cout<<"corner "<<corners[0][0]<<" "<<corners[0][1]<<endl;
+	// cout<<"corner "<<corners[1][0]<<" "<<corners[1][1]<<endl;
+	// cout<<"corner "<<corners[2][0]<<" "<<corners[2][1]<<endl;
+	// cout<<"corner "<<corners[3][0]<<" "<<corners[3][1]<<endl;
+
+	// cout<<"corner_absolute "<<corner_absolute[0][0]<<" "<<corner_absolute[0][1]<<endl;
+	// cout<<"corner_absolute "<<corner_absolute[1][0]<<" "<<corner_absolute[1][1]<<endl;
+	// cout<<"corner_absolute "<<corner_absolute[2][0]<<" "<<corner_absolute[2][1]<<endl;
+	// cout<<"corner_absolute "<<corner_absolute[3][0]<<" "<<corner_absolute[3][1]<<endl;
 
 	// cout<<"left" << left[0] << " " << left[1] << endl;
 	// cout<<"right" << right[0] << " " << right[1] << endl;
 	// cout<<"bottom" << bottom[0] << " " << bottom[1] <<endl;
 	// cout<<"top" << top[0] << " " << top[1] << endl;
 
-	// cout<<"corner_absolute "<<corner_absolute[0][0]<<" "<<corner_absolute[0][1]<<endl;
-	// cout<<"corner_absolute "<<corner_absolute[1][0]<<" "<<corner_absolute[1][1]<<endl;
-	// cout<<"corner_absolute "<<corner_absolute[2][0]<<" "<<corner_absolute[2][1]<<endl;
-	// cout<<"corner_absolute "<<corner_absolute[3][0]<<" "<<corner_absolute[3][1]<<endl;
+	
 
 	//case 1 平行
 	if (corner_absolute[0][1] == corner_absolute[1][1] || corner_absolute[0][0] == corner_absolute[1][0])
@@ -286,7 +299,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 		float grid_diagonal = grid_length * sqrt(2);
 
 		// topleft
-		float x1 = corners[3][0], x2 = corners[0][0], y1 = corners[3][1], y2 = corners[0][1];
+		float x1 = corners[l_i][0], x2 = corners[t_i][0], y1 = corners[l_i][1], y2 = corners[t_i][1];
 		for (int j = top[1]; j <= left[1]; j++)
 		{
 			for (int i = left[0]; i <= top[0]; i++)
@@ -312,10 +325,10 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 		}
 
 		//top right
-		x1 = corners[0][0];
-		x2 = corners[1][0];
-		y1 = corners[0][1];
-		y2 = corners[1][1];
+		x1 = corners[t_i][0];
+		x2 = corners[r_i][0];
+		y1 = corners[t_i][1];
+		y2 = corners[r_i][1];
 		for (int j = top[1]; j <= right[1]; j++)
 		{
 			for (int i = top[0]; i <= right[0]; i++)
@@ -341,10 +354,10 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 		}
 
 		//bottomright
-		x1 = corners[1][0];
-		x2 = corners[2][0];
-		y1 = corners[1][1];
-		y2 = corners[2][1];
+		x1 = corners[r_i][0];
+		x2 = corners[b_i][0];
+		y1 = corners[r_i][1];
+		y2 = corners[b_i][1];
 		for (int j = right[1]; j <= bottom[1]; j++)
 		{
 			for (int i = bottom[0]; i <= right[0]; i++)
@@ -370,10 +383,10 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 		}
 
 		//bottomleft
-		x1 = corners[2][0];
-		x2 = corners[3][0];
-		y1 = corners[2][1];
-		y2 = corners[3][1];
+		x1 = corners[l_i][0];
+		x2 = corners[b_i][0];
+		y1 = corners[l_i][1];
+		y2 = corners[b_i][1];
 		for (int j = left[1]; j <= bottom[1]; j++)
 		{
 			for (int i = left[0]; i <= bottom[0]; i++)
