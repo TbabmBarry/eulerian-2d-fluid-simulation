@@ -47,7 +47,7 @@ void FluidSolver::set_bnd(int N, int b, float *x)
     {
         // cout<<"rigid_corners"<< rigidBody->corners[0]<<" "<< rigidBody->corners[1]<<" "<< rigidBody->corners[2]<<" "<< rigidBody->corners[3]<<" "<<endl;
         vector<Vector4f> boundgrids = rigidBody->BoundingGrid(N);
-        // vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
+        vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
         //here we discuss 3 fluid cases wrt a rigidbody:
         //1. Velocity case && grid is boundary of rigidbody / the grid is both canvas and rigid boundary
         //2. grid is boundary of rigidbody && the grid is not on canvas boundary
@@ -91,10 +91,10 @@ void FluidSolver::set_bnd(int N, int b, float *x)
             // }
         }
         //if case3: for all fluid grids inside rigid body(i.e not boundary grids), assign them=0
-        // for (int i = 0; i < innergrids.size(); i++)
-        // {
-        //     x[IX((int)innergrids[i][0], (int)innergrids[i][1])] = 0;
-        // }
+        for (int i = 0; i < innergrids.size(); i++)
+        {
+            x[IX((int)innergrids[i][0], (int)innergrids[i][1])] = 0;
+        }
     }
 }
 
