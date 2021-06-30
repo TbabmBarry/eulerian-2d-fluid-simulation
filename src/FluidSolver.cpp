@@ -49,9 +49,9 @@ void FluidSolver::set_bnd(int N, int b, float *x)
         vector<Vector4f> boundgrids = rigidBody->BoundingGrid(N);
         vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
 
-        // cout<< "new inner"<<endl;
+        // cout<< "new bound"<<endl;
         // for (int a=0; a<boundgrids.size();a++){
-        //     cout<< "innergrids:" << boundgrids[a][0] << " "<< boundgrids[a][1] <<endl;
+        //     cout<< "boundgrids:" << boundgrids[a][0] << " "<< boundgrids[a][1] <<endl;
         // }
         //here we discuss 3 fluid cases wrt a rigidbody:
         //1. velocity case
