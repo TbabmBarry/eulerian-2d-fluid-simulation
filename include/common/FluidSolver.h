@@ -7,13 +7,13 @@ public:
     void simulateStep(System* system, float h) override;
     void add_source(int N, float* x, float* s, float dt);
     void set_bnd ( int N, int b, float * x );
+    int checkinner(int i, int j, vector<Vector2i> pos);
     void lin_solve ( int N, int b, float * x, float * x0, float a, float c );
     void diffuse ( int N, int b, float * x, float * x0, float diff, float dt );
     void advect ( int N, int b, float * d, float * d0, float * u, float * v, float dt );
     void project ( int N, float * u, float * v, float * p, float * div );
     void vorticity_confinement(int N, float dt, float * d0, float* u, float* v, float * u0, float * v0);
     vector<Particle*> rigidbodies;
-    int dsim=0;
     void setDensity(float* d, float* dprev, int inputN);
     float getDensity(int i, int j);
     void setVelocity(float* xu, float* xv, float* xuprev, float* xvprev, int inputN);

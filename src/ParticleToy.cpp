@@ -513,8 +513,6 @@ static void key_func(unsigned char key, int x, int y)
 
 	case ' ':
 		dsim = !dsim;
-		fsolver->dsim=dsim;
-		cout<<fsolver->dsim<<endl;
 		if (dsim)
 			sys->reset();
 		break;
@@ -548,7 +546,7 @@ static void mouse_func(int button, int state, int x, int y)
 	{
 		int mouse_x = x - int(win_x / 2);
 		int mouse_y = int(win_y / 2) - y;
-		cout << "mouse_func: " << mouse_x << " " << mouse_y << endl;
+		cout << "x,y: " << x << " " << y << endl;
 		Particle *closestParticle;
 		double closestDist = 300;
 		for (int i = 0; i < sys->rigidbodies.size(); i++)

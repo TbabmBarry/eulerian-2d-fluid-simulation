@@ -47,7 +47,12 @@ void FluidSolver::set_bnd(int N, int b, float *x)
     {
         // cout<<"rigid_corners"<< rigidBody->corners[0]<<" "<< rigidBody->corners[1]<<" "<< rigidBody->corners[2]<<" "<< rigidBody->corners[3]<<" "<<endl;
         vector<Vector4f> boundgrids = rigidBody->BoundingGrid(N);
-        // vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
+        vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
+
+        // cout<< "new inner"<<endl;
+        // for (int a=0; a<boundgrids.size();a++){
+        //     cout<< "innergrids:" << boundgrids[a][0] << " "<< boundgrids[a][1] <<endl;
+        // }
         //here we discuss 3 fluid cases wrt a rigidbody:
         //1. Velocity case && grid is boundary of rigidbody / the grid is both canvas and rigid boundary
         //2. grid is boundary of rigidbody && the grid is not on canvas boundary
@@ -78,13 +83,17 @@ void FluidSolver::set_bnd(int N, int b, float *x)
                     //if case2: Assign average value of fluid neigboring cells(grids) to current cell
                     //Value in x field around current cell
                     // cout<<"before: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
-                    float x_before = x[IX((int)boundgrids[i][0] - 1, (int)boundgrids[i][1])];
-                    float x_after = x[IX((int)boundgrids[i][0] + 1, (int)boundgrids[i][1])];
-                    float x_above = x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] + 1)];
-                    float x_below = x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] - 1)];
+                    float before = (checkinner((int)boundgrids[i][0] - 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
+                    float after = (checkinner((int)boundgrids[i][0] + 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
+                    float above = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] + 1, innergrids)==1)? 0 : 1;
+                    float below = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] - 1, innergrids)==1)? 0 : 1;
+                    float x_before = (before==1) ? x[IX((int)boundgrids[i][0] - 1, (int)boundgrids[i][1])] : 0;
+                    float x_after = (after==1) ? x[IX((int)boundgrids[i][0] + 1, (int)boundgrids[i][1])] : 0;
+                    float x_above = (above==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] + 1)] : 0;
+                    float x_below = (below==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] - 1)] : 0;
                     // cout<<(x_before + x_after + x_above + x_below) / x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
-                    x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= -1;
-                    // x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] = (x_before + x_after + x_above + x_below) / x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])];
+                    // x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= 1;
+                    x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] = (x_before + x_after + x_above + x_below) / (before + after + above + below);
                     // cout<<"after: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
                 }
             // }
@@ -95,6 +104,15 @@ void FluidSolver::set_bnd(int N, int b, float *x)
         //     x[IX((int)innergrids[i][0], (int)innergrids[i][1])] = 0;
         // }
     }
+}
+
+int FluidSolver::checkinner(int i, int j, vector<Vector2i> pos){
+    for(int idx=0;idx<pos.size();idx++){
+        if(i==pos[idx][0]&&j==pos[idx][1]){
+            return 1;
+        }
+    }
+    return 0;
 }
 
 void FluidSolver::lin_solve(int N, int b, float *x, float *x0, float a, float c)
