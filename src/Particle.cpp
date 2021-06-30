@@ -213,8 +213,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
 			grid_center[1] = (1 - top[1] * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
-			temp4f[0] = float(i + 1);	   //i
-			temp4f[1] = float(grid_N-(top[1] + 1)); //j
+			temp4f[0] = float(i + 1);				  //i
+			temp4f[1] = float(grid_N - (top[1] + 1)); //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -224,8 +224,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[0] = right[0] * grid_length + (grid_length / 2) - 1;
 			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
-			temp4f[0] = float(right[0] + 1); //i
-			temp4f[1] = float(grid_N-(j + 1));		 //j
+			temp4f[0] = float(right[0] + 1);	 //i
+			temp4f[1] = float(grid_N - (j + 1)); //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -235,8 +235,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[0] = i * grid_length + (grid_length / 2) - 1;
 			grid_center[1] = (1 - bottom[1] * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
-			temp4f[0] = float(i + 1);		  //i
-			temp4f[1] = float(grid_N-(bottom[1] + 1)); //j
+			temp4f[0] = float(i + 1);					 //i
+			temp4f[1] = float(grid_N - (bottom[1] + 1)); //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -246,8 +246,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[0] = left[0] * grid_length + (grid_length / 2) - 1;
 			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
-			temp4f[0] = float(left[0] + 1); //i
-			temp4f[1] = float(grid_N-(j + 1));		//j
+			temp4f[0] = float(left[0] + 1);		 //i
+			temp4f[1] = float(grid_N - (j + 1)); //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -282,8 +282,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				// cout << "dist"<< dist << "diagonal/2" << grid_diagonal/2 << endl;
 				if (dist <= grid_diagonal / 2)
 				{
-					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(grid_N-(j + 1)); //j
+					temp4f[0] = float(i + 1);			 //i
+					temp4f[1] = float(grid_N - (j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -311,8 +311,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				// cout << "dist"<< dist << "diagonal/2" << grid_diagonal/2 << endl;
 				if (dist <= grid_diagonal / 2)
 				{
-					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(grid_N-(j + 1)); //j
+					temp4f[0] = float(i + 1);			 //i
+					temp4f[1] = float(grid_N - (j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -340,8 +340,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				// cout << "dist"<< dist << "diagonal/2" << grid_diagonal/2 << endl;
 				if (dist <= grid_diagonal / 2)
 				{
-					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(grid_N-(j + 1)); //j
+					temp4f[0] = float(i + 1);			 //i
+					temp4f[1] = float(grid_N - (j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -369,8 +369,8 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				// cout << "dist"<< dist << "diagonal/2" << grid_diagonal/2 << endl;
 				if (dist <= grid_diagonal / 2)
 				{
-					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(grid_N-(j + 1)); //j
+					temp4f[0] = float(i + 1);			 //i
+					temp4f[1] = float(grid_N - (j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -410,7 +410,8 @@ vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f)
 
 	for (int i = 0; i < boundGrid.size() - 1; i++)
 	{
-		if (boundGrid.size() < 3) {
+		if (boundGrid.size() < 3)
+		{
 			break;
 		}
 
@@ -423,29 +424,59 @@ vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f)
 				rowGrid.push_back(boundGrid[i + 1][0]);
 			}
 
-	// 		sort(rowGrid.begin(), rowGrid.end());
-	// 		// cout<< "AFTER 2" << endl;
-	// 		// for (int a=0; a< rowGrid.size();a++){
-	// 		// 	cout<< "row_grids"<< rowGrid[a] <<endl;
-	// 		// }
+			// 		sort(rowGrid.begin(), rowGrid.end());
+			// 		// cout<< "AFTER 2" << endl;
+			// 		// for (int a=0; a< rowGrid.size();a++){
+			// 		// 	cout<< "row_grids"<< rowGrid[a] <<endl;
+			// 		// }
 
-	// 		for (int j = 1; j < rowGrid.size(); j++)
-	// 		{
+			// 		for (int j = 1; j < rowGrid.size(); j++)
+			// 		{
 
-	// 			dist = rowGrid[j] - rowGrid[j - 1];
-	// 			if (dist > 1)
-	// 			{
-	// 				for (int k = 1; k < dist; k++)
-	// 				{
-	// 					temp[0] = rowGrid[j - 1] + k;
-	// 					temp[1] = boundGrid[i][1];
-	// 					innerGrid.push_back(temp);
-	// 				}
-	// 			}
-	// 		}
-	// 		vector<int>().swap(rowGrid);
+			// 			dist = rowGrid[j] - rowGrid[j - 1];
+			// 			if (dist > 1)
+			// 			{
+			// 				for (int k = 1; k < dist; k++)
+			// 				{
+			// 					temp[0] = rowGrid[j - 1] + k;
+			// 					temp[1] = boundGrid[i][1];
+			// 					innerGrid.push_back(temp);
+			// 				}
+			// 			}
+			// 		}
+			// 		vector<int>().swap(rowGrid);
 		}
 	}
 
 	return innerGrid;
+}
+
+void Particle::drawBound()
+{
+	vector<Vector4f> boundgrids = BoundingGrid(128);
+	float x, y, h;
+	int i, j;
+	h = 2.0f / 128;
+
+	glBegin(GL_QUADS);
+
+	for (int u = 0; u < boundgrids.size(); u++)
+	{
+		i = boundgrids[u][0], j = boundgrids[u][1];
+		x = (i - 0.5f) * h;
+		x = -1 + x;
+		y = (j - 0.5f) * h;
+		y = -1 + y;
+
+		glColor3f(139, 0, 0);
+		glVertex2f(x, y);
+		glColor3f(139, 0, 0);
+		glVertex2f(x + h, y);
+		glColor3f(139, 0, 0);
+		glVertex2f(x + h, y + h);
+		glColor3f(139, 0, 0);
+		glVertex2f(x, y + h);
+	}
+
+	glEnd();
 }
