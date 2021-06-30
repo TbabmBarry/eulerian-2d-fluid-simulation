@@ -57,6 +57,7 @@ void FluidSolver::set_bnd(int N, int b, float *x)
         //1. Velocity case && grid is boundary of rigidbody / the grid is both canvas and rigid boundary
         //2. grid is boundary of rigidbody && the grid is not on canvas boundary
         //3. grid inside boundary of rigidbody
+
         for (int i = 0; i < boundgrids.size(); i++)
         {
             //if case1: first flip fluid value(Gauss-Seidel relaxiation),

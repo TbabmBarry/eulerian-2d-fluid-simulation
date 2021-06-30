@@ -36,6 +36,7 @@
 
 /* global variables */
 static bool sys_type = false; // false = particle, true = fluid
+static bool mouse_inrigid = false;
 // for particle based system
 static int N;
 static float dt, d;
@@ -316,19 +317,22 @@ static void get_from_UI_grid(float *d, float *u, float *v)
 	if (!mouse_down[0] && !mouse_down[2])
 		return;
 
+	// cout<< "in_UI" <<endl;
+	// cout << "gomx " << gomx <<"gomy" << gomy << endl;
 	i = (int)((gmx / (float)win_x) * grid_N + 1);
 	j = (int)(((win_y - gmy) / (float)win_y) * grid_N + 1);
-
+	
+	// cout << "i " << i <<"j" << j << endl;
 	if (i < 1 || i > grid_N || j < 1 || j > grid_N)
 		return;
 
-	if (mouse_down[0])
+	if (mouse_down[0] && mouse_inrigid == false )
 	{
 		u[IX(i, j)] = force * (gmx - gomx);
 		v[IX(i, j)] = force * (gomy - gmy);
 	}
 
-	if (mouse_down[2])
+	if (mouse_down[2] && mouse_inrigid == false )
 	{
 		d[IX(i, j)] = source;
 	}
@@ -525,58 +529,70 @@ static void key_func(unsigned char key, int x, int y)
 
 static void mouse_func(int button, int state, int x, int y)
 {
-	omx = mx = x;
-	omx = my = y;
-	if (!mouse_down[0])
-	{
-		hmx = x;
-		hmy = y;
-	}
+
 	if (mouse_down[button])
 		mouse_release[button] = state == GLUT_UP;
 	if (mouse_down[button])
 		mouse_shiftclick[button] = glutGetModifiers() == GLUT_ACTIVE_SHIFT;
 	mouse_down[button] = state == GLUT_DOWN;
 
+	// cout<< mouse_inrigid<<endl;
+
 	if (state == GLUT_UP)
 	{
 		mouseForce->setActive(false);
+		mouse_inrigid = false;
 	}
 	else
 	{
-		int mouse_x = x - int(win_x / 2);
-		int mouse_y = int(win_y / 2) - y;
-		cout << "x,y: " << x << " " << y << endl;
+		float mouse_x = (x - int(win_x / 2));
+		float mouse_y = (int(win_y / 2) - y);
+		mouse_x = mouse_x / (win_x / 2);
+		mouse_y = mouse_y / (win_y / 2);
+		// cout << "mouse_func: " << mouse_x << " " << mouse_y << endl;
+		// cout << "x,y: " << x << " " << y << endl;
 		Particle *closestParticle;
-		double closestDist = 300;
 		for (int i = 0; i < sys->rigidbodies.size(); i++)
 		{
 			Vector2f position = sys->rigidbodies[i]->x;
-			cout << "position: " << position << endl;
-			double distance = sqrt(pow(mouse_x - (position[0] * (win_x / 2)), 2) + pow(mouse_y - (position[1] * (win_y / 2)), 2));
-			if (distance < closestDist)
+			float r = sys->rigidbodies[i]->dimension;
+			r = r/2*1.1;
+
+			double distance = sqrt((mouse_x - position[0])*(mouse_x - position[0]) + (mouse_y - position[1])*(mouse_y - position[1]));
+			if (distance < r)
 			{
-				closestDist = distance;
+				// cout<<"r "<<r<<" "<<"distance "<<distance<<endl;
+				mouse_inrigid = true;
 				closestParticle = sys->rigidbodies[i];
 			}
 		}
 		mouseForce = new ExternalForce({closestParticle}, external_force, Vector2f(0.0f, 0.0f));
 		sys->addRigidForce(mouseForce);
 	}
+
 	gomx = x;
 	gomy = y;
+	gmx = x;
+	gmy = y;
+	
 }
+
 
 static void motion_func(int x, int y)
 {
 	mx = x - int(win_x / 2);
 	my = int(win_y / 2) - y;
+	mx = mx / (win_x / 2);
+	my = my / (win_y / 2);
 
-	Vector2f position = mouseForce->particles[0]->m_Position;
-	mouseForce->direction = 3.0f * Vector2f(mx - position[0] * (win_x / 2), my - position[1] * (win_y / 2));
-
+	if (mouse_inrigid == true) {
+		Vector2f position = mouseForce->particles[0]->x;
+		mouseForce->direction = 10000.0f * Vector2f(mx - position[0], my - position[1]);
+	}
+	
 	gmx = x;
 	gmy = y;
+	// cout << "gmx " << gmx <<"gmy" << gmy << endl;
 }
 
 static void reshape_func(int width, int height)
