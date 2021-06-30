@@ -335,11 +335,7 @@ void System::drawRigids()
     for (auto *r : rigidbodies)
     {
         r->draw();
-        r->drawBound();
-    }
-}
-
-void System::drawForces()
+drawForces()
 {
     for (auto *f : forces)
     {
