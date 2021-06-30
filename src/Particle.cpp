@@ -214,7 +214,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[1] = (1 - top[1] * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
 			temp4f[0] = float(i + 1);	   //i
-			temp4f[1] = float(top[1] + 1); //j
+			temp4f[1] = float(grid_N-(top[1] + 1)); //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -225,7 +225,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
 			temp4f[0] = float(right[0] + 1); //i
-			temp4f[1] = float(j + 1);		 //j
+			temp4f[1] = float(grid_N-(j + 1));		 //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -236,7 +236,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[1] = (1 - bottom[1] * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
 			temp4f[0] = float(i + 1);		  //i
-			temp4f[1] = float(bottom[1] + 1); //j
+			temp4f[1] = float(grid_N-(bottom[1] + 1)); //j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -247,7 +247,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 			grid_center[1] = (1 - j * grid_length) - (grid_length / 2);
 			vector_length = grid_center - m_Position;
 			temp4f[0] = float(left[0] + 1); //i
-			temp4f[1] = float(j + 1);		//j
+			temp4f[1] = float(grid_N-(j + 1));		//j
 			temp4f[2] = vector_length[0];
 			temp4f[3] = vector_length[1];
 			bound_grids.push_back(temp4f);
@@ -283,7 +283,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				if (dist <= grid_diagonal / 2)
 				{
 					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(j + 1); //j
+					temp4f[1] = float(grid_N-(j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -312,7 +312,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				if (dist <= grid_diagonal / 2)
 				{
 					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(j + 1); //j
+					temp4f[1] = float(grid_N-(j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -341,7 +341,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				if (dist <= grid_diagonal / 2)
 				{
 					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(j + 1); //j
+					temp4f[1] = float(grid_N-(j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
@@ -370,7 +370,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 				if (dist <= grid_diagonal / 2)
 				{
 					temp4f[0] = float(i + 1); //i
-					temp4f[1] = float(j + 1); //j
+					temp4f[1] = float(grid_N-(j + 1)); //j
 					temp4f[2] = vector_length[0];
 					temp4f[3] = vector_length[1];
 					bound_grids.push_back(temp4f);
