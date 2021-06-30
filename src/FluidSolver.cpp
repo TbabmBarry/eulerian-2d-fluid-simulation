@@ -100,10 +100,10 @@ void FluidSolver::set_bnd(int N, int b, float *x)
             // }
         }
         //if case3: for all fluid grids inside rigid body(i.e not boundary grids), assign them=0
-        // for (int i = 0; i < innergrids.size(); i++)
-        // {
-        //     x[IX((int)innergrids[i][0], (int)innergrids[i][1])] = 0;
-        // }
+        for (int i = 0; i < innergrids.size(); i++)
+        {
+            x[IX((int)innergrids[i][0], (int)innergrids[i][1])] = 0;
+        }
     }
 }
 

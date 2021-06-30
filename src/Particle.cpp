@@ -410,6 +410,10 @@ vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f)
 
 	for (int i = 0; i < boundGrid.size() - 1; i++)
 	{
+		if (boundGrid.size() < 3) {
+			break;
+		}
+
 		rowGrid.push_back(boundGrid[i][0]);
 
 		if (boundGrid[i][1] != boundGrid[i + 1][1] || i == boundGrid.size() - 1)
@@ -419,27 +423,27 @@ vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f)
 				rowGrid.push_back(boundGrid[i + 1][0]);
 			}
 
-			sort(rowGrid.begin(), rowGrid.end());
-			// cout<< "AFTER 2" << endl;
-			// for (int a=0; a< rowGrid.size();a++){
-			// 	cout<< "row_grids"<< rowGrid[a] <<endl;
-			// }
+	// 		sort(rowGrid.begin(), rowGrid.end());
+	// 		// cout<< "AFTER 2" << endl;
+	// 		// for (int a=0; a< rowGrid.size();a++){
+	// 		// 	cout<< "row_grids"<< rowGrid[a] <<endl;
+	// 		// }
 
-			for (int j = 1; j < rowGrid.size(); j++)
-			{
+	// 		for (int j = 1; j < rowGrid.size(); j++)
+	// 		{
 
-				dist = rowGrid[j] - rowGrid[j - 1];
-				if (dist > 1)
-				{
-					for (int k = 1; k < dist; k++)
-					{
-						temp[0] = rowGrid[j - 1] + k;
-						temp[1] = boundGrid[i][1];
-						innerGrid.push_back(temp);
-					}
-				}
-			}
-			vector<int>().swap(rowGrid);
+	// 			dist = rowGrid[j] - rowGrid[j - 1];
+	// 			if (dist > 1)
+	// 			{
+	// 				for (int k = 1; k < dist; k++)
+	// 				{
+	// 					temp[0] = rowGrid[j - 1] + k;
+	// 					temp[1] = boundGrid[i][1];
+	// 					innerGrid.push_back(temp);
+	// 				}
+	// 			}
+	// 		}
+	// 		vector<int>().swap(rowGrid);
 		}
 	}
 
