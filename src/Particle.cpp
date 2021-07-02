@@ -7,7 +7,7 @@
 #endif
 
 Particle::Particle(const Vector2f &ConstructPos, float mass, int index, TYPE type) : m_ConstructPos(ConstructPos), m_Position(ConstructPos), m_Velocity(Vector2f(0.0, 0.0)), mass(mass), index(index),
-																					 type(type), MassCenter(ConstructPos), dimension(0.1)
+																					 type(type), MassCenter(ConstructPos), dimension(0.2)
 {
 	switch (type)
 	{
@@ -49,12 +49,13 @@ void Particle::reset()
 	m_Force = Vector2f(0.0, 0.0);
 	x = m_ConstructPos;
 	//rigid specific
-	I = 0.0f;
+	I = mass * (pow(dimension / 2, 2) + pow(dimension / 2, 2));
+	// I = 0.0f;
 	x = MassCenter;
 	R = Matrix2f::Identity();
 	P = Vector2f(0, 0); //M*v(t)
 	L = 0.0f;			//I*w(t)
-	omega = L / (I + 0.00000000001);
+	omega = L / (I + 0.001);
 	torque = 0.0f;
 	angle = 0.0f * M_PI / 180;
 }
@@ -204,7 +205,7 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 		}
 		if (corner_absolute[i][0] < left[0])
 		{
-			left = corner_absolute[i]; 
+			left = corner_absolute[i];
 			l_i = i;
 		}
 		if (corner_absolute[i][1] < top[1])
@@ -233,8 +234,6 @@ vector<Vector4f> Particle::BoundingGrid(int grid_N)
 	// cout<<"right" << right[0] << " " << right[1] << endl;
 	// cout<<"bottom" << bottom[0] << " " << bottom[1] <<endl;
 	// cout<<"top" << top[0] << " " << top[1] << endl;
-
-	
 
 	//case 1 平行
 	if (corner_absolute[0][1] == corner_absolute[1][1] || corner_absolute[0][0] == corner_absolute[1][0])
@@ -518,7 +517,7 @@ void Particle::drawInner()
 {
 	vector<Vector4f> boundgrids = BoundingGrid(128);
 	vector<Vector2i> innergrids = InnerGrid(boundgrids);
-	cout<<innergrids[0]<<endl;
+	cout << innergrids[0] << endl;
 	float x, y, h;
 	int i, j;
 	h = 2.0f / 128;
@@ -536,7 +535,7 @@ void Particle::drawInner()
 		glColor3f(139.f, 1.f, 1.f); //rgb
 		glPointSize(h);
 		glBegin(GL_POINTS);
-		glVertex2f(x,y);
+		glVertex2f(x, y);
 		glEnd();
 	}
 

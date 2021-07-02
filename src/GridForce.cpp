@@ -33,16 +33,16 @@ void GridForce::apply(bool springsCanBreak)
         vector<Vector2f> normals;
         for (int i = 0; i < rb->corners.size(); ++i)
         {
-          edges.push_back( rb->corners[(i + 1) % (rb->corners.size())] -
-                     rb->corners[i % (rb->corners.size())]);
-          normals.push_back( Vector2f(
+          edges.push_back(rb->corners[(i + 1) % (rb->corners.size())] -
+                          rb->corners[i % (rb->corners.size())]);
+          normals.push_back(Vector2f(
               edges[i][1], -edges[i][0])); // point to inner area of rigid body
         }
         Vector2f on_edge;
         Vector2f normal;
         for (int i = 0; i < normals.size(); ++i)
         {
-          if (CenterToGrid.dot(normals[i])/(CenterToGrid.norm()*normals[i].norm()) <= -sqrt(2)/2 )
+          if (CenterToGrid.dot(normals[i]) / (CenterToGrid.norm() * normals[i].norm()) <= -sqrt(2) / 2)
           {
             on_edge = edges[i];
             normal =
@@ -54,9 +54,8 @@ void GridForce::apply(bool springsCanBreak)
         float projectedVelocity =
             (u * on_edge[1] - on_edge[0] * v) / on_edge.norm();
         Vector2f localVelocity = projectedVelocity * normal;
-
-        rb->force += localVelocity;                    // force = alpha*v
-        rb->torque += CenterToGrid.dot(localVelocity)/3; // torque = L*v
+        rb->m_Force += localVelocity;                      // force = alpha*v
+        rb->torque += CenterToGrid.dot(localVelocity) / 3; // torque = L*v
       }
     }
   }
