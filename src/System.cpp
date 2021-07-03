@@ -82,7 +82,7 @@ VectorXf System::rigidGetState()
     {
         s[i * 8 + 0] = rigidbodies[i]->x[0];
         s[i * 8 + 1] = rigidbodies[i]->x[1];
-        s[i * 8 + 2] = rigidbodies[i]->angle;
+        s[i * 8 + 2] = 0;
         s[i * 8 + 3] = rigidbodies[i]->P[0];
         s[i * 8 + 4] = rigidbodies[i]->P[1];
         s[i * 8 + 5] = rigidbodies[i]->L;
@@ -125,22 +125,31 @@ void System::rigidSetState(VectorXf newState, float time)
         {
             rigidbodies[i]->corners[k] -= rigidbodies[i]->x;
         }
-        rigidbodies[i]->x[0] = newState[i * 8 + 0];
-        rigidbodies[i]->x[1] = newState[i * 8 + 1];
-        rigidbodies[i]->angle = newState[i * 8 + 2];
-        rigidbodies[i]->P[0] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 8 + 3];
-        rigidbodies[i]->P[1] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 8 + 4];
-        rigidbodies[i]->L = rigidbodies[i]->rigid != 1 ? 0.0f : newState[i * 8 + 5];
-
+        rigidbodies[i]->x[0] = newState[i * 6 + 0];
+        rigidbodies[i]->x[1] = newState[i * 6 + 1];
+        rigidbodies[i]->angle = rigidbodies[i]->omega * 0.1;
+        rigidbodies[i]->P[0] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 6 + 3];
+        rigidbodies[i]->P[1] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 6 + 4];
+        rigidbodies[i]->L = rigidbodies[i]->rigid != 1 ? 0.0f : newState[i * 6 + 5];
+        // cout << "linear momentum: " << rigidbodies[i]->P << endl;
         //Compute derived variables
         rigidbodies[i]->R(0, 0) = cos(rigidbodies[i]->angle);
         rigidbodies[i]->R(0, 1) = -sin(rigidbodies[i]->angle);
         rigidbodies[i]->R(1, 0) = sin(rigidbodies[i]->angle);
         rigidbodies[i]->R(1, 1) = cos(rigidbodies[i]->angle);
         rigidbodies[i]->m_Velocity = rigidbodies[i]->P / rigidbodies[i]->mass;
-        rigidbodies[i]->I = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension / 2, 2) + pow(rigidbodies[i]->dimension / 2, 2));
-        rigidbodies[i]->omega = rigidbodies[i]->L / rigidbodies[i]->I;
-
+        rigidbodies[i]->I = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
+        rigidbodies[i]->omega = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
+        if(rigidbodies[i]->omega>0.1){
+            rigidbodies[i]->omega=0.1;
+        }
+        if(rigidbodies[i]->omega<-0.1){
+            rigidbodies[i]->omega=-0.1;
+        }
+        // cout << "velocity: " << rigidbodies[i]->v << endl;
+        // cout << "angle: " << rigidbodies[i]->angle << endl;
+        // cout << "angular momentum: " << rigidbodies[i]->L << endl;
+        // cout << "angular velocity: " << rigidbodies[i]->omega << endl;
         //update positions
         for (int k = 0; k < rigidbodies[i]->corners.size(); ++k)
         {

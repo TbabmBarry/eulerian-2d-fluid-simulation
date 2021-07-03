@@ -10,7 +10,7 @@ using namespace Eigen;
 class GridForce : public Force {
 
 public:
-  GridForce(vector<Particle *> particles, FluidSolver *fluid);
+  GridForce(vector<Particle *> particles, FluidSolver *fluid, int scale);
   FluidSolver *fluid;
   void draw() override;
   void setTarget(vector<Particle *> particles) override;
@@ -19,4 +19,5 @@ public:
   MatrixXf dv() override;
 
 private:
+  int scale;
 };
