@@ -1,12 +1,12 @@
 #include "System.h"
-#include "FluidSolver.h"
+#include "Fluid.h"
 
 class Mode
 {
 public:
-    void CircularGravityRod(System *system);
-    void hair(System *system);
-    void CircularCloth(System *system);
-    void RigidBodyCollision(System *system, FluidSolver *fluid);
+    void RigidBodyCollision(System *system, Fluid *fluid);
+    void RigidBody(System *system, Fluid *fluid);
+    void Fix(System *system, Fluid *fluid);
+    void Move(System *system, Fluid *fluid);
     void FluidCloth(System *system);
 };

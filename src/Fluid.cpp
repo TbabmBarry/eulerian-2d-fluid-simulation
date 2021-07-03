@@ -1,4 +1,4 @@
-#include "FluidSolver.h"
+#include "Fluid.h"
 #include "Eigen/Dense"
 #include <Eigen/Sparse>
 #include <math.h>
@@ -12,13 +12,9 @@
         x = tmp;         \
     }
 
-FluidSolver::FluidSolver() {}
+Fluid::Fluid() {}
 
-void FluidSolver::simulateStep(System *system, float h)
-{
-}
-
-void FluidSolver::add_source(int N, float *x, float *s, float dt)
+void Fluid::add_source(int N, float *x, float *s, float dt)
 {
     h = dt;
     int i, size = (N + 2) * (N + 2);
@@ -28,7 +24,7 @@ void FluidSolver::add_source(int N, float *x, float *s, float dt)
     }
 }
 
-void FluidSolver::set_bnd(int N, int b, float *x)
+void Fluid::set_bnd(int N, int b, float *x)
 { // Gauss-Seidel relaxiation
     for (int i = 1; i <= N; i++)
     {
@@ -83,14 +79,14 @@ void FluidSolver::set_bnd(int N, int b, float *x)
                 //if case2: Assign average value of fluid neigboring cells(grids) to current cell
                 //Value in x field around current cell
                 // cout<<"before: "<<x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
-                float before = (checkinner((int)boundgrids[i][0] - 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
-                float after = (checkinner((int)boundgrids[i][0] + 1, (int)boundgrids[i][1], innergrids)==1)? 0 : 1;
-                float above = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] + 1, innergrids)==1)? 0 : 1;
-                float below = (checkinner((int)boundgrids[i][0] , (int)boundgrids[i][1] - 1, innergrids)==1)? 0 : 1;
-                float x_before = (before==1) ? x[IX((int)boundgrids[i][0] - 1, (int)boundgrids[i][1])] : 0;
-                float x_after = (after==1) ? x[IX((int)boundgrids[i][0] + 1, (int)boundgrids[i][1])] : 0;
-                float x_above = (above==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] + 1)] : 0;
-                float x_below = (below==1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] - 1)] : 0;
+                float before = (checkinner((int)boundgrids[i][0] - 1, (int)boundgrids[i][1], innergrids) == 1) ? 0 : 1;
+                float after = (checkinner((int)boundgrids[i][0] + 1, (int)boundgrids[i][1], innergrids) == 1) ? 0 : 1;
+                float above = (checkinner((int)boundgrids[i][0], (int)boundgrids[i][1] + 1, innergrids) == 1) ? 0 : 1;
+                float below = (checkinner((int)boundgrids[i][0], (int)boundgrids[i][1] - 1, innergrids) == 1) ? 0 : 1;
+                float x_before = (before == 1) ? x[IX((int)boundgrids[i][0] - 1, (int)boundgrids[i][1])] : 0;
+                float x_after = (after == 1) ? x[IX((int)boundgrids[i][0] + 1, (int)boundgrids[i][1])] : 0;
+                float x_above = (above == 1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] + 1)] : 0;
+                float x_below = (below == 1) ? x[IX((int)boundgrids[i][0], (int)boundgrids[i][1] - 1)] : 0;
                 // cout<<(x_before + x_after + x_above + x_below) / x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])]<<endl;
                 // x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= 1;
                 x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] = (x_before + x_after + x_above + x_below) / (before + after + above + below);
@@ -105,16 +101,19 @@ void FluidSolver::set_bnd(int N, int b, float *x)
     }
 }
 
-int FluidSolver::checkinner(int i, int j, vector<Vector2i> pos){
-    for(int idx=0;idx<pos.size();idx++){
-        if(i==pos[idx][0]&&j==pos[idx][1]){
+int Fluid::checkinner(int i, int j, vector<Vector2i> pos)
+{
+    for (int idx = 0; idx < pos.size(); idx++)
+    {
+        if (i == pos[idx][0] && j == pos[idx][1])
+        {
             return 1;
         }
     }
     return 0;
 }
 
-void FluidSolver::lin_solve(int N, int b, float *x, float *x0, float a, float c)
+void Fluid::lin_solve(int N, int b, float *x, float *x0, float a, float c)
 {
     for (int k = 0; k < 20; k++)
     {
@@ -130,13 +129,13 @@ void FluidSolver::lin_solve(int N, int b, float *x, float *x0, float a, float c)
     }
 }
 
-void FluidSolver::diffuse(int N, int b, float *x, float *x0, float diff, float dt)
+void Fluid::diffuse(int N, int b, float *x, float *x0, float diff, float dt)
 {
     float a = dt * diff * N * N; //apply stable diffusion "a"
     lin_solve(N, b, x, x0, a, 1 + 4 * a);
 }
 
-void FluidSolver::advect(int N, int b, float *d, float *d0, float *u, float *v, float dt)
+void Fluid::advect(int N, int b, float *d, float *d0, float *u, float *v, float dt)
 {
     int i0, j0, i1, j1;
     float x, y, s0, t0, s1, t1, dt0;
@@ -181,7 +180,7 @@ void FluidSolver::advect(int N, int b, float *d, float *d0, float *u, float *v, 
     set_bnd(N, b, d); //flag b to update advection vector/(N+2)*(N+2)matrix d
 }
 
-void FluidSolver::project(int N, float *u, float *v, float *p, float *div)
+void Fluid::project(int N, float *u, float *v, float *p, float *div)
 { //velocity field, velocity conservation.
     //velocity field = mass conservation + velocity gradient
     for (int i = 1; i <= N; i++)
@@ -211,7 +210,7 @@ void FluidSolver::project(int N, float *u, float *v, float *p, float *div)
     set_bnd(N, 2, v); //set velocity field
 }
 
-void FluidSolver::vorticity_confinement(int N, float dt, float *d0, float *u, float *v, float *u0, float *v0)
+void Fluid::vorticity_confinement(int N, float dt, float *d0, float *u, float *v, float *u0, float *v0)
 {
     float *curl = d0;
     //compute vorticity
@@ -252,43 +251,43 @@ void FluidSolver::vorticity_confinement(int N, float dt, float *d0, float *u, fl
     }
 }
 
-void FluidSolver::setDensity(float *d, float *dprev, int inputN)
+void Fluid::setDensity(float *d, float *dprev, int inputN)
 {
-	// cout<<"hello1 "<<dprev[IX(64, 82)]<<endl;
+    // cout<<"hello1 "<<dprev[IX(64, 82)]<<endl;
     density = d;
     density_previous = dprev;
     // cout<<"hello2 "<<density_previous[IX(64, 82)]<<endl;
-    N=inputN;
+    N = inputN;
 };
 
-float FluidSolver::getDensity(int i, int j)
+float Fluid::getDensity(int i, int j)
 {
-    int idx=i+(N+2)*j;
-    return *(density+idx);
+    int idx = i + (N + 2) * j;
+    return *(density + idx);
 };
 
-void FluidSolver::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev, int inputN)
+void Fluid::setVelocity(float *xu, float *xv, float *xuprev, float *xvprev, int inputN)
 {
     u = xu;
     v = xv;
     u_previous = xuprev;
     v_previous = xvprev;
-    N=inputN;
+    N = inputN;
 };
 
-float FluidSolver::getXVelocity(int i, int j)
+float Fluid::getXVelocity(int i, int j)
 {
-    int idx=i+(N+2)*j;
-    return *(u+idx);
+    int idx = i + (N + 2) * j;
+    return *(u + idx);
 };
 
-float FluidSolver::getYVelocity(int i, int j)
+float Fluid::getYVelocity(int i, int j)
 {
-    int idx=i+(N+2)*j;
-    return *(v+idx);
+    int idx = i + (N + 2) * j;
+    return *(v + idx);
 };
 
-void FluidSolver::dens_step(int N, float *x, float *x0, float *u, float *v, float diff, float dt)
+void Fluid::dens_step(int N, float *x, float *x0, float *u, float *v, float diff, float dt)
 {
     // cout<<"hello "<<x0[IX(64, 82)]<<endl;
     setDensity(x, x0, N);
@@ -300,7 +299,7 @@ void FluidSolver::dens_step(int N, float *x, float *x0, float *u, float *v, floa
     setDensity(x, x0, N);
 }
 
-void FluidSolver::vel_step(int N, float *u, float *v, float *u0, float *v0, float visc, float dt)
+void Fluid::vel_step(int N, float *u, float *v, float *u0, float *v0, float visc, float dt)
 {
     setVelocity(u, v, u0, v0, N);
     add_source(N, u, u0, dt);
