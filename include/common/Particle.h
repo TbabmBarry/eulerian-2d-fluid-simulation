@@ -26,6 +26,7 @@ public:
     virtual void draw();
     virtual void drawBound();
     virtual void drawInner();
+    virtual void drawLocal();
 
     Vector2f m_ConstructPos;
     Vector2f m_Position;
@@ -42,6 +43,7 @@ public:
     // Vec2f getBodyCoordinates(Vec2f world);
     vector<Vector4f> BoundingGrid(int grid_N);
     vector<Vector2i> InnerGrid(vector<Vector4f> BoundGrid);
+    Vector2i LocolGrid(int grid_N);
     static bool compareVectors(Vector2i g1, Vector2i g2);
 
     // get the closest edge for a target point

@@ -48,7 +48,7 @@ void FluidSolver::set_bnd(int N, int b, float *x)
         // cout<<"rigid_corners"<< rigidBody->corners[0]<<" "<< rigidBody->corners[1]<<" "<< rigidBody->corners[2]<<" "<< rigidBody->corners[3]<<" "<<endl;
         vector<Vector4f> boundgrids = rigidBody->BoundingGrid(N);
         vector<Vector2i> innergrids = rigidBody->InnerGrid(boundgrids);
-
+        // cout << " innersize " << innergrids.size() << endl;
         // cout<< "new bound"<<endl;
         // for (int a=0; a<boundgrids.size();a++){
         //     cout<< "boundgrids:" << boundgrids[a][0] << " "<< boundgrids[a][1] <<endl;

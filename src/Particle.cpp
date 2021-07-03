@@ -456,32 +456,49 @@ vector<Vector2i> Particle::InnerGrid(vector<Vector4f> boundGrid4f)
 				rowGrid.push_back(boundGrid[i + 1][0]);
 			}
 
-			// 		sort(rowGrid.begin(), rowGrid.end());
-			// 		// cout<< "AFTER 2" << endl;
-			// 		// for (int a=0; a< rowGrid.size();a++){
-			// 		// 	cout<< "row_grids"<< rowGrid[a] <<endl;
-			// 		// }
+			sort(rowGrid.begin(), rowGrid.end());
+					// cout<< "AFTER 2" << endl;
+					// for (int a=0; a< rowGrid.size();a++){
+					// 	cout<< "row_grids"<< rowGrid[a] <<endl;
+					// }
 
-			// 		for (int j = 1; j < rowGrid.size(); j++)
-			// 		{
+			for (int j = 1; j < rowGrid.size(); j++)
+			{
 
-			// 			dist = rowGrid[j] - rowGrid[j - 1];
-			// 			if (dist > 1)
-			// 			{
-			// 				for (int k = 1; k < dist; k++)
-			// 				{
-			// 					temp[0] = rowGrid[j - 1] + k;
-			// 					temp[1] = boundGrid[i][1];
-			// 					innerGrid.push_back(temp);
-			// 				}
-			// 			}
-			// 		}
-			// 		vector<int>().swap(rowGrid);
+				dist = rowGrid[j] - rowGrid[j - 1];
+				if (dist > 1)
+				{
+					for (int k = 1; k < dist; k++)
+					{
+						temp[0] = rowGrid[j - 1] + k;
+						temp[1] = boundGrid[i][1];
+						innerGrid.push_back(temp);
+					}
+				}
+			}
+			vector<int>().swap(rowGrid);
 		}
 	}
 
 	return innerGrid;
 }
+
+Vector2i Particle::LocolGrid(int grid_N){
+	Vector2f position = m_Position;
+	Vector2i result;
+	float grid_length = 2.0 / grid_N;
+
+	// cout<< "position"<< position[0] <<" "<<position[1] <<endl;
+	result[0] = int((position[0] - (-1)) / grid_length) + 1;
+	result[1] = int((1 - position[1]) / grid_length);
+	result[1] = grid_N - (result[1] + 1);
+
+
+	// cout<< "localgrid"<< result[0] <<" " <<result[1] <<endl;
+	return result;
+}
+
+
 
 void Particle::drawBound()
 {
@@ -517,7 +534,7 @@ void Particle::drawInner()
 {
 	vector<Vector4f> boundgrids = BoundingGrid(128);
 	vector<Vector2i> innergrids = InnerGrid(boundgrids);
-	cout << innergrids[0] << endl;
+	cout << " innersize " << innergrids.size() << endl;
 	float x, y, h;
 	int i, j;
 	h = 2.0f / 128;
@@ -526,18 +543,60 @@ void Particle::drawInner()
 
 	for (int u = 0; u < innergrids.size(); u++)
 	{
+
+		
 		i = innergrids[u][0], j = innergrids[u][1];
+		// cout<<  "innergrids"<< i << j <<endl;
 		x = (i - 0.5f) * h;
 		x = -1 + x;
 		y = (j - 0.5f) * h;
 		y = -1 + y;
 
-		glColor3f(139.f, 1.f, 1.f); //rgb
-		glPointSize(h);
-		glBegin(GL_POINTS);
+
+		glColor3f(139, 0, 0);
 		glVertex2f(x, y);
-		glEnd();
+		glColor3f(139, 0, 0);
+		glVertex2f(x + h, y);
+		glColor3f(139, 0, 0);
+		glVertex2f(x + h, y + h);
+		glColor3f(139, 0, 0);
+		glVertex2f(x, y + h);
+		// glColor3f(139.f, 1.f, 1.f); //rgb
+		// glPointSize(h);
+		// glBegin(GL_POINTS);
+		// glVertex2f(x, y);
+		// glEnd();
 	}
 
 	glEnd();
+}
+
+void Particle::drawLocal()
+{
+	Vector2i index = LocolGrid(128);
+	// cout<< "localgrid"<< index[0] << index[1] <<endl;
+
+	int i,j;
+	float temp_x,temp_y,h;
+	h = 2.0f / 128;
+
+	glBegin(GL_QUADS);	
+
+	i = index[0], j = index[1];
+	temp_x = (i - 0.5f) * h;
+	temp_x = -1 + temp_x;
+	temp_y = (j - 0.5f) * h;
+	temp_y = -1 + temp_y;
+
+	glColor3f(139, 0, 0);
+	glVertex2f(temp_x, temp_y);
+	glColor3f(139, 0, 0);
+	glVertex2f(temp_x + h, temp_y);
+	glColor3f(139, 0, 0);
+	glVertex2f(temp_x + h, temp_y + h);
+	glColor3f(139, 0, 0);
+	glVertex2f(temp_x, temp_y + h);
+
+	glEnd();
+	
 }

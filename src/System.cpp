@@ -329,6 +329,7 @@ void System::drawParticles()
     for (auto *p : particles)
     {
         p->draw();
+        p->drawLocal();
     }
 }
 void System::drawRigids()
@@ -337,7 +338,7 @@ void System::drawRigids()
     {
         r->draw();
         // r->drawBound();
-        // r->drawInner();
+        r->drawInner();
     }
 }
 
