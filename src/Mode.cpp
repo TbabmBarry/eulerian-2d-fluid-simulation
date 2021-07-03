@@ -160,10 +160,10 @@ void Mode::RigidBodyCollision(System *sys, FluidSolver *fluid)
 {
     // for test
     sys->wall = true;
-    sys->addRigid(new Particle(Vector2f(-0.125f, 0.125f), 5.0f, 0, Particle::RIGID));
-    sys->addRigid(new Particle(Vector2f(-0.f, 0.f), 5.0f, 0, Particle::RIGID));
+    sys->addRigid(new Particle(Vector2f(-0.2f, 0.2f), 5.0f, 0, Particle::RIGID));
+    // sys->addRigid(new Particle(Vector2f(-0.f, 0.f), 5.0f, 0, Particle::RIGID));
     sys->addRigidForce(new GridForce(sys->rigidbodies, fluid));
-    sys->addRigidForce(new CollisionForce(sys->rigidbodies, 0, 0.2));
+    // sys->addRigidForce(new CollisionForce(sys->rigidbodies, 0, 0.2));
 
     // sys->addRigid(new Particle(Vector2f(0.0f, 0.0f), 5.1f, 0, Particle::RIGID));
     // sys->addRigid(new Particle(Vector2f(-0.5f, 0.5f), 5.1f, 1, Particle::RIGID));

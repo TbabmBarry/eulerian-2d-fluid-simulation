@@ -55,9 +55,11 @@ void GridForce::apply(bool springsCanBreak)
             (u * on_edge[1] - on_edge[0] * v) / on_edge.norm();
         Vector2f localVelocity = projectedVelocity * normal;
 
-        rb->force += localVelocity;                    // force = alpha*v
-        rb->torque += CenterToGrid.dot(localVelocity)/3; // torque = L*v
+        rb->m_Force -= localVelocity;                    // force = alpha*v
+        rb->torque -= CenterToGrid.dot(Vector2f(u,v)) * 1000; // torque = L*v
       }
+      rb->m_Force = rb->m_Force.normalized() * 10000;
+      // cout<<rb->m_Force<<endl;
     }
   }
 }

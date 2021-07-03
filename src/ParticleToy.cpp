@@ -623,6 +623,7 @@ static void idle_func(void)
 	}
 	else if (sys_type == true)
 	{
+		fsolver->rigidbodies=sys->rigidbodies;
 		get_from_UI_grid(dens_prev, u_prev, v_prev);
 		fsolver->vel_step(grid_N, u, v, u_prev, v_prev, visc, dt);
 		fsolver->dens_step(grid_N, dens, dens_prev, u, v, diff, dt);
