@@ -82,7 +82,7 @@ VectorXf System::rigidGetState()
     {
         s[i * 8 + 0] = rigidbodies[i]->x[0];
         s[i * 8 + 1] = rigidbodies[i]->x[1];
-        s[i * 8 + 2] = rigidbodies[i]->angle;
+        s[i * 8 + 2] = 0;
         s[i * 8 + 3] = rigidbodies[i]->P[0];
         s[i * 8 + 4] = rigidbodies[i]->P[1];
         s[i * 8 + 5] = rigidbodies[i]->L;
