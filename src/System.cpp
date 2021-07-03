@@ -1,7 +1,7 @@
 #include "System.h"
 #include "ConstraintMaintainer.h"
 
-System::System(Solver *solver) : solver(solver), wall(false), time(0.0f), dt(0.001f)
+System::System(Solver *solver, Fluid *fluid) : solver(solver), fluid(fluid), wall(false), time(0.0f), dt(0.001f)
 {
 }
 
@@ -70,8 +70,10 @@ VectorXf System::particleGetState()
     {
         s[i * 4 + 0] = particles[i]->m_Position[0];
         s[i * 4 + 1] = particles[i]->m_Position[1];
-        s[i * 4 + 2] = particles[i]->m_Velocity[0];
-        s[i * 4 + 3] = particles[i]->m_Velocity[1];
+        // s[i * 4 + 2] = particles[i]->m_Velocity[0];
+        s[i * 4 + 2] = fluid->getXVelocity(particles[i]->LocolGrid(128)[0], particles[i]->LocolGrid(128)[1]) * 10;
+        // s[i * 4 + 3] = particles[i]->m_Velocity[1];
+        s[i * 4 + 3] = fluid->getYVelocity(particles[i]->LocolGrid(128)[0], particles[i]->LocolGrid(128)[1]) * 10;
     }
     return s;
 }

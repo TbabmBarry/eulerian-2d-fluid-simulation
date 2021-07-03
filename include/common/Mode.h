@@ -1,14 +1,12 @@
 #include "System.h"
-#include "FluidSolver.h"
+#include "Fluid.h"
 
 class Mode
 {
 public:
-
-    void RigidBodyCollision(System *system, FluidSolver *fluid);
-    void RigidBody(System *system, FluidSolver *fluid);
-    void Fix(System *system, FluidSolver *fluid);
-    void Move(System *system, FluidSolver *fluid);
+    void RigidBodyCollision(System *system, Fluid *fluid);
+    void RigidBody(System *system, Fluid *fluid);
+    void Fix(System *system, Fluid *fluid);
+    void Move(System *system, Fluid *fluid);
     void FluidCloth(System *system);
-    
 };

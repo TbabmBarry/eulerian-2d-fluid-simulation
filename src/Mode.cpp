@@ -23,8 +23,7 @@
 #include "unistd.h"
 #include "Mode.h"
 
-
-void Mode::RigidBodyCollision(System *sys, FluidSolver *fluid)
+void Mode::RigidBodyCollision(System *sys, Fluid *fluid)
 {
     // for test
     sys->wall = true;
@@ -38,21 +37,21 @@ void Mode::RigidBodyCollision(System *sys, FluidSolver *fluid)
     // sys->addRigidForce(new CollisionForce(sys->rigidbodies, 0.0f, 0.8f));
 }
 
-void Mode::RigidBody(System *sys, FluidSolver *fluid)
+void Mode::RigidBody(System *sys, Fluid *fluid)
 {
     sys->wall = true;
     sys->addRigid(new Particle(Vector2f(-0.2f, 0.2f), 5.0f, 0, Particle::RIGID));
     sys->addRigidForce(new GridForce(sys->rigidbodies, fluid, 1000));
 }
 
-void Mode::Fix(System *sys, FluidSolver *fluid)
+void Mode::Fix(System *sys, Fluid *fluid)
 {
     sys->wall = true;
     sys->addRigid(new Particle(Vector2f(-0.2f, 0.2f), 5.0f, 0, Particle::FIX));
     sys->addRigidForce(new GridForce(sys->rigidbodies, fluid, 1000));
 }
 
-void Mode::Move(System *sys, FluidSolver *fluid)
+void Mode::Move(System *sys, Fluid *fluid)
 {
     sys->wall = true;
     sys->addRigid(new Particle(Vector2f(-0.2f, 0.2f), 5.0f, 0, Particle::MOVING));

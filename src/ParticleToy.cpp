@@ -15,7 +15,7 @@
 #include "ExternalForce.h"
 #include "MidpointSolver.h"
 #include "RungeSovler.h"
-#include "FluidSolver.h"
+#include "Fluid.h"
 
 #include <vector>
 #include <stdlib.h>
@@ -67,7 +67,7 @@ static int dvel;
 static float *u, *v, *u_prev, *v_prev;
 static float *dens, *dens_prev;
 static int gomx, gomy, gmx, gmy;
-FluidSolver *fsolver = new FluidSolver();
+Fluid *fluid = new Fluid();
 /*
 ----------------------------------------------------------------------
 free/clear/allocate simulation data
@@ -113,7 +113,7 @@ static void init_system(void)
 	const double dist = 0.2;
 	const Vec2f center(0.0, 0.0);
 	const Vec2f offset(dist, 0.0);
-	sys = new System(new EulerSolver(EulerSolver::SEMI));
+	sys = new System(new EulerSolver(EulerSolver::SEMI), fluid);
 	mode = new Mode();
 }
 
@@ -179,26 +179,6 @@ static void post_display(void)
 
 	glutSwapBuffers();
 }
-
-// static void draw_particles ( void )
-// {
-// 	sys->drawParticles();
-// }
-
-// static void draw_rigid ( void )
-// {
-// 	sys->drawRigids();
-// }
-
-// static void draw_forces ( void )
-// {
-// 	sys->drawForces();
-// }
-
-// static void draw_constraints ( void )
-// {
-// 	sys->drawConstraints();
-// }
 
 static void draw_velocity(void)
 {
@@ -375,7 +355,6 @@ static void key_func(unsigned char key, int x, int y)
 		mode->FluidCloth(sys);
 		break;
 
-
 	case '2':
 		sys_type = false;
 		clear_data();
@@ -384,9 +363,8 @@ static void key_func(unsigned char key, int x, int y)
 		sys->dt = 0.001;
 		external_force = 0.1f;
 		init_system();
-		sys->fluidsolver = fsolver;
 		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		mode->RigidBody(sys, fsolver);
+		mode->RigidBody(sys, fluid);
 		break;
 
 	case '3':
@@ -397,9 +375,8 @@ static void key_func(unsigned char key, int x, int y)
 		sys->dt = 0.001;
 		external_force = 0.1f;
 		init_system();
-		sys->fluidsolver = fsolver;
 		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		mode->RigidBodyCollision(sys, fsolver);
+		mode->RigidBodyCollision(sys, fluid);
 		break;
 
 	case '4':
@@ -410,9 +387,8 @@ static void key_func(unsigned char key, int x, int y)
 		sys->dt = 0.001;
 		external_force = 0.1f;
 		init_system();
-		sys->fluidsolver = fsolver;
 		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		mode->Fix(sys, fsolver);
+		mode->Fix(sys, fluid);
 		break;
 
 	case '5':
@@ -423,9 +399,8 @@ static void key_func(unsigned char key, int x, int y)
 		sys->dt = 0.001;
 		external_force = 0.1f;
 		init_system();
-		sys->fluidsolver = fsolver;
 		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		mode->Move(sys, fsolver);
+		mode->Move(sys, fluid);
 		break;
 
 	case 'w':
@@ -600,14 +575,12 @@ static void motion_func(int x, int y)
 	fy = fy / (win_y / 2);
 
 	// cout << "after fx,fy"<< fx << " " <<fy << endl;
-	
 
 	if (mouse_inrigid == true)
 	{
 		Vector2f position = mouseForce->particles[0]->x;
 		mouseForce->direction = 10000.0f * Vector2f(fx - position[0], fy - position[1]);
 	}
-
 
 	gmx = x;
 	gmy = y;
@@ -628,7 +601,7 @@ static void idle_func(void)
 {
 	if (sys_type == false)
 	{
-		fsolver->rigidbodies = sys->rigidbodies;
+		fluid->rigidbodies = sys->rigidbodies;
 		if (dsim)
 			sys->simulationStep();
 		else
@@ -637,17 +610,17 @@ static void idle_func(void)
 			remap_GUI();
 		}
 		get_from_UI_grid(dens_prev, u_prev, v_prev);
-		fsolver->vel_step(grid_N, u, v, u_prev, v_prev, visc, dt);
-		fsolver->dens_step(grid_N, dens, dens_prev, u, v, diff, dt);
-		fsolver->vorticity_confinement(grid_N, dt, dens_prev, u, v, u_prev, v_prev);
+		fluid->vel_step(grid_N, u, v, u_prev, v_prev, visc, dt);
+		fluid->dens_step(grid_N, dens, dens_prev, u, v, diff, dt);
+		fluid->vorticity_confinement(grid_N, dt, dens_prev, u, v, u_prev, v_prev);
 	}
 	else if (sys_type == true)
 	{
-		fsolver->rigidbodies=sys->rigidbodies;
+		fluid->rigidbodies = sys->rigidbodies;
 		get_from_UI_grid(dens_prev, u_prev, v_prev);
-		fsolver->vel_step(grid_N, u, v, u_prev, v_prev, visc, dt);
-		fsolver->dens_step(grid_N, dens, dens_prev, u, v, diff, dt);
-		fsolver->vorticity_confinement(grid_N, dt, dens_prev, u, v, u_prev, v_prev);
+		fluid->vel_step(grid_N, u, v, u_prev, v_prev, visc, dt);
+		fluid->dens_step(grid_N, dens, dens_prev, u, v, diff, dt);
+		fluid->vorticity_confinement(grid_N, dt, dens_prev, u, v, u_prev, v_prev);
 	}
 
 	glutSetWindow(win_id);
