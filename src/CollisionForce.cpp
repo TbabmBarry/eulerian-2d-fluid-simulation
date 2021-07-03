@@ -119,7 +119,7 @@ void CollisionForce::collision(Vector2f point, Particle *rb1, Particle *rb2)
         force[1] *= 45;
     else
         force[1] *= 15;
-    cout <<"force "<< force << endl;
+    // cout <<"force "<< force << endl;
     rb1->m_Force += force;
     rb2->m_Force -= force;
     rb1->torque += (1 / rb1->I) / 8 * raF.determinant();

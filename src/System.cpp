@@ -348,7 +348,7 @@ void System::drawRigids()
     for (auto *r : rigidbodies)
     {
         r->draw();
-        r->drawBound();
+        // r->drawBound();
         // r->drawInner();
     }
 }
