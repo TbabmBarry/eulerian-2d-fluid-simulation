@@ -67,7 +67,7 @@ void FluidSolver::set_bnd(int N, int b, float *x)
             {
                 x[IX((int)boundgrids[i][0], (int)boundgrids[i][1])] *= -1; //flip velocity
                 Vector2f vel = rigidBody->m_Velocity;
-                float factor = h * 1.1;
+                float factor = h * 0.05;
                 //if the grid is also on canvas boundary
                 if (b == 1)
                 {
