@@ -588,20 +588,28 @@ static void mouse_func(int button, int state, int x, int y)
 
 static void motion_func(int x, int y)
 {
-	mx = x - int(win_x / 2);
-	my = int(win_y / 2) - y;
-	mx = mx / (win_x / 2);
-	my = my / (win_y / 2);
+	float fx = x - (win_x / 2);
+	float fy = (win_y / 2) - y;
+
+	// cout << "mx,my"<< fx << " " <<fy << endl;
+
+	fx = fx / (win_x / 2);
+	fy = fy / (win_y / 2);
+
+	// cout << "after fx,fy"<< fx << " " <<fy << endl;
+	
 
 	if (mouse_inrigid == true)
 	{
 		Vector2f position = mouseForce->particles[0]->x;
-		mouseForce->direction = 10000.0f * Vector2f(mx - position[0], my - position[1]);
+		mouseForce->direction = 30000.0f * Vector2f(fx - position[0], fy - position[1]);
 	}
+
 
 	gmx = x;
 	gmy = y;
 	// cout << "gmx " << gmx <<"gmy" << gmy << endl;
+	// cout << "mouseForce" << mouseForce->direction[0] << " " << mouseForce->direction[1] << endl;;
 }
 
 static void reshape_func(int width, int height)
