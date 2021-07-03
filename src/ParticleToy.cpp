@@ -362,60 +362,9 @@ static void key_func(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-
 	case '1':
 		sys_type = false;
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt = 0.001;
-		external_force = 1.0f;
-		sys->solver = new RungeSovler();
-		mode_index = 5;
-		mode->CircularGravityRod(sys);
-		break;
-
-	case '2':
-		sys_type = false;
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt = 0.01;
-		external_force = 0.05f;
-		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		mode_index = 6;
-		mode->hair(sys);
-		break;
-
-	case '3':
-		sys_type = false;
-		if (dsim)
-			dsim = !dsim;
-		init_system();
-		sys->dt = 0.001;
-		external_force = 0.1f;
-		mode_index = 7;
-		sys->solver = new RungeSovler();
-		mode->CircularCloth(sys);
-		break;
-
-	case '4':
-		sys_type = true;
-		init_system();
-		break;
-	case '5':
-		sys_type = false;
-		if (dsim)
-			dsim = !dsim;
-		sys->dt = 0.001;
-		external_force = 0.1f;
-		init_system();
-		sys->fluidsolver = fsolver;
-		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		mode->RigidBodyCollision(sys, fsolver);
-		break;
-	case '6':
-		sys_type = false;
+		clear_data();
 		if (dsim)
 			dsim = !dsim;
 		init_system();
@@ -425,6 +374,60 @@ static void key_func(unsigned char key, int x, int y)
 		sys->solver = new EulerSolver(EulerSolver::SEMI);
 		mode->FluidCloth(sys);
 		break;
+
+
+	case '2':
+		sys_type = false;
+		clear_data();
+		if (dsim)
+			dsim = !dsim;
+		sys->dt = 0.001;
+		external_force = 0.1f;
+		init_system();
+		sys->fluidsolver = fsolver;
+		sys->solver = new EulerSolver(EulerSolver::SEMI);
+		mode->RigidBody(sys, fsolver);
+		break;
+
+	case '3':
+		sys_type = false;
+		clear_data();
+		if (dsim)
+			dsim = !dsim;
+		sys->dt = 0.001;
+		external_force = 0.1f;
+		init_system();
+		sys->fluidsolver = fsolver;
+		sys->solver = new EulerSolver(EulerSolver::SEMI);
+		mode->RigidBodyCollision(sys, fsolver);
+		break;
+
+	case '4':
+		sys_type = false;
+		clear_data();
+		if (dsim)
+			dsim = !dsim;
+		sys->dt = 0.001;
+		external_force = 0.1f;
+		init_system();
+		sys->fluidsolver = fsolver;
+		sys->solver = new EulerSolver(EulerSolver::SEMI);
+		mode->Fix(sys, fsolver);
+		break;
+
+	case '5':
+		sys_type = false;
+		clear_data();
+		if (dsim)
+			dsim = !dsim;
+		sys->dt = 0.001;
+		external_force = 0.1f;
+		init_system();
+		sys->fluidsolver = fsolver;
+		sys->solver = new EulerSolver(EulerSolver::SEMI);
+		mode->Move(sys, fsolver);
+		break;
+
 	case 'w':
 	case 'W':
 		if (dsim)
@@ -602,7 +605,7 @@ static void motion_func(int x, int y)
 	if (mouse_inrigid == true)
 	{
 		Vector2f position = mouseForce->particles[0]->x;
-		mouseForce->direction = 30000.0f * Vector2f(fx - position[0], fy - position[1]);
+		mouseForce->direction = 10000.0f * Vector2f(fx - position[0], fy - position[1]);
 	}
 
 
