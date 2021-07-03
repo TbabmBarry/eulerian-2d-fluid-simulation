@@ -1,8 +1,8 @@
 #include "GridForce.h"
 #include <math.h>
 
-GridForce::GridForce(vector<Particle *> particles, FluidSolver *fluid)
-    : fluid(fluid)
+GridForce::GridForce(vector<Particle *> particles, FluidSolver *fluid, int scale)
+    : fluid(fluid), scale(scale)
 {
   this->setTarget(particles);
 }
@@ -56,7 +56,7 @@ void GridForce::apply(bool springsCanBreak)
         Vector2f localVelocity = projectedVelocity * normal;
 
         rb->m_Force -= localVelocity;                    // force = alpha*v
-        rb->torque -= CenterToGrid.dot(Vector2f(u,v)) * 1000; // torque = L*v
+        rb->torque -= CenterToGrid.dot(Vector2f(u,v)) * scale; // torque = L*v
       }
       rb->m_Force = rb->m_Force.normalized() * 10000;
       // cout<<rb->m_Force<<endl;
