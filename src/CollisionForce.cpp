@@ -103,8 +103,8 @@ void CollisionForce::collision(Vector2f point, Particle *rb1, Particle *rb2)
     rbN(0, 0) = rb[0], rbN(0, 1) = rb[1], rbN(1, 0) = normal[0], rbN(1, 1) = normal[1];
     float raCrossN = raN.determinant();
     float rbCrossN = rbN.determinant();
-    float term3 = (raCrossN * raCrossN) * (1 / (rb1->I + 0.001));
-    float term4 = (rbCrossN * rbCrossN) * (1 / (rb2->I + 0.001));
+    float term3 = (raCrossN * raCrossN) * (1 / rb1->I);
+    float term4 = (rbCrossN * rbCrossN) * (1 / rb2->I);
     float j = numerator / (term1 + term2 + term3 + term4);
     float scale = 3;
     Vector2f force = scale * j * normal;
@@ -119,10 +119,11 @@ void CollisionForce::collision(Vector2f point, Particle *rb1, Particle *rb2)
         force[1] *= 45;
     else
         force[1] *= 15;
+    cout << force << endl;
     rb1->m_Force += force;
     rb2->m_Force -= force;
-    rb1->torque += (1 / (rb1->I + 0.001)) / 8 * raF.determinant();
-    rb2->torque -= (1 / (rb2->I + 0.001)) / 8 * rbF.determinant();
+    rb1->torque += (1 / rb1->I) / 8 * raF.determinant();
+    rb2->torque -= (1 / rb2->I) / 8 * rbF.determinant();
 }
 
 map<int, map<int, float>> CollisionForce::dx()

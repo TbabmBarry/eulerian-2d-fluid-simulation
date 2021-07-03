@@ -41,7 +41,7 @@ int System::particleDims()
 }
 int System::rigidDims()
 {
-    return rigidbodies.size() * 6;
+    return rigidbodies.size() * 8;
 }
 
 void System::free()
@@ -80,12 +80,14 @@ VectorXf System::rigidGetState()
     VectorXf s(this->rigidDims());
     for (int i = 0; i < rigidbodies.size(); i++)
     {
-        s[i * 6 + 0] = rigidbodies[i]->x[0];
-        s[i * 6 + 1] = rigidbodies[i]->x[1];
-        s[i * 6 + 2] = 0;
-        s[i * 6 + 3] = rigidbodies[i]->P[0];
-        s[i * 6 + 4] = rigidbodies[i]->P[1];
-        s[i * 6 + 5] = rigidbodies[i]->L;
+        s[i * 8 + 0] = rigidbodies[i]->x[0];
+        s[i * 8 + 1] = rigidbodies[i]->x[1];
+        s[i * 8 + 2] = rigidbodies[i]->angle;
+        s[i * 8 + 3] = rigidbodies[i]->P[0];
+        s[i * 8 + 4] = rigidbodies[i]->P[1];
+        s[i * 8 + 5] = rigidbodies[i]->L;
+        s[i * 8 + 6] = rigidbodies[i]->mass;
+        s[i * 8 + 7] = rigidbodies[i]->I;
     }
     return s;
 }
@@ -210,31 +212,31 @@ VectorXf System::collisionValidationRigid(VectorXf newState)
 {
     for (int i = 0; i < rigidbodies.size(); i++)
     {
-        if (newState[i * 6] < -(0.9f - rigidbodies[i]->dimension / 2))
+        if (newState[i * 8] < -(0.9f - rigidbodies[i]->dimension / 2))
         {
             // particles[i]->m_Force+= Vec2f(10,0);
-            newState[i * 6] = -(0.9f - rigidbodies[i]->dimension / 2);
-            newState[i * 6 + 3] *= -1;
+            newState[i * 8] = -(0.9f - rigidbodies[i]->dimension / 2);
+            newState[i * 8 + 3] *= -1;
         }
 
-        if (newState[i * 6] > (0.9f - rigidbodies[i]->dimension / 2))
+        if (newState[i * 8] > (0.9f - rigidbodies[i]->dimension / 2))
         {
             // particles[i]->m_Force+= Vec2f(-10,0);
-            newState[i * 6] = (0.9f - rigidbodies[i]->dimension / 2);
-            newState[i * 6 + 3] *= -1;
+            newState[i * 8] = (0.9f - rigidbodies[i]->dimension / 2);
+            newState[i * 8 + 3] *= -1;
         }
 
-        if (newState[i * 6 + 1] < -(0.9f - rigidbodies[i]->dimension / 2))
+        if (newState[i * 8 + 1] < -(0.9f - rigidbodies[i]->dimension / 2))
         {
             // particles[i]->m_Force+= Vec2f(0,100);
-            newState[i * 6 + 1] = -(0.9f - rigidbodies[i]->dimension / 2);
-            newState[i * 6 + 4] *= -1;
+            newState[i * 8 + 1] = -(0.9f - rigidbodies[i]->dimension / 2);
+            newState[i * 8 + 4] *= -1;
         }
 
-        if (newState[i * 6 + 1] > (0.9f - rigidbodies[i]->dimension / 2))
+        if (newState[i * 8 + 1] > (0.9f - rigidbodies[i]->dimension / 2))
         {
-            newState[i * 6 + 1] = (0.9f - rigidbodies[i]->dimension / 2);
-            newState[i * 6 + 4] *= -1;
+            newState[i * 8 + 1] = (0.9f - rigidbodies[i]->dimension / 2);
+            newState[i * 8 + 4] *= -1;
         }
     }
     return newState;
@@ -281,12 +283,14 @@ VectorXf System::rigidDerivative()
         Particle *rb = rigidbodies[i];
         // updateForce();
         // updateTorque();
-        y[i * 6 + 0] = rb->m_Velocity[0];
-        y[i * 6 + 1] = rb->m_Velocity[1];
-        y[i * 6 + 2] = rb->omega;
-        y[i * 6 + 3] = rb->m_Force[0];
-        y[i * 6 + 4] = rb->m_Force[1];
-        y[i * 6 + 5] = rb->torque;
+        y[i * 8 + 0] = rb->m_Velocity[0];
+        y[i * 8 + 1] = rb->m_Velocity[1];
+        y[i * 8 + 2] = rb->omega;
+        y[i * 8 + 3] = rb->m_Force[0];
+        y[i * 8 + 4] = rb->m_Force[1];
+        y[i * 8 + 5] = rb->torque;
+        y[i * 8 + 6] = 0.0f;
+        y[i * 8 + 7] = 0.0f;
     }
     return y;
 }
@@ -341,7 +345,7 @@ void System::drawRigids()
     for (auto *r : rigidbodies)
     {
         r->draw();
-        r->drawBound();
+        // r->drawBound();
         // r->drawInner();
     }
 }

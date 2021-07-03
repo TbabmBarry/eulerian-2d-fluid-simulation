@@ -50,27 +50,44 @@ void EulerSolver::explicitS(System *system, float h)
 void EulerSolver::semiS(System *system, float h)
 {
     // Get the old state
-    VectorXf oldState = system->particleGetState();
+    VectorXf oldStateParticle = system->particleGetState();
+    VectorXf oldStateRigid = system->rigidGetState();
 
     // Evaluate derivative
-    VectorXf stateDeriv = system->particleAcceleration();
-
+    VectorXf stateDerivParticle = system->particleAcceleration();
+    VectorXf stateDerivRigid = system->rigidAcceleration();
     // Calculate the new state
-    VectorXf newState = oldState + h * stateDeriv;
-    //set the new state
-    system->particleSetState(newState, system->particleGetTime() + h);
+    VectorXf newStateParticle = oldStateParticle + h * stateDerivParticle;
+    VectorXf newStateRigid = oldStateRigid + h * stateDerivRigid;
+    // //set the new state
+    // system->particleSetState(newStateParticle, system->particleGetTime() + h);
+    // system->rigidSetState(newStateRigid, system->particleGetTime() + h);
 
     //Use new vectory
-    for (int i = 0; i < newState.size(); i += 4)
+    for (int i = 0; i < newStateParticle.size(); i += 4)
     {
-        newState[i + 0] = oldState[i + 0] + h * newState[i + 2];
-        newState[i + 1] = oldState[i + 1] + h * newState[i + 3];
+        newStateParticle[i + 0] = oldStateParticle[i + 0] + h * newStateParticle[i + 2];
+        newStateParticle[i + 1] = oldStateParticle[i + 1] + h * newStateParticle[i + 3];
+    }
+    // cout << "position: " << newStateRigid[1] << endl;
+    // cout << "angle: " << newStateRigid[5] << endl;
+    for (int i = 0; i < newStateRigid.size(); i += 8)
+    {
+        // position
+        newStateRigid[i + 0] = oldStateRigid[i + 0] + h * (newStateRigid[i + 3] / oldStateRigid[i + 6]);
+        newStateRigid[i + 1] = oldStateRigid[i + 1] + h * (newStateRigid[i + 4] / oldStateRigid[i + 6]);
+        // orientation
+        newStateRigid[i + 2] = oldStateRigid[i + 2] + h * (newStateRigid[i + 5] / oldStateRigid[i + 7]);
     }
 
     if (system->wall)
-        newState = system->collisionValidation(newState);
+    {
+        newStateParticle = system->collisionValidation(newStateParticle);
+        newStateRigid = system->collisionValidationRigid(newStateRigid);
+    }
     //set the new state
-    system->particleSetState(newState, system->particleGetTime() + h);
+    system->particleSetState(newStateParticle, system->particleGetTime() + h);
+    system->rigidSetState(newStateRigid, system->particleGetTime() + h);
 }
 
 void EulerSolver::implicitS(System *system, float h)

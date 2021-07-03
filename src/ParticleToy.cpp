@@ -321,18 +321,18 @@ static void get_from_UI_grid(float *d, float *u, float *v)
 	// cout << "gomx " << gomx <<"gomy" << gomy << endl;
 	i = (int)((gmx / (float)win_x) * grid_N + 1);
 	j = (int)(((win_y - gmy) / (float)win_y) * grid_N + 1);
-	
+
 	// cout << "i " << i <<"j" << j << endl;
 	if (i < 1 || i > grid_N || j < 1 || j > grid_N)
 		return;
 
-	if (mouse_down[0] && mouse_inrigid == false )
+	if (mouse_down[0] && mouse_inrigid == false)
 	{
 		u[IX(i, j)] = force * (gmx - gomx);
 		v[IX(i, j)] = force * (gomy - gmy);
 	}
 
-	if (mouse_down[2] && mouse_inrigid == false )
+	if (mouse_down[2] && mouse_inrigid == false)
 	{
 		d[IX(i, j)] = source;
 	}
@@ -407,14 +407,24 @@ static void key_func(unsigned char key, int x, int y)
 		sys_type = false;
 		if (dsim)
 			dsim = !dsim;
-		sys->dt = 0.0001;
+		sys->dt = 0.001;
 		external_force = 0.1f;
 		init_system();
-		sys->fluidsolver=fsolver;
-		sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
+		sys->fluidsolver = fsolver;
+		sys->solver = new EulerSolver(EulerSolver::SEMI);
 		mode->RigidBodyCollision(sys, fsolver);
 		break;
-
+	case '6':
+		sys_type = false;
+		if (dsim)
+			dsim = !dsim;
+		init_system();
+		sys->dt = 0.001;
+		external_force = 0.1f;
+		mode_index = 7;
+		sys->solver = new EulerSolver(EulerSolver::SEMI);
+		mode->FluidCloth(sys);
+		break;
 	case 'w':
 	case 'W':
 		if (dsim)
@@ -556,9 +566,9 @@ static void mouse_func(int button, int state, int x, int y)
 		{
 			Vector2f position = sys->rigidbodies[i]->x;
 			float r = sys->rigidbodies[i]->dimension;
-			r = r/2*1.1;
+			r = r / 2 * 1.1;
 
-			double distance = sqrt((mouse_x - position[0])*(mouse_x - position[0]) + (mouse_y - position[1])*(mouse_y - position[1]));
+			double distance = sqrt((mouse_x - position[0]) * (mouse_x - position[0]) + (mouse_y - position[1]) * (mouse_y - position[1]));
 			if (distance < r)
 			{
 				// cout<<"r "<<r<<" "<<"distance "<<distance<<endl;
@@ -574,9 +584,7 @@ static void mouse_func(int button, int state, int x, int y)
 	gomy = y;
 	gmx = x;
 	gmy = y;
-	
 }
-
 
 static void motion_func(int x, int y)
 {
@@ -585,11 +593,12 @@ static void motion_func(int x, int y)
 	mx = mx / (win_x / 2);
 	my = my / (win_y / 2);
 
-	if (mouse_inrigid == true) {
+	if (mouse_inrigid == true)
+	{
 		Vector2f position = mouseForce->particles[0]->x;
 		mouseForce->direction = 10000.0f * Vector2f(mx - position[0], my - position[1]);
 	}
-	
+
 	gmx = x;
 	gmy = y;
 	// cout << "gmx " << gmx <<"gmy" << gmy << endl;
@@ -608,7 +617,7 @@ static void idle_func(void)
 {
 	if (sys_type == false)
 	{
-		fsolver->rigidbodies=sys->rigidbodies;
+		fsolver->rigidbodies = sys->rigidbodies;
 		if (dsim)
 			sys->simulationStep();
 		else
