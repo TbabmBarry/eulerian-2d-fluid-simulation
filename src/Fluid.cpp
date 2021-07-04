@@ -245,8 +245,8 @@ void Fluid::vorticity_confinement(int N, float dt, float *d0, float *u, float *v
             len = 1 / (sqrt(Nx * Nx + Ny * Ny) + 0.0000000000000000001);
             Nx *= len;
             Ny *= len;
-            u[IX(i, j)] += Nx * u0[IX(i, j)];
-            v[IX(i, j)] += Ny * v0[IX(i, j)];
+            u[IX(i, j)] += dt * Nx * u0[IX(i, j)];
+            v[IX(i, j)] += dt * Ny * v0[IX(i, j)];
         }
     }
 }

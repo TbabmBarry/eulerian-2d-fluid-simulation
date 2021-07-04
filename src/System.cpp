@@ -71,9 +71,9 @@ VectorXf System::particleGetState()
         s[i * 4 + 0] = particles[i]->m_Position[0];
         s[i * 4 + 1] = particles[i]->m_Position[1];
         // s[i * 4 + 2] = particles[i]->m_Velocity[0];
-        s[i * 4 + 2] = fluid->getXVelocity(particles[i]->LocolGrid(128)[0], particles[i]->LocolGrid(128)[1]) * 10;
+        s[i * 4 + 2] = fluid->getXVelocity(particles[i]->LocolGrid(128)[0], particles[i]->LocolGrid(128)[1]) * 50;
         // s[i * 4 + 3] = particles[i]->m_Velocity[1];
-        s[i * 4 + 3] = fluid->getYVelocity(particles[i]->LocolGrid(128)[0], particles[i]->LocolGrid(128)[1]) * 10;
+        s[i * 4 + 3] = fluid->getYVelocity(particles[i]->LocolGrid(128)[0], particles[i]->LocolGrid(128)[1]) * 50;
     }
     return s;
 }

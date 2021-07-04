@@ -650,7 +650,7 @@ int main(int argc, char **argv)
 	printf("\t Switch view between density and verlocity by pressing the 'v' key\n");
 	printf("\t key '1' for cloth on fluid\n");
 	printf("\t key '2' for rigid body + fluid\n");
-	printf("\t key '3' for figid body collision + fluid\n");
+	printf("\t key '3' for rigid body collision + fluid\n");
 	printf("\t key '4' for fix boundary + fluid\n");
 	printf("\t key '5' for move boundary + fluid\n");
 
