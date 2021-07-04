@@ -403,82 +403,6 @@ static void key_func(unsigned char key, int x, int y)
 		mode->Move(sys, fluid);
 		break;
 
-	case 'w':
-	case 'W':
-		if (dsim)
-			dsim = !dsim;
-		sys->reset();
-		printf("Using SEMI Euler\n");
-		sys->solver = new EulerSolver(EulerSolver::SEMI);
-		break;
-
-	case 'e':
-	case 'E':
-		if (dsim)
-			dsim = !dsim;
-		sys->reset();
-		if (mode_index != 6)
-		{
-			printf("Using Explicit Euler\n");
-			sys->solver = new EulerSolver(EulerSolver::EXPLICIT);
-		}
-		else
-		{
-			printf("Only SEMI\n");
-		}
-
-		break;
-
-	case 'r':
-	case 'R':
-		if (dsim)
-			dsim = !dsim;
-		sys->reset();
-		if (mode_index != 6)
-		{
-			printf("Using Implicit Euler\n");
-			sys->solver = new EulerSolver(EulerSolver::IMPLICIT);
-		}
-		else
-		{
-			printf("Only SEMI\n");
-		}
-
-		break;
-
-	case 't':
-	case 'T':
-		if (dsim)
-			dsim = !dsim;
-		sys->reset();
-		if (mode_index != 6)
-		{
-			printf("Using Midpoint Solver\n");
-			sys->solver = new MidpointSolver();
-		}
-		else
-		{
-			printf("Only SEMI\n");
-		}
-
-		break;
-
-	case 'y':
-	case 'Y':
-		if (dsim)
-			dsim = !dsim;
-		sys->reset();
-		if (mode_index != 6)
-		{
-			printf("Using Runge4 Solver\n");
-			sys->solver = new RungeSovler();
-		}
-		else
-		{
-			printf("Only SEMI\n");
-		}
-		break;
-
 	case 'c':
 	case 'C':
 		clear_data();
@@ -723,14 +647,12 @@ int main(int argc, char **argv)
 	printf("\t Toggle construction/simulation display with the spacebar key\n");
 	printf("\t Dump frames by pressing the 'd' key\n");
 	printf("\t Quit by pressing the 'q' key\n");
-	printf("\t key '1' for Circular Wire Constraint + Spring force + Rod Constraint + Gravity (default: Runge4)\n");
-	printf("\t key '2' for hair (Only Semi)\n");
-	printf("\t key '3' for cloth (default: Implicit)\n");
-	printf("\t key 'w' turn to Semi Euler solver\n");
-	printf("\t key 'e' turn to Explicit Euler solver\n");
-	printf("\t key 'r' turn to Implicit Euler solver\n");
-	printf("\t key 't' turn to Midpoint solver\n");
-	printf("\t key 'y' turn to Runge4 solver\n");
+	printf("\t Switch view between density and verlocity by pressing the 'v' key\n");
+	printf("\t key '1' for cloth on fluid\n");
+	printf("\t key '2' for rigid body + fluid\n");
+	printf("\t key '3' for figid body collision + fluid\n");
+	printf("\t key '4' for fix boundary + fluid\n");
+	printf("\t key '5' for move boundary + fluid\n");
 
 	// for particle based system
 	dsim = 0;
