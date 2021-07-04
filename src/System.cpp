@@ -129,7 +129,7 @@ void System::rigidSetState(VectorXf newState, float time)
         }
         rigidbodies[i]->x[0] = newState[i * 8 + 0];
         rigidbodies[i]->x[1] = newState[i * 8 + 1];
-        rigidbodies[i]->angle = newState[i * 8 + 2];
+        rigidbodies[i]->angle = rigidbodies[i]->rigid != 1 ? 0.0f : newState[i * 8 + 2];
         rigidbodies[i]->P[0] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 8 + 3];
         rigidbodies[i]->P[1] = rigidbodies[i]->rigid == 2 ? 0.0f : newState[i * 8 + 4];
         rigidbodies[i]->L = rigidbodies[i]->rigid != 1 ? 0.0f : newState[i * 8 + 5];
@@ -139,7 +139,7 @@ void System::rigidSetState(VectorXf newState, float time)
         rigidbodies[i]->R(0, 1) = -sin(rigidbodies[i]->angle);
         rigidbodies[i]->R(1, 0) = sin(rigidbodies[i]->angle);
         rigidbodies[i]->R(1, 1) = cos(rigidbodies[i]->angle);
-        rigidbodies[i]->m_Velocity = rigidbodies[i]->P / rigidbodies[i]->mass;
+        rigidbodies[i]->m_Velocity = rigidbodies[i]->rigid == 2 ? Vector2f(0.0f, 0.0f) : (rigidbodies[i]->P / rigidbodies[i]->mass);
         rigidbodies[i]->I = rigidbodies[i]->mass * (pow(rigidbodies[i]->dimension, 2) + pow(rigidbodies[i]->dimension, 2));
         rigidbodies[i]->omega = rigidbodies[i]->L / (rigidbodies[i]->I + 0.00000000001);
         if (rigidbodies[i]->omega > 0.1)

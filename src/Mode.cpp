@@ -47,7 +47,7 @@ void Mode::RigidBody(System *sys, Fluid *fluid)
 void Mode::Fix(System *sys, Fluid *fluid)
 {
     sys->wall = true;
-    sys->addRigid(new Particle(Vector2f(-0.2f, 0.2f), 5.0f, 0, Particle::FIX));
+    sys->addRigid(new Particle(Vector2f(-0.2f, 0.2f), 500.0f, 0, Particle::FIX));
     sys->addRigidForce(new GridForce(sys->rigidbodies, fluid, 1000));
 }
 
